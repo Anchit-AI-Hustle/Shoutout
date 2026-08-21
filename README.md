@@ -2,6 +2,8 @@
 
 One platform for the independent music economy. Every request is a **Shout** — a call that someone answers.
 
+**Live:** [shoutout.anchit-tandon.com](https://shoutout.anchit-tandon.com) — deploys automatically on every push to `main` via Vercel's GitHub integration.
+
 ## Quickstart
 
 ```bash
