@@ -1,4 +1,4 @@
-# shoutout-platform
+# Shoutout
 
 One platform for the independent music economy. Every request is a **Shout** — a call that someone answers.
 

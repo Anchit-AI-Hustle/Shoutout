@@ -1,4 +1,4 @@
-project_id = "shoutout-platform"
+project_id = "shoutout"
 
 [db]
 port = 54322
