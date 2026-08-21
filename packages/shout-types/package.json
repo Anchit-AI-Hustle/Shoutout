@@ -1,0 +1,19 @@
+{
+  "name": "@shoutout/shout-types",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test:registry": "echo \"registry not yet built — see docs/09-BUILD-SEQUENCE.md M1\" && exit 0"
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

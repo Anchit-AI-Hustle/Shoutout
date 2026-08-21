@@ -1,0 +1,35 @@
+/* SHOUTOUT design tokens — docs/06-DESIGN-SYSTEM.md. Do not hand-pick colors outside this file. */
+
+:root {
+  --ink: #15181b; /* primary text */
+  --ink-soft: #4e5259; /* secondary */
+  --surface: #e2ded3; /* app background */
+  --surface-2: #d5d0c3; /* raised */
+  --line: #b6b0a1;
+  --desk: #1a1e22; /* nav, headers, code */
+  --signal: #c1272d; /* action, alert */
+  --trust: #14456f; /* money, verified */
+  --accent: #e8b33a; /* active state */
+  --ok: #3e6b47;
+
+  /* type scale: 11 · 12 · 13 · 15 · 17 · 21 · 26 · 34 · 48. body 15. never below 11. */
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-md: 17px;
+  --text-lg: 21px;
+  --text-xl: 26px;
+  --text-2xl: 34px;
+  --text-3xl: 48px;
+
+  /* spacing: 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64. nothing off-scale. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+}

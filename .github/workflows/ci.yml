@@ -1,0 +1,38 @@
+name: CI
+
+# Pipeline order per docs/10-TESTING.md:
+# lint -> typecheck -> unit -> test:registry -> test:rls -> test:money -> build -> test:e2e @critical -> deploy
+# test:rls and test:money are stub gates until B2 and B6 land — they must never be removed from this order.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm test:registry
+      - run: pnpm test:rls
+      - run: pnpm test:money
+      - run: pnpm build
+      # test:e2e (@critical) enabled once Playwright specs exist — see docs/10-TESTING.md Gate 3

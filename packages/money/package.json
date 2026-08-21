@@ -1,0 +1,19 @@
+{
+  "name": "@shoutout/money",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"settlement rail not yet built — see docs/09-BUILD-SEQUENCE.md M4\" && exit 0"
+  },
+  "dependencies": {
+    "@shoutout/db": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

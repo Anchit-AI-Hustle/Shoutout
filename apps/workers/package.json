@@ -1,0 +1,9 @@
+{
+  "name": "workers",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Python FastAPI workers — audio analysis, ML inference, transcode hooks. Not a JS package; this file exists only so pnpm's workspace glob resolves cleanly.",
+  "scripts": {
+    "dev": "uvicorn main:app --reload --port 8000"
+  }
+}
