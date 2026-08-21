@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1A1E22">
+<title>SHOUTOUT — Founder Build Package v1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --desk:#1A1E22;
+  --desk-2:#23282D;
+  --panel:#E2DED3;
+  --panel-2:#D5D0C3;
+  --ink:#15181B;
+  --ink-soft:#4E5259;
+  --neve:#14456F;
+  --api:#C1272D;
+  --led:#E8B33A;
+  --line:#B6B0A1;
+  --rail-w:236px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--panel);
+  color:var(--ink);
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:15px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- CHANNEL STRIP RAIL (signature) ---------- */
+.rail{
+  position:fixed;top:0;left:0;bottom:0;width:var(--rail-w);
+  background:var(--desk);color:var(--panel);
+  display:flex;flex-direction:column;z-index:60;
+  border-right:3px solid var(--api);
+}
+.rail-head{padding:20px 18px 14px;border-bottom:1px solid #33383E}
+.rail-mark{font-family:'Archivo Black',sans-serif;font-size:23px;letter-spacing:.14em;line-height:1}
+.rail-sub{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.16em;color:#8D949C;margin-top:7px;text-transform:uppercase}
+.chans{flex:1;overflow-y:auto;padding:10px 0 24px}
+.chan{
+  display:flex;align-items:center;gap:10px;width:100%;
+  padding:8px 16px;background:none;border:0;cursor:pointer;
+  color:#A9B0B8;text-align:left;font-family:'IBM Plex Mono',monospace;
+  font-size:11px;letter-spacing:.05em;transition:background .15s,color .15s;
+  border-left:3px solid transparent;
+}
+.chan:hover{background:#2A3037;color:var(--panel)}
+.chan:focus-visible{outline:2px solid var(--led);outline-offset:-2px}
+.chan .led{
+  width:7px;height:7px;border-radius:50%;background:#3E454C;flex:none;
+  transition:background .2s,box-shadow .2s;
+}
+.chan .num{color:#5E666E;font-size:10px;width:16px;flex:none}
+.chan.on{background:#2E353C;color:#fff;border-left-color:var(--led)}
+.chan.on .led{background:var(--led);box-shadow:0 0 8px var(--led)}
+.chan.on .num{color:var(--led)}
+.rail-foot{padding:12px 16px;border-top:1px solid #33383E;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6E767E;letter-spacing:.08em}
+
+/* ---------- MAIN ---------- */
+main{margin-left:var(--rail-w);max-width:1080px;padding:0 40px 120px}
+section{padding:56px 0;border-bottom:1px solid var(--line)}
+section:first-of-type{border-top:0}
+
+/* ---------- HERO / MASTER SECTION ---------- */
+.hero{padding:64px 0 48px;border-bottom:3px solid var(--ink)}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--api);font-weight:600}
+.hero h1{
+  font-family:'Archivo Black',sans-serif;
+  font-size:clamp(56px,10.5vw,116px);line-height:.86;letter-spacing:-.02em;
+  margin:16px 0 0;
+}
+.hero .rule{height:6px;background:var(--ink);margin:22px 0 18px;position:relative}
+.hero .rule::after{content:"";position:absolute;left:0;top:0;height:6px;width:34%;background:var(--api)}
+.hero .thesis{font-size:20px;line-height:1.4;max-width:640px;font-weight:500}
+.hero .manifesto{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--neve);margin-top:14px;letter-spacing:.02em}
+
+/* VU meters */
+.meters{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:1px;background:var(--line);margin-top:34px;border:1px solid var(--line)}
+.meter{background:var(--panel-2);padding:14px 14px 12px}
+.meter .lbl{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft)}
+.meter .val{font-family:'Archivo Black',sans-serif;font-size:26px;line-height:1.05;margin-top:5px}
+.meter .val small{font-size:12px;font-family:'IBM Plex Mono',monospace;font-weight:400;color:var(--ink-soft);display:block;margin-top:3px;letter-spacing:.02em}
+.meter .bar{height:4px;background:#C3BCAC;margin-top:9px;position:relative;overflow:hidden}
+.meter .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--neve)}
+
+/* ---------- SECTION HEADS ---------- */
+.shead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+.shead .ch{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--api);letter-spacing:.14em;font-weight:600}
+h2{font-family:'Archivo Black',sans-serif;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.01em;line-height:1.05}
+.sdek{color:var(--ink-soft);max-width:660px;margin-top:10px;font-size:15.5px}
+h3{font-family:'Archivo',sans-serif;font-weight:700;font-size:17px;letter-spacing:.01em;margin:34px 0 12px;text-transform:uppercase}
+h3:first-of-type{margin-top:26px}
+h4{font-weight:700;font-size:14.5px;margin:20px 0 8px}
+p{margin:10px 0;max-width:760px}
+ul{margin:10px 0 10px 18px;max-width:760px}
+li{margin:5px 0}
+strong{font-weight:700}
+code{font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:var(--panel-2);padding:1px 5px;border:1px solid var(--line)}
+
+/* ---------- TABLES ---------- */
+.tw{overflow-x:auto;margin:16px 0;border:1px solid var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:#EAE7DE;min-width:520px}
+th{
+  background:var(--desk);color:var(--panel);text-align:left;padding:9px 12px;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;
+}
+td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+tbody tr:nth-child(even){background:#E4E0D6}
+.num-c{font-family:'IBM Plex Mono',monospace;text-align:right;white-space:nowrap}
+tr.clickable{cursor:pointer;transition:background .12s}
+tr.clickable:hover{background:#DAD3C0}
+tr.clickable:focus-visible{outline:2px solid var(--api);outline-offset:-2px}
+tr.clickable td:first-child{position:relative;padding-left:24px;font-weight:600}
+tr.clickable td:first-child::before{content:"▸";position:absolute;left:9px;color:var(--api);font-size:11px}
+.tnote{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);margin-top:7px}
+
+/* ---------- FORMULA BLOCK ---------- */
+.fx{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.75;
+  background:var(--desk);color:#D8DEE4;padding:14px 16px;margin:14px 0;
+  border-left:4px solid var(--led);
+  white-space:pre;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  tab-size:2;position:relative;
+}
+.fx::-webkit-scrollbar{height:6px}
+.fx::-webkit-scrollbar-thumb{background:#4A5158;border-radius:3px}
+.fxhint{
+  display:none;font-family:'IBM Plex Mono',monospace;font-size:10px;
+  color:var(--ink-soft);letter-spacing:.08em;margin:-8px 0 14px;
+}
+.fxhint.on{display:block}
+.fx b{color:var(--led);font-weight:500}
+.fx .out{color:#8FD19E}
+
+/* ---------- CALLOUT ---------- */
+.callout{border:1px solid var(--ink);border-left:5px solid var(--neve);background:#EAE7DE;padding:14px 16px;margin:18px 0}
+.callout .k{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--neve);font-weight:600;display:block;margin-bottom:5px}
+.callout.warn{border-left-color:var(--api)}
+.callout.warn .k{color:var(--api)}
+
+/* ---------- PILLS / TAGS ---------- */
+.pill{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:2px 7px;border:1px solid var(--ink);background:var(--panel-2)}
+.pill.p1{background:var(--api);color:#fff;border-color:var(--api)}
+.pill.p2{background:var(--neve);color:#fff;border-color:var(--neve)}
+.pill.p3{background:var(--led);border-color:#A8802A}
+
+/* ---------- MAP GRID ---------- */
+.map3{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--ink);border:1px solid var(--ink);margin:18px 0}
+.map3 > div{background:#EAE7DE;padding:16px}
+.map3 .t{font-family:'Archivo Black',sans-serif;font-size:13px;letter-spacing:.1em;color:var(--api);margin-bottom:8px}
+
+/* ---------- STATE MACHINE ---------- */
+.sm{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0;align-items:center}
+.sm span{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:5px 9px;background:var(--desk);color:var(--panel);white-space:nowrap}
+.sm span.alt{background:var(--api)}
+.sm i{color:var(--ink-soft);font-style:normal;font-family:'IBM Plex Mono',monospace}
+
+/* ---------- DRAWER ---------- */
+.scrim{position:fixed;inset:0;background:rgba(21,24,27,.55);opacity:0;pointer-events:none;transition:opacity .2s;z-index:80}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);
+  background:var(--panel);border-left:4px solid var(--api);
+  transform:translateX(102%);transition:transform .26s cubic-bezier(.4,0,.2,1);
+  z-index:90;display:flex;flex-direction:column;
+}
+.drawer.on{transform:translateX(0)}
+.dr-head{background:var(--desk);color:var(--panel);padding:18px 22px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.dr-head h3{margin:0;font-family:'Archivo Black',sans-serif;font-size:19px;text-transform:none;letter-spacing:0;color:#fff}
+.dr-head .k{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.15em;color:var(--led);text-transform:uppercase;display:block;margin-bottom:5px}
+.dr-close{background:none;border:1px solid #565D65;color:var(--panel);font-size:17px;line-height:1;padding:5px 10px;cursor:pointer;flex:none}
+.dr-close:hover{background:var(--api);border-color:var(--api)}
+.dr-body{padding:20px 22px 60px;overflow-y:auto;flex:1}
+.dr-body h4{margin-top:20px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--api)}
+.dr-body h4:first-child{margin-top:0}
+.dr-body p,.dr-body ul{max-width:none}
+.dr-body table{min-width:0;font-size:12.5px}
+
+
+/* ============ TABLE SCROLL AFFORDANCE ============ */
+.tw{position:relative}
+.tw.scrollable.is-over::after{
+  content:"";position:absolute;top:0;right:0;bottom:0;width:38px;pointer-events:none;
+  background:linear-gradient(to right,rgba(234,231,222,0),rgba(214,209,196,.9));
+}
+.scrollhint{display:none}
+.tw.scrollable.is-over + .scrollhint{display:block}
+
+/* ============ WIDE SCREENS ============ */
+@media (min-width:1500px){
+  main{padding-inline:clamp(40px,6vw,110px);max-width:1240px}
+}
+
+/* ============ TABLET ============ */
+@media (max-width:1100px){
+  :root{--rail-w:200px}
+  .rail-mark{font-size:16px}
+  .chan{font-size:10.5px;padding:8px 12px}
+}
+
+/* ============ MOBILE LAYOUT ============ */
+@media (max-width:900px){
+  :root{--rail-w:0px}
+  body{font-size:15.5px}
+
+  /* rail becomes a sticky compact header with a snapping chapter scroller */
+  .rail{
+    position:sticky;top:0;left:auto;bottom:auto;width:100%;height:auto;
+    flex-direction:column;border-right:0;border-bottom:3px solid var(--api);
+    padding-top:env(safe-area-inset-top);
+  }
+  .rail-head{
+    display:flex;align-items:baseline;gap:10px;
+    padding:11px 16px 9px;border-bottom:1px solid #33383E;
+  }
+  .rail-mark{font-size:15px!important;letter-spacing:.18em}
+  .rail-sub{margin-top:0;font-size:8.5px;letter-spacing:.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chans{
+    display:flex;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
+    padding:0;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .chans::-webkit-scrollbar{display:none}
+  .chan{
+    width:auto;flex:0 0 auto;border-left:0;border-bottom:3px solid transparent;
+    padding:11px 14px;min-height:44px;white-space:nowrap;scroll-snap-align:center;
+    font-size:11px;
+  }
+  .chan.on{border-left:0;border-bottom-color:var(--led)}
+  .chan .num{display:none}
+  .chan .led{width:6px;height:6px}
+  .rail-foot{display:none}
+
+  main{margin-left:0;padding:0 18px 80px;max-width:100%}
+  section{padding:38px 0;scroll-margin-top:96px}
+  .hero{padding:34px 0 34px;scroll-margin-top:96px}
+  .hero .rule{height:5px;margin:16px 0 14px}
+  .hero .thesis{font-size:17px}
+  .hero .manifesto{font-size:12px}
+  .meters{grid-template-columns:repeat(2,1fr)}
+  .meter{padding:12px}
+  .meter .val{font-size:21px}
+  h2{font-size:25px}
+  h3{font-size:15.5px;margin-top:28px}
+  .sdek{font-size:14.5px}
+  p,ul{max-width:100%}
+
+  .map3{grid-template-columns:1fr}
+  .fx{font-size:10px;line-height:1.7;padding:12px 12px;border-left-width:3px}
+  .sm span{font-size:10px;padding:5px 8px}
+}
+
+/* ============ TABLES → CARDS ON SMALL SCREENS ============ */
+@media (max-width:760px){
+  .tw{border:0;overflow:visible}
+  .tw.scrollable{border:1px solid var(--ink);overflow-x:auto}
+  .tw.scrollable table{min-width:560px}
+  .tw.scrollable.is-over + .scrollhint{
+    display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;
+    color:var(--ink-soft);letter-spacing:.08em;margin:6px 0 0;
+  }
+
+  table.cards{min-width:0;background:none;display:block}
+  table.cards thead{display:none}
+  table.cards tbody{display:block}
+  table.cards tr{
+    display:block;background:#EAE7DE;border:1px solid var(--line);
+    border-left:3px solid var(--line);padding:13px 15px;margin-bottom:9px;
+  }
+  table.cards tbody tr:nth-child(even){background:#EAE7DE}
+  table.cards td{
+    display:block;width:100%;border:0;padding:7px 0 0;text-align:left;
+    word-break:break-word;
+  }
+  table.cards td:first-child{padding-top:0}
+  table.cards td::before{
+    content:attr(data-label);display:block;
+    font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-soft);margin-bottom:3px;font-weight:500;
+  }
+  table.cards td:first-child{font-size:16.5px;font-weight:700;line-height:1.3}
+  table.cards td:first-child::before{display:none}
+  /* numeric cells pair up side by side instead of stacking */
+  table.cards td.num-c{
+    text-align:left;font-size:15px;font-weight:600;
+    display:inline-block;width:48%;vertical-align:top;padding-right:2%;
+  }
+  table.cards td.num-c + td.num-c{padding-right:0}
+  table.cards tr.clickable{
+    border-left-color:var(--api);cursor:pointer;min-height:44px;position:relative;
+  }
+  table.cards tr.clickable td:first-child{padding-left:0;padding-right:22px}
+  table.cards tr.clickable td:first-child::before{display:none}
+  table.cards tr.clickable::after{
+    content:"▸";position:absolute;right:14px;top:13px;color:var(--api);font-size:15px;
+  }
+  table.cards tr.clickable:hover{background:#E2DCCB}
+}
+
+/* ============ DRAWER — FULL SHEET ON MOBILE ============ */
+@media (max-width:760px){
+  .drawer{
+    width:100%;border-left:0;border-top:4px solid var(--api);
+    padding-top:env(safe-area-inset-top);
+  }
+  .dr-head{padding:15px 17px;position:sticky;top:0;z-index:2}
+  .dr-head h3{font-size:17px}
+  .dr-body{padding:17px 17px calc(70px + env(safe-area-inset-bottom))}
+  .dr-close{min-width:44px;min-height:44px;font-size:19px}
+  .dr-body table{min-width:0;display:block}
+  .dr-body thead{display:none}
+  .dr-body tbody,.dr-body tr,.dr-body td{display:block;width:100%}
+  .dr-body tr{border:1px solid var(--line);padding:10px 12px;margin-bottom:7px;background:#EAE7DE}
+  .dr-body td{border:0;padding:4px 0}
+  .dr-body td:first-child{font-weight:700}
+}
+
+/* ============ SMALL PHONES ============ */
+@media (max-width:400px){
+  main{padding:0 14px 70px}
+  .meters{grid-template-columns:1fr}
+  h2{font-size:22px}
+  .fx{font-size:9.5px}
+}
+
+/* ============ ACCESSIBILITY ============ */
+a:focus-visible,button:focus-visible,tr:focus-visible{outline:2px solid var(--api);outline-offset:2px}
+@media (hover:none){
+  tr.clickable:hover{background:inherit}
+}
+</style>
+</head>
+<body>
+
+<nav class="rail" aria-label="Document sections">
+  <div class="rail-head">
+    <div class="rail-mark" style="font-size:18px">SHOUTOUT</div>
+    <div class="rail-sub">Founder Build Package · v1.0 · Aug 2026</div>
+  </div>
+  <div class="chans" id="chans"></div>
+  <div class="rail-foot">₹85 = $1.00 · est. = estimate</div>
+</nav>
+
+<main>
+
+<header class="hero" id="top">
+  <div class="eyebrow">Company build document — confidential</div>
+  <h1>SHOUTOUT</h1>
+  <div class="rule"></div>
+  <p class="thesis">The operating system and money rail for the independent music economy. India first, built to be the universal identity layer for artists, managers and organisers worldwide.</p>
+  <p class="manifesto">"You don't need a label. You need a back office."</p>
+
+  <div class="meters">
+    <div class="meter"><div class="lbl">India TAM · artist fees</div><div class="val">₹35,370cr<small>$4.16B · est.</small></div><div class="bar"><i style="width:100%"></i></div></div>
+    <div class="meter"><div class="lbl">Serviceable (SAM)</div><div class="val">₹7,781cr<small>$915M · 22% of TAM</small></div><div class="bar"><i style="width:22%"></i></div></div>
+    <div class="meter"><div class="lbl">Year-5 GMV target</div><div class="val">₹272cr<small>$32M · 3.5% of SAM</small></div><div class="bar"><i style="width:12%"></i></div></div>
+    <div class="meter"><div class="lbl">Year-5 revenue</div><div class="val">₹99.1cr<small>$11.7M · 7 lines</small></div><div class="bar"><i style="width:36%"></i></div></div>
+    <div class="meter"><div class="lbl">Contribution / gig</div><div class="val">71.2%<small>₹10,680 · $126</small></div><div class="bar"><i style="width:71%"></i></div></div>
+  </div>
+</header>
+
+<section id="brand">
+  <div class="shead"><span class="ch">CH 01</span><h2>Brand architecture</h2></div>
+  <p class="sdek">One name, one primitive, every surface. The reason SHOUTOUT works is structural, not sentimental.</p>
+
+  <div class="callout"><span class="k">The primitive</span>A shoutout is <strong>a call that someone answers.</strong> That single object — a <strong>Shout</strong> — is the atomic unit of the entire platform. A producer shouts for a vocalist. An organiser shouts for a headliner. A season shouts for talent. A brand shouts for an artist. And when the platform shouts <em>about</em> you, that is recognition. Collaboration, booking, auditions and sponsorship are not four products. They are four kinds of Shout on one rail.</div>
+
+  <h3>Every surface, one verb</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Shout type</th><th>Who posts it</th><th>Who answers</th><th>What closes it</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Collab Shout</strong></td><td>Producer, artist, songwriter</td><td>Vocalist, topliner, rapper, session player, engineer</td><td>Split sheet + delivery escrow</td></tr>
+      <tr><td><strong>Gig Shout</strong></td><td>Organiser, planner, venue, college, brand</td><td>Artist or manager</td><td>Contract + settlement</td></tr>
+      <tr><td><strong>Open Shout</strong></td><td>SHOUTOUT (season / league)</td><td>Any artist, any genre</td><td>Scorecard + onboarding</td></tr>
+      <tr><td><strong>Brand Shout</strong></td><td>Sponsor, agency</td><td>Artist matched on audience fit</td><td>Deliverables + settlement</td></tr>
+      <tr><td><strong>Sync Shout</strong></td><td>Creator, agency, D2C brand</td><td>Catalog work</td><td>Licence + auto-split</td></tr>
+    </tbody>
+  </table></div>
+  <p class="tnote">One schema, one match engine, one escrow rail, one reliability score. Five revenue surfaces. This is why the name is correct rather than merely available.</p>
+
+  <h3>Product naming</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Surface</th><th>Name</th><th>What it is</th></tr></thead>
+    <tbody id="brand-tb"></tbody>
+  </table></div>
+  <p class="tnote">Click any surface for positioning, voice and usage rules.</p>
+
+  <h3>Trademark strategy — the honest position</h3>
+  <p>"Shoutout" is common English vernacular. That is a real weakness and it does not go away by wishing. It is managed, not solved, and here is how:</p>
+  <div class="tw"><table>
+    <thead><tr><th>Move</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr><td>File <strong>SHOUTOUT</strong> as one word, no article, always styled</td><td>"The ShoutOut" is weaker still and breaks every domain and handle. One word, all caps, one lockup.</td></tr>
+      <tr><td>File the <strong>device mark before the word mark</strong></td><td>The stylised logotype is where your defensible rights actually live. Protect the shape, then argue the word.</td></tr>
+      <tr><td>Class 41 first, then 9, 42, 35, 36</td><td>Class 41 (entertainment, live events, TV formats) is where your use is most distinctive and least crowded. Establish there, extend outward.</td></tr>
+      <tr><td>Own the verb in-product</td><td>"Post a Shout." "Answer a Shout." Consistent proprietary usage over time builds secondary meaning, which is what turns a weak mark into a defensible one.</td></tr>
+      <tr><td>Register sub-brands as separate marks</td><td>SHOUTOUT STAGE, SHOUTOUT STUDIO, SHOUTOUT CREDITS. Compound marks are meaningfully more registrable than the bare word.</td></tr>
+      <tr><td>Domain convention: <code>shoutout.fm</code> primary</td><td>.fm is the music TLD convention and reads as intentional rather than as a compromise. Secure .app, .live, .music, and getshoutout.com defensively.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn"><span class="k">Accept this trade knowingly</span>You are trading trademark strength for brand-story coherence and cultural warmth. That is a defensible trade — Stripe, Slack and Square all began with common words — but it means budgeting for a longer, more expensive path to a defensible mark, and never letting a competitor use "shout" as a product noun unchallenged.</div>
+
+  <h3>Verbal identity</h3>
+  <ul>
+    <li><strong>The verb is the brand.</strong> "Put out a shout." Never "create a listing," never "post a request."</li>
+    <li><strong>Artist-side, never gatekeeper.</strong> The platform works <em>for</em> the person posting, not above them.</li>
+    <li><strong>Numerate where money is involved.</strong> Fees, splits, deductions and payout timing stated plainly and early. Warmth in the culture surfaces, precision in the money surfaces.</li>
+    <li><strong>Bilingual by default in India.</strong> Hinglish and code-switching in the app and on social; clean global English in investor and brand material.</li>
+    <li><strong>Recognition is the emotional core.</strong> Every state change that means someone got picked — matched, booked, selected, paid — is a moment the product should mark, not just log.</li>
+  </ul>
+</section>
+
+
+<!-- ================= 02 MAP ================= -->
+<section id="map">
+  <div class="shead"><span class="ch">CH 02</span><h2>MAP strategy</h2></div>
+  <p class="sdek">Market — Angle — Product, for the combined entity and each of the seven lines.</p>
+
+  <h3>The combined entity</h3>
+  <div class="map3">
+    <div><div class="t">MARKET</div><p style="font-size:13.5px">Independent artists, managers, organisers, venues, promoters and brands inside a ₹35,370cr ($4.16B) Indian artist-fee economy and a ~$60B global one. Beachhead: managers carrying 3–15 artists, tier-1 and tier-2 India, all genres.</p></div>
+    <div><div class="t">ANGLE</div><p style="font-size:13.5px">Every incumbent monetises the artist's attention. None monetise on their behalf. SHOUTOUT is the artist's side of the table — their audience, their money, their contracts, their data — with the manager as the primary user, not the artist.</p></div>
+    <div><div class="t">PRODUCT</div><p style="font-size:13.5px">Four layers: Demand (SHOUTOUT + LINER) → Identity (fan CRM, credits, splits) → Money (booking escrow, sync, financing) → Growth (release campaigns, analytics). One rail, one identity, seven revenue lines.</p></div>
+  </div>
+
+  <div class="callout"><span class="k">The flywheel</span>SHOUTOUT auditions produce talent and footage → LINER distributes and captures fans → fans land in a CRM the artist owns → that CRM proves audience value → proof prices gigs, sponsorships and sync → transactions clear through the SHOUTOUT rail → transaction history becomes the fee benchmark index → the index prices the next deal and underwrites the next advance.</div>
+
+  <h3>Line-by-line MAP</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Line</th><th>Market</th><th>Angle</th><th class="num-c">Y5 rev</th></tr></thead>
+    <tbody id="map-tb"></tbody>
+  </table></div>
+  <p class="tnote">Click any line for full MAP, product spec and monetisation detail. Sorted descending by Year-5 revenue.</p>
+
+  <h3>Global expansion sequence</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Wave</th><th>Markets</th><th>Why these, in this order</th><th class="num-c">Timing</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill p1">Wave 0</span></td><td>India (Delhi NCR → Mumbai → Bengaluru → Pune, Hyderabad, Chandigarh)</td><td>Home market, manager economy is informal and unserved, live events growing ~19% CAGR, government actively de-regulating via single-window clearance</td><td class="num-c">M0–M18</td></tr>
+      <tr><td><span class="pill p2">Wave 1</span></td><td>Indonesia, Philippines, Vietnam, Nigeria</td><td>Structural analogues — WhatsApp/mobile-first, cash-heavy informal gig economy, huge young population, no incumbent rail. Nigeria adds Afrobeats export value</td><td class="num-c">M18–M36</td></tr>
+      <tr><td><span class="pill p2">Wave 2</span></td><td>Mexico, Brazil, Colombia</td><td>Largest manager-economy analogue outside Asia; regional música movement mirrors the Indian indie surge; Portuguese/Spanish localisation unlocks scale</td><td class="num-c">M30–M48</td></tr>
+      <tr><td><span class="pill p3">Wave 3</span></td><td>UAE, Saudi Arabia</td><td>Highest gig values per booking globally; state-funded entertainment build-out; low competition on back-office tooling</td><td class="num-c">M42–M60</td></tr>
+      <tr><td><span class="pill p3">Wave 4</span></td><td>UK, US</td><td>Enter last, not first — enter as the credits/splits registry and A&amp;R data product where incumbents are weakest, not as another booking app</td><td class="num-c">M54+</td></tr>
+    </tbody>
+  </table></div>
+</section>
+<!-- ================= 03 MARKET ================= -->
+<section id="market">
+  <div class="shead"><span class="ch">CH 03</span><h2>Market model</h2></div>
+  <p class="sdek">Every figure below is derived live from stated inputs. No hardcoded totals — the arithmetic is the audit trail.</p>
+
+  <h3>India TAM — total annual artist performance fees</h3>
+  <div class="fx">
+<b>WEDDINGS</b>
+  10,500,000 weddings/yr
+  x 8.0% with paid live music
+  x <span class="out">₹180,000</span> avg fee   = <span class="out">₹15,120 cr</span>  ($1.78B)
+
+<b>ORGANISED LIVE</b>
+  ₹13,000 cr market x 35%  = <span class="out">₹4,550 cr</span>   ($535M)
+
+<b>TEMPLE / FOLK</b>       est. = <span class="out">₹6,000 cr</span>   ($706M)
+<b>CORPORATE / MICE</b>    est. = <span class="out">₹4,000 cr</span>   ($471M)
+<b>GOVT / TOURISM</b>      est. = <span class="out">₹2,500 cr</span>   ($294M)
+<b>CLUBS / NIGHTLIFE</b>   est. = <span class="out">₹2,000 cr</span>   ($235M)
+<b>COLLEGE FESTS</b>       est. = <span class="out">₹1,200 cr</span>   ($141M)
+                        ─────────────────
+<b>INDIA TAM</b>
+  15,120 + 4,550 + 6,000 + 4,000
+  + 2,500 + 2,000 + 1,200
+                     = <span class="out">₹35,370 cr</span>  <span class="out">($4.16 B)</span>
+</div>
+  <p class="tnote">est. — wedding count and live-music attach rate are founder estimates; organised live events figure per EY-Parthenon/BookMyShow March 2026 (~₹13,000 cr, ~19% CAGR). Validate the wedding attach rate first — it is 43% of TAM and the single most sensitive input.</p>
+
+  <h3>SAM and SOM</h3>
+  <div class="fx">
+<b>SAM</b>
+  TAM ₹35,370 cr x 22% digitally addressable
+  (managed or semi-pro, non-cash-only, tier-1 + 2)
+                     = <span class="out">₹7,781 cr</span>  ($915 M)
+
+<b>SOM</b>
+  SAM ₹7,781 cr x 3.5% share by Year 5
+                     = <span class="out">₹272 cr GMV</span>  ($32.0 M)
+
+<b>REVENUE</b>
+  GMV ₹272 cr x 10% blended take   = ₹27.2 cr
+  + SaaS, financing, show, data,
+    sponsorship, sync
+                     = <span class="out">₹99.1 cr</span>  <span class="out">($11.7 M)</span>
+</div>
+
+  <h3>Global TAM — the Year-8 case</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Pool</th><th>Basis</th><th class="num-c">USD</th><th class="num-c">INR</th></tr></thead>
+    <tbody>
+      <tr><td>Global live music artist fees</td><td>~$35B live market × ~55% artist-fee share (est.)</td><td class="num-c">$19.3B</td><td class="num-c">₹164,050 cr</td></tr>
+      <tr><td>Private &amp; social events worldwide</td><td>Weddings, corporate, private hire (est.)</td><td class="num-c">$28.0B</td><td class="num-c">₹238,000 cr</td></tr>
+      <tr><td>Recorded music revenue</td><td>IFPI global trade revenue (~$29.6B, 2024)</td><td class="num-c">$29.6B</td><td class="num-c">₹251,600 cr</td></tr>
+      <tr><td>Music publishing</td><td>Global publishing revenue (est.)</td><td class="num-c">$8.0B</td><td class="num-c">₹68,000 cr</td></tr>
+      <tr><td>Artist services / label services</td><td>Distribution, marketing, admin (est.)</td><td class="num-c">$3.0B</td><td class="num-c">₹25,500 cr</td></tr>
+      <tr><td>Royalty advances &amp; financing</td><td>Advance origination volume (est.)</td><td class="num-c">$2.0B</td><td class="num-c">₹17,000 cr</td></tr>
+      <tr><td>Sync licensing</td><td>Global sync revenue (est.)</td><td class="num-c">$0.65B</td><td class="num-c">₹5,525 cr</td></tr>
+      <tr style="font-weight:700;background:var(--panel-2)"><td>SHOUTOUT-relevant global TAM</td><td>Artist fees + services + financing + sync</td><td class="num-c">$52.9B</td><td class="num-c">₹449,650 cr</td></tr>
+    </tbody>
+  </table></div>
+  <p class="tnote">est. — recorded music per IFPI; all other pools are founder estimates with stated basis. Recorded music and publishing are shown for context; SHOUTOUT does not address them directly at Y5, but the credits and splits registry is the entry point into them.</p>
+</section>
+
+<!-- ================= 04 PRD ================= -->
+<section id="prd">
+  <div class="shead"><span class="ch">CH 04</span><h2>Product requirements</h2></div>
+  <p class="sdek">Personas, jobs-to-be-done, module specs, non-functional requirements and MoSCoW phasing.</p>
+
+  <h3>Vision statement</h3>
+  <div class="callout"><span class="k">Product vision</span>SHOUTOUT gives every working musician and manager the back office a major label takes for granted — booking, contracts, payment, fan ownership, credits and capital — on one rail, in one identity, anywhere in the world. Success is when a manager in Indore and a manager in Lagos both open SHOUTOUT on Monday morning to see the same three things: who is booked, who owes them money, and who to call next.</div>
+
+  <h3>Personas &amp; jobs-to-be-done</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Persona</th><th>Primary job-to-be-done</th><th>Priority</th></tr></thead>
+    <tbody id="persona-tb"></tbody>
+  </table></div>
+  <p class="tnote">Click any persona for full spec — pains, current workaround, success criteria, and which modules serve them. Sorted descending by priority.</p>
+
+  <h3>Module specifications</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Module</th><th>Phase</th><th>MoSCoW</th><th>Core capability</th></tr></thead>
+    <tbody id="module-tb"></tbody>
+  </table></div>
+  <p class="tnote">Click any module for full feature list and acceptance criteria.</p>
+
+  <h3>Release phasing</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Phase</th><th>Window</th><th>Ships</th><th>Exit criterion</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill p1">Phase 1</span> Attention</td><td>M0–M6</td><td>SHOUTOUT open call, audition intake + scoring + HITL review, rejection-to-onboarding lifecycle, artist profiles, EPK generator, LINER content engine</td><td>15,000 artist profiles created; 500 EPKs downloaded; 60% of rejected auditionees complete profile</td></tr>
+      <tr><td><span class="pill p2">Phase 2</span> Transactions</td><td>M6–M18</td><td>Manager OS, brief intake, match scoring, auto-quote, holds ledger, contracts + eSign, split settlement, rider checklists, fan CRM, growth OS</td><td>₹12cr GMV settled on rail; 300 paying manager orgs; benchmark index covers 8 genres × 12 cities</td></tr>
+      <tr><td><span class="pill p3">Phase 3</span> Capital</td><td>M18–M36</td><td>Artist financing, A&amp;R signal engine, credits &amp; splits registry, sponsorship marketplace, sync catalog, first international market</td><td>₹40cr advances originated with &lt;4% loss rate; 25 paying A&amp;R data seats; Wave 1 market live</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Non-functional requirements</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Requirement</th><th>Target</th><th>Why it matters here</th></tr></thead>
+    <tbody>
+      <tr><td>Settlement accuracy</td><td>100% — zero tolerance</td><td>A single mis-split commission destroys manager trust permanently. Every money movement double-entry logged and reconcilable.</td></tr>
+      <tr><td>Payout SLA</td><td>T+2 business days from performance confirm</td><td>The entire value proposition is faster money. Slower than the informal circuit and there is no product.</td></tr>
+      <tr><td>Hold-expiry reliability</td><td>99.99% — must never miss</td><td>A missed auto-release causes a double-booking, which is a reputational event for the manager, not just a bug.</td></tr>
+      <tr><td>Mobile-first</td><td>&lt;2.5s LCP on 4G, works at 3G</td><td>Managers work from venues, backstage and cars. Desktop-first is a non-starter.</td></tr>
+      <tr><td>WhatsApp delivery</td><td>&gt;97% template delivery</td><td>WhatsApp is the primary rail; email is secondary in this market.</td></tr>
+      <tr><td>Multi-tenancy isolation</td><td>Row-level security on every table, org_id enforced</td><td>Competing managers on one platform. A leak of one roster's fees to another is existential.</td></tr>
+      <tr><td>Data residency</td><td>India primary region; per-market residency at Wave 1</td><td>DPDP Act compliance and future market requirements.</td></tr>
+      <tr><td>Audit trail</td><td>Immutable log on contracts, holds, settlements</td><td>Disputes are routine in this industry. The log is the referee.</td></tr>
+      <tr><td>Accessibility</td><td>WCAG 2.2 AA</td><td>Baseline quality floor; also a procurement requirement for government and corporate clients.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ================= COLLAB ================= -->
+<section id="collab">
+  <div class="shead"><span class="ch">CH 05</span><h2>Collab network</h2></div>
+  <p class="sdek">A producer needs a vocalist. Or a songwriter and a vocalist, independently, on the same track. This is the module that makes SHOUTOUT a network rather than a booking tool.</p>
+
+  <div class="callout"><span class="k">Why this changes the company</span>Gig booking is transactional — a manager returns when there is a date to fill. Collaboration is <strong>daily</strong>. A producer opens the app to find a topliner on a Tuesday afternoon with no gig in sight. That shifts SHOUTOUT from a system of record to a system of habit, which is the difference between a tool people keep and a tool people forget.</div>
+
+  <h3>Role taxonomy</h3>
+  <p>Every profile declares one or more roles with structured attributes. A person can be a producer <em>and</em> a mix engineer — the graph is many-to-many, and matching happens per role, never per person.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Role family</th><th>Roles</th><th>Match attributes</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Voice</strong></td><td>Vocalist, topliner, rapper, backing vocalist, harmony singer, voice-over</td><td>Vocal range, timbre tags, languages, accent, genre fit, key comfort, sung vs rapped</td></tr>
+      <tr><td><strong>Writing</strong></td><td>Songwriter, lyricist, hook writer, composer, arranger, translator</td><td>Languages, themes, genre, co-write vs work-for-hire, split expectation</td></tr>
+      <tr><td><strong>Production</strong></td><td>Beat producer, instrumental producer, sound designer, programmer</td><td>Genres, BPM range, typical keys, DAW, signature tags, turnaround</td></tr>
+      <tr><td><strong>Engineering</strong></td><td>Mix engineer, mastering engineer, vocal editor, tuning engineer</td><td>Genre specialisation, stem count capacity, turnaround, revision policy, loudness targets</td></tr>
+      <tr><td><strong>Players</strong></td><td>Session guitarist, bassist, drummer, keys, tabla, sitar, flute, strings, brass, percussion</td><td>Instrument, style, reading vs by-ear, remote vs in-person, home rig quality</td></tr>
+      <tr><td><strong>Stage</strong></td><td>DJ, live band member, hype man, MD (musical director), backline tech, FOH engineer</td><td>City, travel radius, rate band, rider needs</td></tr>
+      <tr><td><strong>Visual</strong></td><td>Music video director, DOP, editor, VFX, cover artist, photographer, stylist, choreographer</td><td>Style tags, budget band, turnaround, showreel</td></tr>
+      <tr><td><strong>Business</strong></td><td>Manager, booking agent, publicist, label scout, distributor rep, studio owner</td><td>Roster size, genres, territories, terms</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Feature set</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Feature</th><th>Priority</th><th>What it does</th></tr></thead>
+    <tbody id="collabfeat-tb"></tbody>
+  </table></div>
+  <p class="tnote">Click any feature for full specification and acceptance criteria. Sorted descending by build priority.</p>
+
+  <h3>The multi-role Shout — worked example</h3>
+  <div class="fx">
+<b>SHOUT</b>  posted by  @kalmi_beats   (role: beat producer)
+       title    "Hindi R&B — need topline + vocal"
+       tempo    92 BPM   key  A minor   mood  nocturnal, restrained
+       attached  beat_v3.mp3  +  reference generated in Studio
+       <b>SLOT 1</b>  songwriter · Hindi · R&amp;B     terms: 15% writer split
+       <b>SLOT 2</b>  vocalist   · female · Hindi   terms: ₹12,000 flat + 5%
+       deadline  14 days     visibility  open / invite-only / roster-only
+
+<b>MATCHING</b>  each slot matched independently against its own role pool
+<b>ANSWERS</b>   applicants attach a 30-second demo against the actual beat
+<b>CLOSE</b>     producer picks per slot → split sheet auto-drafted
+           → all three sign → escrow funds slot 2 → stems released
+           → on delivery: splits register to <span class="out">SHOUTOUT Credits</span>
+  </div>
+  <p><strong>The point:</strong> slots are independent. One Shout can fill a writer and a vocalist from two different people, with different terms — cash for one, points for the other — and the split sheet reconciles all of it before a single file changes hands.</p>
+
+  <h3>Split sheet at session time — the non-negotiable rule</h3>
+  <p>No stems are released until every slot's split is agreed and signed. This is the single most important design decision in the module. The industry's oldest, most corrosive problem is undocumented splits discovered years later when money finally arrives. SHOUTOUT makes the split a precondition of the file transfer, not an afterthought — and every agreed split writes directly into the credits registry, which is how the registry gets populated without anyone doing data entry.</p>
+
+  <h3>Trust &amp; safety</h3>
+  <ul>
+    <li><strong>Watermarked previews.</strong> Beats and stems stream watermarked until the deal closes. Full-quality files unlock on signature.</li>
+    <li><strong>Reliability score</strong> per role: delivered on time, revisions honoured, splits upheld, disputes raised against them. Visible, and it decays if inactive.</li>
+    <li><strong>Verified identity</strong> before any paid Shout — phone plus PAN or equivalent. Free collabs can stay lighter-weight.</li>
+    <li><strong>Work-for-hire vs co-write</strong> declared on every slot up front. Ambiguity here is where relationships die.</li>
+    <li><strong>Dispute path</strong> that freezes escrow and preserves version history as evidence, rather than leaving two people arguing in DMs.</li>
+  </ul>
+</section>
+
+<!-- ================= STUDIO ================= -->
+<section id="studio">
+  <div class="shead"><span class="ch">CH 06</span><h2>Creation studio — two assets, one engine</h2></div>
+  <p class="sdek">Studio is assembled from two things already built: the MusicGenAI / MuseForge Pro intent layer, and the Third Eye music studio pipeline. Neither is complete alone. Together they are the whole engine.</p>
+
+  <div class="callout"><span class="k">The find</span>These are not duplicate projects to choose between. <strong>MusicGenAI is the front half. The Third Eye music studio is the back half.</strong> One captures intent and previews instantly in the browser; the other runs the durable, queue-driven pipeline that actually produces and stores finished audio. Merging them gives SHOUTOUT a production generation engine without building one.</div>
+
+  <h3>What each contributes</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Asset</th><th>Contributes</th><th>Becomes</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="4"><strong>MusicGenAI / MuseForge Pro</strong><br><span class="pill p2">Front half</span></td><td>19 UI fields → deterministic <code>GENERATION_INTENT</code> JSON semantic engine</td><td><code>@shoutout/intent</code> — the shared sonic brief object</td></tr>
+      <tr><td>AI suggest system — enhances existing user input rather than replacing it, field-specific prompts, low temperature for enhancement and high for generation from scratch</td><td>Shout composer assist — helps a producer articulate what they need</td></tr>
+      <tr><td>Web Audio API in-browser synthesis</td><td>Instant scratch preview before committing a job to the queue</td></tr>
+      <tr><td>Album mode with controlled semantic drift per track</td><td>Multi-track project planning for artists</td></tr>
+      <tr><td rowspan="5"><strong>Third Eye music studio</strong><br><span class="pill p1">Back half</span></td><td>Nine-stage generation pipeline, strictly ordered, no stage skippable or combinable</td><td>The Studio production pipeline, unchanged</td></tr>
+      <tr><td>Redis + BullMQ queue with worker execution, async job processing and polling</td><td>Durable generation — essential, because Shout reference generation cannot block a request</td></tr>
+      <tr><td>Python ML inference via subprocess — semantic analysis, symbolic generation, audio decode</td><td><code>apps/workers</code> — also runs Essentia/librosa BPM, key and genre extraction</td></tr>
+      <tr><td>Section-by-section generation rather than single-pass, then combine</td><td>Stem-aware output — which is what makes collaboration work</td></tr>
+      <tr><td>S3 storage service, FFmpeg post-processing, file lifecycle management, video generation as a separate gracefully-failing worker</td><td>Sync variants, stem delivery, and Liner video assets</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>The nine-stage pipeline — carried over intact</h3>
+  <div class="fx">
+<b>1</b>  Input Freeze              ← user input locked, no mutation past this point
+<b>2</b>  Text to Meaning           ← semantic analysis
+<b>3</b>  Music Intent Object       ← <span class="out">this is GENERATION_INTENT</span> — the join between both assets
+<b>4</b>  Structure Planning        ← sections, arrangement, arc
+<b>5</b>  Section-by-Section Gen    ← not single-pass; this is what yields usable stems
+<b>6</b>  Combine Sections
+<b>7</b>  Decode to Audio Samples
+<b>8</b>  Post-Processing           ← FFmpeg; also where sync variants are cut
+<b>9</b>  Encode + Persist          ← object storage, lifecycle managed
+  </div>
+  <p><strong>Stage 3 is the seam.</strong> MusicGenAI's semantic engine produces the Music Intent Object; the Third Eye pipeline consumes it from stage 4 onward. The two projects were already designed around the same object without being connected. That is why this merge is cheap.</p>
+
+  <div class="callout warn"><span class="k">Confirm before porting</span>I have reconstructed both assets from project history rather than reading the repositories. Before the port begins, confirm which repo the nine-stage pipeline actually lives in — standalone, or inside <code>The-Third-Eye</code> alongside the JARVIS tool system — and whether the Python ML stage is real inference or currently scaffolded. That single answer changes the week-7 estimate materially.</div>
+
+  <h3>The architectural unlock</h3>
+  <p><code>GENERATION_INTENT</code> is not a generation artifact. It is <strong>a universal sonic brief object</strong> with four consumers:</p>
+  <div class="tw"><table>
+    <thead><tr><th>Consumer</th><th>Uses it for</th></tr></thead>
+    <tbody>
+      <tr><td>Studio pipeline</td><td>Stage 3 input — generating the audio itself</td></tr>
+      <tr><td>Collab match engine</td><td>Matching a Shout to vocalists, writers and players on genre, BPM, key, mood and language</td></tr>
+      <tr><td>Sync catalog</td><td>Tagging and retrieving catalog works for licensing search</td></tr>
+      <tr><td>Gig match engine</td><td>Genre and energy fit between an organiser's brief and an artist's actual sound</td></tr>
+    </tbody>
+  </table></div>
+  <p class="tnote">One schema, four consumers. This is the strongest reason to fold both projects in rather than run them beside — the semantic engine is worth more as shared infrastructure than as any single app's internals.</p>
+
+  <h3>What Third Eye contributes beyond Studio</h3>
+  <p>The music studio is not the only reusable thing in that repo. Three other pieces map directly onto SHOUTOUT:</p>
+  <div class="tw"><table>
+    <thead><tr><th>Third Eye asset</th><th>SHOUTOUT use</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>JARVIS tool system — invoice, PDF, chart, image, QR, resume generation</td><td>EPK generation, contract PDFs, settlement statements, rider sheets, gig QR codes for fan capture</td><td><span class="pill p1">High</span> — this is most of the document layer already built</td></tr>
+      <tr><td>Python FastAPI + Alembic backend, Dockerised</td><td><code>apps/workers</code> — audio analysis, transcode hooks, embeddings, ML inference</td><td><span class="pill p2">Medium-high</span> — pattern and structure, not the domain code</td></tr>
+      <tr><td>Capacitor iOS/Android wrapping over a Next.js web app</td><td>SHOUTOUT mobile — managers work backstage, in venues and in cars. Desktop-first is a non-starter</td><td><span class="pill p2">Medium-high</span> — proven path from one codebase to three platforms</td></tr>
+      <tr><td>Supabase multi-schema organisation (8 schemas)</td><td>Schema layout pattern for SHOUTOUT's new project</td><td><span class="pill p3">Medium</span> — reference the pattern, write fresh migrations with RLS from 001</td></tr>
+    </tbody>
+  </table></div>
+  <p class="tnote">Third Eye stays its own product. SHOUTOUT ports patterns and packages from it — it does not absorb it. Keep the repos and the roadmaps separate.</p>
+
+  <h3>Studio feature set</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Feature</th><th>Serves</th><th>Built from</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Reference generator</strong></td><td>Collab Shouts, brand briefs</td><td>Full nine-stage pipeline. Generate a 30-second reference to attach to a Shout instead of writing "make it vibey" — removes the single biggest cause of failed collaborations.</td></tr>
+      <tr><td><strong>Scratch preview</strong></td><td>Fast iteration</td><td>MuseForge Web Audio synthesis — instant, in-browser, no queue. Commit to the pipeline only when the direction is right.</td></tr>
+      <tr><td><strong>Scratch topline</strong></td><td>Producers pitching beats</td><td>Pipeline stages 4–6, vocal layer only, so a vocalist hears the intent rather than a bare instrumental.</td></tr>
+      <tr><td><strong>Stem separation</strong></td><td>Collab, remix, live backing</td><td>Section-by-section generation already produces stem-aware output; separation extends it to uploaded audio.</td></tr>
+      <tr><td><strong>Sync variants</strong></td><td>Sync catalog revenue</td><td>Stage 8 post-processing — auto-cut a licensed work to 6s / 15s / 30s preserving the hook.</td></tr>
+      <tr><td><strong>BPM / key / genre detect</strong></td><td>Every match engine</td><td>Python workers, Essentia/librosa. Deterministic, not an LLM job. Auto-tags every upload so matching works without manual metadata.</td></tr>
+      <tr><td><strong>Demo-to-Shout</strong></td><td>Lowest-friction entry path</td><td>Upload a hum or voice note → stages 1–3 → structured Shout with tempo, key and mood pre-filled.</td></tr>
+      <tr><td><strong>Album / project mode</strong></td><td>Artist planning</td><td>MuseForge semantic drift across tracks, for coherent multi-track projects.</td></tr>
+      <tr><td><strong>Video assets</strong></td><td>Liner, release campaigns</td><td>Third Eye's separate video worker — fails gracefully without affecting audio job status.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout warn"><span class="k">Positioning discipline</span>Never market SHOUTOUT as an AI music generator. The market is crowded, margins are poor, and it actively repels the working musicians who are your entire supply side. Studio is a <strong>communication tool</strong> — it helps humans describe sound to other humans. Generated audio is never presented as a finished work, never enters the sync catalog as a licensable asset without human authorship, and always carries provenance metadata.</div>
+</section>
+
+
+<!-- ================= 05 FLOWS ================= -->
+<section id="flows">
+  <div class="shead"><span class="ch">CH 07</span><h2>Flows &amp; state machine</h2></div>
+  <p class="sdek">The two flows that define the company: a booking from brief to re-book, and an audition from submission to onboarding.</p>
+
+  <h3>Hold ledger — state machine</h3>
+  <div class="sm">
+    <span>enquiry</span><i>→</i><span>soft_hold_1</span><i>→</i><span>soft_hold_2</span><i>→</i><span>soft_hold_3</span><i>→</i><span>confirmed</span><i>→</i><span>contracted</span><i>→</i><span>advance_paid</span><i>→</i><span>performed</span><i>→</i><span>settled</span><i>→</i><span>closed</span>
+  </div>
+  <div class="sm">
+    <i>exits:</i><span class="alt">released</span><span class="alt">cancelled</span><span class="alt">disputed</span><span class="alt">expired</span>
+  </div>
+  <p><strong>Rules that make it work:</strong> Every soft hold carries a mandatory release deadline. First hold has right of first refusal; when a second party wants the date, hold 1 is challenged and has 48 hours to confirm or drop. Auto-release fires from a scheduled job, not a user action. <code>confirmed</code> cannot be entered without a contract draft attached. <code>settled</code> cannot be entered until every split — manager, agency, sidemen — is reconciled to zero.</p>
+
+  <h3>Booking flow — brief to re-book</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Step</th><th>Actor</th><th>System action</th><th>Automation trigger</th></tr></thead>
+    <tbody id="flow-tb"></tbody>
+  </table></div>
+  <p class="tnote">Click any step for detailed spec, edge cases and acceptance criteria.</p>
+
+  <h3>Audition flow — the acquisition engine</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Stage</th><th>What happens</th><th>Conversion goal</th></tr></thead>
+    <tbody>
+      <tr><td>Open call published</td><td>Multi-language landing page per genre bracket and city; entry via phone OTP only, no password</td><td>Cost per submission &lt;₹40 ($0.47)</td></tr>
+      <tr><td>Submission</td><td>Sub-90-second video from phone; direct-to-storage upload; auto-transcode; no app install</td><td>&gt;70% start-to-complete</td></tr>
+      <tr><td>Auto-scoring</td><td>Audio quality, originality flag, BPM/key/genre extraction, engagement history; produces a draft score and rationale</td><td>&lt;3 min from upload to scored</td></tr>
+      <tr><td>HITL review queue</td><td>Human reviewer confirms, overrides or escalates. Model rationale shown, never auto-final</td><td>&gt;250 reviews/hour/reviewer</td></tr>
+      <tr><td>Selection</td><td>~15 advance to season; brackets by genre so folk and classical are not crowded out by hip-hop volume</td><td>—</td></tr>
+      <tr><td><strong>Rejection sequence</strong></td><td>Scorecard + free auto-generated EPK + open gigs in their city + Manager OS invite. This is not a consolation email; it is the onboarding flow</td><td><strong>&gt;60% complete a profile</strong></td></tr>
+      <tr><td>Alumni track</td><td>Every past entrant stays in the graph as bookable supply and as A&amp;R signal</td><td>&gt;25% book within 12 months</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn"><span class="k">The whole thesis in one number</span>If the rejection sequence converts at 60%, a 45,000-entry season produces ~27,000 activated artist profiles at a blended CAC under ₹40 ($0.47). No competitor can match that, because none of them run the show.</div>
+</section>
+
+<!-- ================= 06 DATA ================= -->
+<section id="data">
+  <div class="shead"><span class="ch">CH 08</span><h2>Data model</h2></div>
+  <p class="sdek">Core tables. Every table carries <code>org_id</code> and is protected by row-level security from the first migration, not retrofitted.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Table</th><th>Purpose</th><th>Key columns</th></tr></thead>
+    <tbody>
+      <tr><td><code>orgs</code></td><td>Manager, agency or self-managed artist entity — the tenant boundary</td><td>id, type, name, gst, pan, kyc_status, plan_tier</td></tr>
+      <tr><td><code>artists</code></td><td>Artist identity — the universal record other systems point at</td><td>id, org_id, stage_name, genres[], home_city, verified, melos_id</td></tr>
+      <tr><td><code>roster</code></td><td>Org ↔ artist with commission terms</td><td>org_id, artist_id, commission_pct, exclusive, start_date, end_date</td></tr>
+      <tr><td><code>organisers</code></td><td>Promoters, planners, venues, corporates, colleges, government bodies</td><td>id, type, name, city, settlement_reliability_score</td></tr>
+      <tr><td><code>venues</code></td><td>Physical spaces with capacity and technical spec</td><td>id, organiser_id, capacity, stage_spec, backline_available</td></tr>
+      <tr><td><code>briefs</code></td><td>Demand — a request for talent</td><td>id, organiser_id, event_date, city, budget_min, budget_max, genres[], crowd_size, source</td></tr>
+      <tr><td><code>matches</code></td><td>Ranked artist shortlist per brief with score breakdown</td><td>brief_id, artist_id, score, score_components jsonb, rank</td></tr>
+      <tr><td><code>holds</code></td><td>The ledger — date reservations with expiry</td><td>id, artist_id, brief_id, state, priority, expires_at, released_at</td></tr>
+      <tr><td><code>bookings</code></td><td>Confirmed engagement</td><td>id, hold_id, artist_id, organiser_id, fee, currency, event_datetime</td></tr>
+      <tr><td><code>contracts</code></td><td>Executed agreement with eSign trail</td><td>booking_id, esign_provider_id, stamp_state, signed_at, pdf_url</td></tr>
+      <tr><td><code>riders</code></td><td>Technical and hospitality requirements travelling with the booking</td><td>booking_id, backline jsonb, travel jsonb, hospitality jsonb, confirmed_by</td></tr>
+      <tr><td><code>settlements</code></td><td>Money owed and released</td><td>booking_id, gross, tds_amount, gst_amount, net, state, released_at</td></tr>
+      <tr><td><code>splits</code></td><td>Who gets what — manager, agency, sidemen, artist</td><td>settlement_id, payee_type, payee_id, pct, amount, paid_at</td></tr>
+      <tr><td><code>payouts</code></td><td>Individual bank transfers with reconciliation status</td><td>split_id, method, utr, status, failure_reason</td></tr>
+      <tr><td><code>fans</code></td><td>The artist-owned audience record</td><td>id, artist_id, phone_hash, city, consent_state, source</td></tr>
+      <tr><td><code>fan_events</code></td><td>Attendance, purchase, engagement — feeds the superfan graph</td><td>fan_id, artist_id, type, booking_id, value, occurred_at</td></tr>
+      <tr><td><code>submissions</code></td><td>Audition entries</td><td>id, season_id, artist_id, video_url, auto_score, review_state, bracket</td></tr>
+      <tr><td><code>seasons</code> / <code>episodes</code></td><td>SHOUTOUT show and league structure</td><td>id, format, city, bracket, air_date, sponsor_ids[]</td></tr>
+      <tr><td><code>scores</code></td><td>Judging and league standings</td><td>submission_id, judge_id, criteria jsonb, total</td></tr>
+      <tr><td><code>credits</code> / <code>works</code></td><td>Verified contribution registry — producer, writer, session player</td><td>work_id, contributor_id, role, split_pct, verified_by</td></tr>
+      <tr><td><code>licenses</code></td><td>Sync licences issued against works</td><td>work_id, licensee_id, usage_tier, territory, fee, expires_at</td></tr>
+      <tr><td><code>benchmark_index</code></td><td>Materialised view — the proprietary asset</td><td>genre, city, slot, crowd_band, season, p25, p50, p75, sample_n</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout"><span class="k">The asset</span><code>benchmark_index</code> is a materialised view over settled bookings, refreshed nightly. It is a byproduct of transactions you already process, it sharpens with every booking, no incumbent has it, and it prices quotes, sponsorships and loan underwriting. Protect it: never expose raw rows, only percentile bands with a minimum sample size of 5 to prevent reverse-engineering of individual deals.</div>
+</section>
+
+<!-- ================= 07 MODEL ================= -->
+<section id="model">
+  <div class="shead"><span class="ch">CH 09</span><h2>Business model</h2></div>
+
+  <h3>Revenue lines — Year 5, sorted descending</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Line</th><th>Mechanic</th><th class="num-c">INR</th><th class="num-c">USD</th></tr></thead>
+    <tbody>
+      <tr><td>Gig take rate</td><td>₹272cr GMV × 10% blended</td><td class="num-c">₹27.2 cr</td><td class="num-c">$3.20 M</td></tr>
+      <tr><td>Manager OS SaaS</td><td>4,000 orgs × ₹4,999 × 12</td><td class="num-c">₹24.0 cr</td><td class="num-c">$2.82 M</td></tr>
+      <tr><td>Artist financing</td><td>₹180cr originated × 9% net spread</td><td class="num-c">₹16.2 cr</td><td class="num-c">$1.91 M</td></tr>
+      <tr><td>SHOUTOUT show &amp; format</td><td>Sponsorship ₹9cr + OTT/licensing ₹5cr</td><td class="num-c">₹14.0 cr</td><td class="num-c">$1.65 M</td></tr>
+      <tr><td>A&amp;R data seats</td><td>90 seats × ₹9L avg</td><td class="num-c">₹8.1 cr</td><td class="num-c">$0.95 M</td></tr>
+      <tr><td>Sponsorship marketplace</td><td>₹40cr GMV × 15%</td><td class="num-c">₹6.0 cr</td><td class="num-c">$0.71 M</td></tr>
+      <tr><td>Sync licensing</td><td>₹12cr licensed × 30% share</td><td class="num-c">₹3.6 cr</td><td class="num-c">$0.42 M</td></tr>
+      <tr style="font-weight:700;background:var(--panel-2)"><td>Total Year 5</td><td>7 lines, India + Wave 1</td><td class="num-c">₹99.1 cr</td><td class="num-c">$11.66 M</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Unit economics — per booking</h3>
+  <div class="fx">
+<b>AGV</b>    average gig value        ₹150,000  ($1,765)
+<b>REV</b>    AGV x 10% take rate      <span class="out">₹15,000</span>   ($176)
+<b>(-)</b>    PA fee   AGV x 1.8%      ₹2,700    ($32)
+<b>(-)</b>    messaging + infra        ₹120      ($1.4)
+<b>(-)</b>    ops &amp; support (Phase 2)   ₹1,500    ($18)
+       ───────────────────────────────────────
+<b>CONTRIB</b>  15,000-2,700-120-1,500  <span class="out">₹10,680</span>   ($126)
+<b>MARGIN</b>   10,680 / 15,000         <span class="out">71.2%</span>
+</div>
+
+  <h3>CAC and LTV by segment</h3>
+  <div class="fx">
+<b>ARTIST CAC</b>
+  season cost ₹18,00,000 / 45,000 submissions
+                        = <span class="out">₹40</span> ($0.47) per artist
+
+<b>MANAGER CAC</b>
+  field sales + onboarding, fully loaded
+                        = <span class="out">₹25,000</span> ($294)
+
+<b>MANAGER LTV</b>
+  SaaS      ₹4,999 x 12            = ₹59,988
+  gig contribution
+    9/mo x 12 x ₹10,680 x 35%      = ₹403,704
+  annual contribution              = ₹463,692
+  x 3.1 yr retention   = <span class="out">₹1,437,445</span> ($16,911)
+
+<b>LTV / CAC</b>  1,437,445 / 25,000  = <span class="out">57.5x</span>
+</div>
+  <p class="tnote">est. — LTV/CAC is implausibly high at this stage because CAC is pre-scale and attribution is generous. Model conservatively at 8–12× for planning; treat anything above that as upside, not as a plan input.</p>
+
+  <h3>Path to profitability</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Year</th><th class="num-c">GMV</th><th class="num-c">Revenue</th><th class="num-c">Burn / (Profit)</th><th>Milestone</th></tr></thead>
+    <tbody>
+      <tr><td>Y1</td><td class="num-c">₹6 cr</td><td class="num-c">₹1.1 cr</td><td class="num-c">₹4.2 cr</td><td>Season 1 shipped; 300 bookings on rail; index seeded</td></tr>
+      <tr><td>Y2</td><td class="num-c">₹28 cr</td><td class="num-c">₹6.4 cr</td><td class="num-c">₹9.5 cr</td><td>Manager OS GA; 400 paying orgs; Series A</td></tr>
+      <tr><td>Y3</td><td class="num-c">₹82 cr</td><td class="num-c">₹22.7 cr</td><td class="num-c">₹12.0 cr</td><td>Financing live; Wave 1 market opens</td></tr>
+      <tr><td>Y4</td><td class="num-c">₹168 cr</td><td class="num-c">₹53.4 cr</td><td class="num-c">₹6.0 cr</td><td>A&amp;R data at scale; approaching breakeven</td></tr>
+      <tr><td>Y5</td><td class="num-c">₹272 cr</td><td class="num-c">₹99.1 cr</td><td class="num-c">(₹14.8 cr)</td><td>Profitable; Wave 2 opens</td></tr>
+    </tbody>
+  </table></div>
+  <p class="tnote">est. — illustrative operating plan, not a forecast. Financing revenue assumes an NBFC co-lending partner; SHOUTOUT does not lend off its own balance sheet.</p>
+</section>
+
+<!-- ================= 08 STACK ================= -->
+<section id="stack">
+  <div class="shead"><span class="ch">CH 10</span><h2>Tech architecture</h2></div>
+  <p class="sdek">Chosen to be shippable by a small team, cheap at seed stage, and not require a rewrite at Wave 1.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Layer</th><th>Choice</th><th>Why</th></tr></thead>
+    <tbody id="stack-tb"></tbody>
+  </table></div>
+  <p class="tnote">Click any layer for configuration detail, gotchas and setup notes.</p>
+
+  <h3>AI &amp; model layer</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Job</th><th>Model</th><th>Volume</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Brief parsing — WhatsApp/PDF → structured brief</td><td>Claude Sonnet</td><td>High</td><td>Structured JSON output, schema-validated. The single highest-leverage AI job in the product.</td></tr>
+      <tr><td>Auto-quote drafting</td><td>Claude Sonnet</td><td>High</td><td>Grounded on benchmark index percentiles; never invents a price.</td></tr>
+      <tr><td>EPK &amp; release copy generation</td><td>Claude Sonnet</td><td>High</td><td>Human-in-the-loop review before publish, mirroring the LifeCycle-OS asset pattern.</td></tr>
+      <tr><td>Audition auto-scoring rationale</td><td>Claude Opus</td><td>Low</td><td>Reasoning quality matters more than cost here. Output is advisory — a human always confirms.</td></tr>
+      <tr><td>Benchmark anomaly review</td><td>Claude Opus</td><td>Low</td><td>Flags suspicious fees before they poison the index.</td></tr>
+      <tr><td>Artist ↔ brief semantic match</td><td>Embeddings → pgvector</td><td>High</td><td>Hybrid with Postgres full-text. Do not add a separate search cluster before Wave 1.</td></tr>
+      <tr><td>Lyric transcription for LINER</td><td>Speech-to-text (Whisper-class / AssemblyAI)</td><td>Medium</td><td>Multi-language including Hindi, Punjabi, Tamil, Malayalam code-switching.</td></tr>
+      <tr><td>BPM / key / genre extraction</td><td>Essentia or librosa in a Python worker</td><td>Medium</td><td>Deterministic audio features, not an LLM job. Feeds match scoring and sync catalog tagging.</td></tr>
+      <tr><td>Audition video quality gate</td><td>Frame sampling + vision check</td><td>Medium</td><td>Rejects unusable uploads before they reach the human queue.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Monthly run cost — seed stage, 0–2,000 users</h3>
+  <div class="fx">
+Vercel Pro                    $20      ₹1,700
+Supabase Pro                  $25      ₹2,125
+Cloudflare R2 (video masters) $15      ₹1,275
+Video transcode + playback    $60      ₹5,100
+Workflow engine (Inngest)     $20      ₹1,700
+WhatsApp BSP + messages       $60      ₹5,100
+Anthropic API                 $150     ₹12,750
+Embeddings + audio pipeline   $40      ₹3,400
+PostHog                       $50      ₹4,250
+Sentry                        $26      ₹2,210
+Transactional email           $20      ₹1,700
+                             ─────    ───────
+<b>TOTAL</b>                        <span class="out">$486</span>     <span class="out">₹41,310</span>  / month
+  </div>
+  <p class="tnote">est. — excludes payment-aggregator fees (charged as % of GMV, modelled in unit economics) and eSign/KYC per-document costs (₹25–60 per contract).</p>
+
+  <div class="callout warn"><span class="k">Two blockers to clear before any code ships</span><strong>1. Escrow is not legally yours to hold.</strong> Under RBI payment-aggregator rules you cannot hold customer funds. Use a licensed PA's split-settlement product with hold periods — functionally escrow, legally theirs. The nodal account sits with the PA. Architect the settlement layer as provider-agnostic from day one.<br><br><strong>2. Fix the OAuth code exchange.</strong> The existing Kolab shell has incomplete server-side PKCE code exchange and CSP conflicts. Both are security-critical and must close before multi-tenant work begins — you will be holding contract and payout data for competing managers on one platform.</div>
+</section>
+
+<section id="priority">
+  <div class="shead"><span class="ch">CH 11</span><h2>Build priority &amp; repo strategy</h2></div>
+  <p class="sdek">Fresh codebase, ported semantic engine, reused data infrastructure. Ranked by what unblocks the most downstream value per week of work.</p>
+
+  <h3>Repository decision</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Asset</th><th>Decision</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr><td>Application codebase</td><td><span class="pill p1">New repo</span> <code>shoutout-platform</code></td><td>Clean room. MusicGenAI was architected as a single-purpose generation app; SHOUTOUT is a multi-tenant marketplace with money movement. Retrofitting RLS, org scoping and settlement onto it costs more than starting clean.</td></tr>
+      <tr><td>Semantic engine</td><td><span class="pill p2">Port as a package</span> <code>@shoutout/intent</code></td><td>The 19-field → <code>GENERATION_INTENT</code> converter is the most valuable thing you have already built. Extract it as a versioned internal package consumed by Studio, both match engines and the sync catalog.</td></tr>
+      <tr><td>Audio synthesis + generation modules</td><td><span class="pill p2">Port selectively</span></td><td>Bring the nine TypeScript modules across as <code>packages/studio-core</code>. Leave the SPA shell behind entirely.</td></tr>
+      <tr><td>Supabase / data layer</td><td><span class="pill p2">Reuse the org, new project</span></td><td>Stay in the existing Supabase organisation for billing and familiarity, but provision a <strong>new project</strong> so RLS and <code>org_id</code> exist from migration 001 rather than being bolted on.</td></tr>
+      <tr><td>Third Eye music studio pipeline</td><td><span class="pill p2">Port as workers</span></td><td>The nine-stage pipeline, BullMQ queue, Python ML inference and FFmpeg post-processing become <code>apps/workers</code> + <code>packages/studio-core</code>. This is the back half of Studio and the reason generation can be durable and async rather than blocking.</td></tr>
+      <tr><td>Third Eye JARVIS document tools</td><td><span class="pill p2">Port selectively</span></td><td>Invoice, PDF, chart and image generation map directly onto EPKs, contracts, settlement statements and rider sheets. Most of the document layer already exists.</td></tr>
+      <tr><td>Third Eye Capacitor shell</td><td><span class="pill p3">Reference pattern</span></td><td>Proven Next.js → iOS/Android path from one codebase. Adopt at mobile, not at week one.</td></tr>
+      <tr><td>Third Eye repo itself</td><td><span class="pill">Stays separate</span></td><td>Third Eye remains its own product with its own roadmap and its own architectural fork to resolve. SHOUTOUT borrows packages and patterns; it does not absorb the project.</td></tr>
+      <tr><td>Kolab auth shell</td><td><span class="pill p3">Reference only</span></td><td>Take the OAuth patterns, not the code. The incomplete server-side PKCE exchange and CSP conflicts are exactly what you must not inherit into a system holding payout data.</td></tr>
+      <tr><td>MusicGenAI repo</td><td><span class="pill">Archive, do not delete</span></td><td>Keep it readable as the reference implementation while porting. Archive once <code>@shoutout/intent</code> passes parity tests.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Monorepo layout</h3>
+  <div class="fx">
+shoutout-platform/
+├─ apps/
+│  ├─ web/            Next.js — artist · manager · organiser · collab
+│  ├─ admin/          HITL queues: auditions, assets, disputes, index anomalies
+│  └─ workers/        Python — audio analysis, transcode hooks, embeddings
+├─ packages/
+│  ├─ intent/         <b>@shoutout/intent</b>  ported semantic engine — the shared schema
+│  ├─ studio-core/    generation, stems, variants  (ported from MusicGenAI)
+│  ├─ match/          scoring engine — one engine, all Shout types
+│  ├─ money/          settlement abstraction: PA-agnostic, double-entry ledger
+│  ├─ db/             Supabase client, generated types, RLS test suite
+│  └─ ui/             design system
+├─ workflows/         Inngest functions — every lifecycle sequence
+└─ supabase/migrations/   001 creates org_id + RLS. Non-negotiable.
+  </div>
+
+  <h3>Build priority — ranked</h3>
+  <div class="tw"><table>
+    <thead><tr><th>#</th><th>Build</th><th>Unblocks</th><th>Weeks</th></tr></thead>
+    <tbody id="prio-tb"></tbody>
+  </table></div>
+  <p class="tnote">Click any item for scope, dependencies and definition of done. Sorted ascending by build order — which is descending by leverage per week.</p>
+
+  <div class="callout"><span class="k">The sequencing logic</span>Ship the <strong>Shout object and the match engine first</strong>, because collaboration is the only module that creates <em>daily</em> usage with zero supply-side cold start — two producers and one vocalist is already a working network. Gig booking needs organisers, which needs sales. Auditions need a season, which needs production budget. Collab needs nothing but the app existing. It is the cheapest possible proof that the primitive works, and everything else reuses the same object.</div>
+</section>
+
+
+<!-- ================= 09 GTM ================= -->
+<section id="gtm">
+  <div class="shead"><span class="ch">CH 12</span><h2>90-day execution plan</h2></div>
+  <p class="sdek">One city, one season, twenty-five concierge bookings. No product until the flow is understood by hand.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Weeks</th><th>Workstream</th><th>Output</th><th>Gate</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill p1">W1–2</span></td><td>Incorporate &amp; clear the name</td><td>Pvt Ltd registered; SHOUTOUT + SHOUTOUT clearance opinion commissioned; India TM filed 5 classes; domains and handles locked; <strong>WhatsApp BSP application submitted and templates written</strong></td><td>Templates in review — this has a 2–3 week lead time and blocks everything downstream. Start it day one.</td></tr>
+      <tr><td><span class="pill p1">W3–4</span></td><td>SHOUTOUT open call #1</td><td>Delhi NCR, four genre brackets. Landing page + phone-OTP intake. Manual review via spreadsheet. Target 500 submissions.</td><td>500 submissions at &lt;₹80 CPA</td></tr>
+      <tr><td><span class="pill p2">W5–6</span></td><td>Artist profile + EPK generator</td><td>Ship the rejection-to-onboarding sequence. Every non-selected entrant gets scorecard, EPK, open gigs.</td><td>&gt;50% of rejected entrants complete a profile</td></tr>
+      <tr><td><span class="pill p2">W7–8</span></td><td>Concierge bookings — no product</td><td>Broker 25 real bookings entirely by hand over WhatsApp. Record every field of every deal.</td><td>25 settled bookings. This exercise <em>is</em> the schema and the first benchmark rows.</td></tr>
+      <tr><td><span class="pill p3">W9–10</span></td><td>Manager OS v1</td><td>Brief intake, match, quote, roster pipeline. Ten pilot manager orgs onboarded free.</td><td>10 orgs using it weekly without being chased</td></tr>
+      <tr><td><span class="pill p3">W11–12</span></td><td>Holds ledger + settlement rail</td><td>Auto-expiry, contract eSign, PA split settlement. First fully on-rail booking end to end.</td><td>First ₹10L GMV settled with zero manual reconciliation</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>12-month and 5-year</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Horizon</th><th>Objective</th></tr></thead>
+    <tbody>
+      <tr><td>M4–M6</td><td>Season 1 aired or published clip-first. LINER launched. 15,000 artist profiles.</td></tr>
+      <tr><td>M6–M12</td><td>Manager OS GA and priced. Fan CRM ships. Expand to Mumbai, Bengaluru, Pune. Raise seed.</td></tr>
+      <tr><td>M12–M18</td><td>Benchmark index reaches statistical usefulness (8 genres × 12 cities). Growth OS ships. Wedding and corporate circuits opened deliberately.</td></tr>
+      <tr><td>M18–M36</td><td>Financing live with NBFC partner. A&amp;R data sold. Credits registry launched. Wave 1 market (Indonesia or Nigeria) opens.</td></tr>
+      <tr><td>M36–M60</td><td>Wave 2 LatAm. Sponsorship marketplace at scale. SHOUTOUT format licensed internationally rather than produced in-house.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ================= 10 DECK ================= -->
+<section id="deck">
+  <div class="shead"><span class="ch">CH 13</span><h2>Pitch deck — 15 slides</h2></div>
+  <p class="sdek">Narrative arc: the money arrived before the infrastructure → nobody serves the artist's side → we own the rail and the funnel → here is the compounding asset.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>#</th><th>Slide</th><th>Headline</th></tr></thead>
+    <tbody id="deck-tb"></tbody>
+  </table></div>
+  <p class="tnote">Click any slide for the full content brief — body copy, data points and the visual to build.</p>
+</section>
+
+<!-- ================= 11 RISK ================= -->
+<section id="risk">
+  <div class="shead"><span class="ch">CH 14</span><h2>Risk register</h2></div>
+  <p class="sdek">Sorted descending by severity. Each carries a mitigation that is a product decision, not a hope.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Risk</th><th>Severity</th><th>Mitigation</th></tr></thead>
+    <tbody id="risk-tb"></tbody>
+  </table></div>
+  <p class="tnote">Click any risk for full analysis, leading indicators and the trigger that would force a strategy change.</p>
+</section>
+
+<!-- ================= 12 KPI ================= -->
+<section id="kpi">
+  <div class="shead"><span class="ch">CH 15</span><h2>KPI tree</h2></div>
+
+  <div class="callout"><span class="k">North star</span><strong style="font-size:19px">Settled GMV on rail</strong> — money that actually moved through SHOUTOUT and reconciled to zero. Not bookings created, not briefs posted, not users registered. Only settled money counts, because only settled money proves the product did the job nobody else does.</div>
+
+  <h3>Driver metrics</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Branch</th><th>Metric</th><th>Y1 target</th><th>Why this one</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="4"><strong>Demand</strong></td><td>Briefs posted / month</td><td>180</td><td>Top of the transaction funnel</td></tr>
+      <tr><td>Brief → shortlist opened</td><td>&gt;75%</td><td>Tests match quality; if organisers don't open it, scoring is wrong</td></tr>
+      <tr><td>Shortlist → hold placed</td><td>&gt;35%</td><td>Tests pricing accuracy from the index</td></tr>
+      <tr><td>Hold → contracted</td><td>&gt;55%</td><td>Tests trust in the rail</td></tr>
+      <tr><td rowspan="3"><strong>Supply</strong></td><td>Activated artist profiles</td><td>15,000</td><td>Audition funnel efficiency</td></tr>
+      <tr><td>Rejection → profile completion</td><td>&gt;60%</td><td><strong>The single most important number in the company</strong></td></tr>
+      <tr><td>Paying manager orgs</td><td>300</td><td>The wedge is working</td></tr>
+      <tr><td rowspan="3"><strong>Money</strong></td><td>Payout SLA met</td><td>&gt;97% at T+2</td><td>The core promise</td></tr>
+      <tr><td>Settlement reconciliation errors</td><td>0</td><td>Zero tolerance — trust is binary</td></tr>
+      <tr><td>Off-platform leakage rate</td><td>&lt;20%</td><td>Measures disintermediation directly</td></tr>
+      <tr><td rowspan="2"><strong>Asset</strong></td><td>Benchmark index coverage</td><td>8 genres × 12 cities, n≥5</td><td>When this is dense, everything downstream prices itself</td></tr>
+      <tr><td>Repeat organiser rate</td><td>&gt;40%</td><td>Proves the rail beats the informal circuit</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ================= 13 DOCS ================= -->
+<section id="docs">
+  <div class="shead"><span class="ch">CH 16</span><h2>Document index</h2></div>
+  <p class="sdek">Everything else a founder needs on file. Sorted descending by urgency.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Document</th><th>When</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Certificate of Incorporation — Pvt Ltd</td><td>W1</td><td>India entity first. Decide the holding structure question separately — do not default to an offshore flip before you have revenue; RBI round-tripping rules make reversal painful.</td></tr>
+      <tr><td>Founder agreement + vesting</td><td>W1</td><td>4-year vest, 1-year cliff, even if solo today. Reverse-vesting protects the cap table when you add a co-founder.</td></tr>
+      <tr><td>Trademark filings — SHOUTOUT, SHOUTOUT, LINER</td><td>W1–2</td><td>India Classes 9/35/36/41/42. Word mark and device mark filed separately.</td></tr>
+      <tr><td>WhatsApp BSP contract + template set</td><td>W1</td><td>2–3 week approval lead time. The critical path item.</td></tr>
+      <tr><td>Artist terms of service</td><td>W5</td><td>Must cover: commission handling, fan-data ownership (artist owns, SHOUTOUT processes), content licence for SHOUTOUT footage, dispute process.</td></tr>
+      <tr><td>Organiser terms of service</td><td>W7</td><td>Hold obligations, cancellation ladder, settlement timing, liability.</td></tr>
+      <tr><td>Booking contract template</td><td>W7</td><td>Per-state stamping via eSign provider. Rider annexure attached by reference.</td></tr>
+      <tr><td>Privacy policy + DPDP Act compliance</td><td>W5</td><td>Consent architecture for fan data is a product requirement, not a legal footnote. Fan consent is granted to the artist, processed by SHOUTOUT.</td></tr>
+      <tr><td>Payment aggregator agreement</td><td>W9</td><td>Split-settlement product. Confirm hold-period mechanics and refund/chargeback flow before building against it.</td></tr>
+      <tr><td>ESOP pool + scheme document</td><td>M3</td><td>10–12% pool. First artist-community hires should get equity — it buys credibility you cannot purchase.</td></tr>
+      <tr><td>IPRS / PPL public performance licensing position</td><td>M4</td><td>Establish whether SHOUTOUT, the organiser or the venue is the licensee for each booking type. Get this wrong and you inherit liability.</td></tr>
+      <tr><td>Format bible — SHOUTOUT</td><td>M4</td><td>The licensable asset. Rules, brackets, judging criteria, staging, graphics package. Written before season 1, not after.</td></tr>
+      <tr><td>Content licensing agreements — sync catalog</td><td>M12</td><td>Artist-side split terms and licensee usage tiers.</td></tr>
+      <tr><td>NBFC co-lending agreement</td><td>M18</td><td>Prerequisite for financing. Start conversations 6 months early.</td></tr>
+      <tr><td>Data processing addenda — Wave 1 markets</td><td>M18</td><td>Per-market residency and cross-border transfer terms.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+</main>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dr-title">
+  <div class="dr-head">
+    <div><span class="k" id="dr-kicker">Detail</span><h3 id="dr-title">—</h3></div>
+    <button class="dr-close" id="dr-close" aria-label="Close detail">✕</button>
+  </div>
+  <div class="dr-body" id="dr-body"></div>
+</aside>
+
+<script>
+/* ---------- SECTION RAIL ---------- */
+const SECTIONS=[
+ ["brand","Brand architecture"],["map","MAP strategy"],["market","Market model"],
+ ["prd","Product requirements"],["collab","Collab network"],["studio","Creation studio"],
+ ["flows","Flows & state machine"],["data","Data model"],["model","Business model"],
+ ["stack","Tech architecture"],["priority","Build priority & repo"],["gtm","90-day GTM"],
+ ["deck","Pitch deck"],["risk","Risk register"],["kpi","KPI tree"],["docs","Document index"]
+];
+const chans=document.getElementById('chans');
+SECTIONS.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.className='chan';b.dataset.target=s[0];
+  b.innerHTML=`<span class="led"></span><span class="num">${String(i+1).padStart(2,'0')}</span><span>${s[1]}</span>`;
+  b.onclick=()=>document.getElementById(s[0])?.scrollIntoView({behavior:'smooth'});
+  chans.appendChild(b);
+});
+const obs=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('.chan').forEach(c=>c.classList.toggle('on',c.dataset.target===e.target.id));
+    }
+  });
+},{rootMargin:'-45% 0px -50% 0px'});
+
+/* ---------- DRAWER ---------- */
+const scrim=document.getElementById('scrim'),drawer=document.getElementById('drawer');
+let lastFocus=null;
+function openDrawer(kicker,title,html){
+  lastFocus=document.activeElement;
+  document.getElementById('dr-kicker').textContent=kicker;
+  document.getElementById('dr-title').textContent=title;
+  document.getElementById('dr-body').innerHTML=html;
+  drawer.classList.add('on');scrim.classList.add('on');
+  document.getElementById('dr-close').focus();
+}
+function closeDrawer(){drawer.classList.remove('on');scrim.classList.remove('on');lastFocus&&lastFocus.focus();}
+document.getElementById('dr-close').onclick=closeDrawer;
+scrim.onclick=closeDrawer;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
+
+function buildTable(tbodyId,rows,cells,kicker){
+  const tb=document.getElementById(tbodyId);if(!tb)return;
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.className='clickable';tr.tabIndex=0;
+    tr.innerHTML=cells(r);
+    const fire=()=>openDrawer(kicker,r.name,r.detail);
+    tr.onclick=fire;
+    tr.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fire();}};
+    tb.appendChild(tr);
+  });
+}
+
+/* ---------- CH01 BRAND SURFACES ---------- */
+const BRANDS=[
+{name:"SHOUTOUT",what:"The company and the platform",role:"Masterbrand",
+ detail:`<h4>Positioning</h4><p>The place you go when you need someone — a collaborator, an act, a stage, a sponsor — and the place you go when someone needs you.</p><h4>Usage</h4><p>One word, all caps in the logotype, sentence case in prose ("ShoutOut"). Never "The ShoutOut." Never split as "Shout Out."</p><h4>The verb</h4><p>"Put out a shout." Own this construction relentlessly — it is where trademark strength will eventually come from.</p>`},
+{name:"Shouts",what:"The universal primitive — a call someone answers",role:"Core object",
+ detail:`<h4>What it is</h4><p>Collab Shout, Gig Shout, Open Shout, Brand Shout, Sync Shout. One schema, one match engine, one escrow rail, one reliability score.</p><h4>Why it matters</h4><p>Users learn one mental model and it transfers across every surface. Engineering builds one object and reuses it five times. This is the single biggest architectural advantage the name gives you.</p>`},
+{name:"SHOUTOUT Studio",what:"Creation — generation, stems, references, variants",role:"Feature",
+ detail:`<h4>Positioning</h4><p>A communication tool, not a music generator. It helps you show someone the sound in your head.</p><h4>Absorbs</h4><p>Two existing assets. MusicGenAI / MuseForge Pro supplies the intent layer, AI suggest and browser preview; the Third Eye music studio supplies the nine-stage pipeline, queue, workers and storage. The semantic engine becomes shared infrastructure at <code>@shoutout/intent</code>.</p><h4>Never say</h4><p>"AI-generated songs." "Make music with AI." Both repel the working musicians who are your supply side.</p>`},
+{name:"SHOUTOUT Stage",what:"The season show and city leagues",role:"Culture IP",
+ detail:`<h4>Positioning</h4><p>All-genre talent platform. Season shows, improv battle formats, city leagues with standings and playoffs, weekly open calls.</p><h4>Role</h4><p>Top of funnel for the whole company. The audition volume is the artist acquisition engine — every non-selected entrant becomes a platform user through the rejection sequence.</p><h4>Register separately</h4><p>SHOUTOUT STAGE as its own compound mark in Class 41.</p>`},
+{name:"SHOUTOUT Rooms",what:"Collab workspace — files, versions, chat, splits",role:"Feature",
+ detail:`<h4>What it is</h4><p>A project space per collaboration: reference tracks, stem versions, chat, split sheet, deadline, escrow state. Opens automatically when a Shout is answered and accepted.</p>`},
+{name:"SHOUTOUT Credits",what:"Verified contribution and splits registry",role:"Feature",
+ detail:`<h4>What it is</h4><p>Every split agreed inside a Room writes here. Over time it becomes a verified credits graph attached to each person's SHOUTOUT ID.</p><h4>Strategic role</h4><p>The "universal identity" play, and the entry point into recorded music and publishing. Also the cold-start protocol — once a producer's catalogue lives here, they never re-key it elsewhere.</p>`},
+{name:"SHOUTOUT Circle",what:"Fan CRM and superfan graph",role:"Feature",
+ detail:`<h4>What it is</h4><p>The audience the artist owns. Captured at gigs by QR, consented to the artist, processed by SHOUTOUT. Tiers from proof-of-attendance and spend; drops and presales gated by tier.</p>`},
+{name:"SHOUTOUT Settle",what:"Contracts, escrow, splits, payouts",role:"Money rail",
+ detail:`<h4>What it is</h4><p>The rail underneath every Shout type. Contract with eSign, funds held at a licensed payment aggregator, splits reconciled to zero, payouts at T+2 with UTR tracking.</p><h4>Legal note</h4><p>SHOUTOUT never holds funds. The PA does. Architect the layer provider-agnostic from day one.</p>`},
+{name:"SHOUTOUT Advance",what:"Artist financing against escrowed contracts",role:"Phase 3",
+ detail:`<h4>What it is</h4><p>₹25k–₹5L in 48 hours against a signed, escrowed contract, recovered from the same rail. Requires an NBFC co-lending partner — never balance-sheet lending.</p>`},
+{name:"Liner",what:"Lyric-decode media property",role:"Endorsed sub-brand",
+ detail:`<h4>What it is</h4><p>Vertical-video breakdowns of bars, wordplay and the story behind the verse. Deliberately <em>not</em> called SHOUTOUT-something — it needs independent editorial credibility.</p><h4>Endorsement</h4><p>"Liner — from SHOUTOUT," small, in the outro frame only.</p>`}
+];
+buildTable('brand-tb',BRANDS,r=>`<td>${r.name}</td><td>${r.what}</td><td>${r.role}</td>`,'Brand surface');
+
+/* ---------- CH02 MAP LINES ---------- */
+const MAPLINES=[
+{name:"Gig rail + escrow settlements",m:"Managers, organisers, venues, wedding &amp; corporate planners",a:"Trust, not discovery — money held and released on performance",rev:"₹27.2cr",
+ detail:`<h4>Market</h4><p>Every paid performance in India across weddings, corporate, festivals, clubs, college fests, government and folk circuits. The addressable slice is the ~22% already transacting non-cash.</p>
+ <h4>Angle</h4><p>Discovery is not the bottleneck — payment certainty is. Fees are delayed, part-paid or never paid, and sidemen are paid last. Escrow-style split settlement is the wedge because it solves the thing that actually hurts.</p>
+ <h4>Product</h4><p>Brief intake (including WhatsApp/PDF auto-parse) → AI match scoring → auto-quote priced off the fee benchmark index → holds ledger with auto-expiry → contract with Aadhaar eSign → split settlement → rider checklist → payout confirm → commission auto-split across manager/agency/sidemen → re-book sequence at T+11 months.</p>
+ <h4>Monetisation</h4><p>8–12% take rate, blended 10%. Y5: ₹272cr GMV × 10% = <strong>₹27.2cr ($3.2M)</strong>.</p>`},
+{name:"Manager OS (SaaS)",m:"Artist managers carrying 3–15 artists on WhatsApp and Sheets",a:"The manager is the user; the artist gets a portal",rev:"₹24.0cr",
+ detail:`<h4>Market</h4><p>Most independent Indian artists are managed by a friend, a cousin, or themselves. Working managers run rosters with zero pipeline software, no calendar sync, no settlement tracking and no commission reconciliation.</p>
+ <h4>Angle</h4><p>Every competitor builds for the artist. The artist is not the buyer — the person with the WhatsApp thread and the commission stake is. Build for them and the roster comes free.</p>
+ <h4>Product</h4><p>Multi-artist roster pipeline, shared holds calendar, quote generator with market comps, contract + escrow, rider checklists that travel with the booking, payout tracker, automatic commission splits, artist read-only portals.</p>
+ <h4>Monetisation</h4><p>₹2,499–₹9,999/mo by roster size. Y5: 4,000 paying orgs × ₹4,999 avg × 12 = <strong>₹24.0cr ($2.8M)</strong>.</p>`},
+{name:"Artist financing (advances)",m:"Artists and managers with signed contracts and royalty flow",a:"Underwritten off your own rail — nobody else can price it",rev:"₹16.2cr",
+ detail:`<h4>Market</h4><p>Artists wait 30–90 days for gig balances and years for royalty accumulation. Advances against a signed, escrowed wedding or corporate contract are far safer than advances against streaming forecasts.</p>
+ <h4>Angle</h4><p>This is the moat. Nobody switches CRMs; everybody switches to whoever pays them early. Only SHOUTOUT can underwrite it, because only SHOUTOUT holds the streaming data, the escrowed contract and the fan list simultaneously.</p>
+ <h4>Product</h4><p>₹25,000–₹5,00,000 ($295–$5,900) in 48 hours, recovered automatically from the same settlement rail. Risk model built on benchmark index + organiser settlement history + artist gig frequency.</p>
+ <h4>Monetisation</h4><p>2–4% origination + spread. Y5: ₹180cr originated × 9% net = <strong>₹16.2cr ($1.9M)</strong>. Requires NBFC partnership or co-lending structure — do not attempt to lend off balance sheet.</p>`},
+{name:"SHOUTOUT — show &amp; league IP",m:"All-genre talent, ages 16–32, tier-1 and tier-2",a:"The audition funnel is the customer acquisition engine",rev:"₹14.0cr",
+ detail:`<h4>Market</h4><p>Season shows pull tens of thousands of audition entries and sign around fifteen. The other 99.9% are the highest-intent, most qualified artist leads in the country — already identified, already serious, already emotionally invested. Every existing format throws them away.</p>
+ <h4>Angle</h4><p>SHOUTOUT is not a vertical. It is the top of SHOUTOUT's funnel. Run the audition and you acquire the entire independent artist base at near-zero CAC. All genres — hip-hop, electronic, indie, Punjabi, folk, classical crossover, devotional — because the folk and classical brackets are where government, tourism and corporate money already sits.</p>
+ <h4>Product ladder</h4><p>Flagship season show (broadcast/OTT, sponsor-funded) → improv battle format, ensemble cast, cheap to produce, high clip velocity → city leagues with standings and playoffs → weekly open calls and cypher nights, venue-partnered, feeding everything above.</p>
+ <h4>The rejection sequence — the single most valuable automation</h4><p>"You didn't make the cut. Here's your scorecard, here's your free EPK, here are four gigs open in your city." Rejection becomes onboarding.</p>
+ <h4>Monetisation</h4><p>Sponsorship ₹9cr + OTT and format licensing ₹5cr = <strong>₹14.0cr ($1.6M)</strong>.</p>`},
+{name:"A&amp;R signal engine (data)",m:"Labels, promoters, brand teams, festival bookers",a:"Only holder of both online and offline signal",rev:"₹8.1cr",
+ detail:`<h4>Market</h4><p>Labels and promoters currently scout on vibes and Instagram follower counts. Nobody holds gig sell-through and settlement reliability alongside streaming velocity.</p>
+ <h4>Angle</h4><p>Highest-margin product in the stack, zero marginal cost, entirely a byproduct of transactions you already process.</p>
+ <h4>Product</h4><p>Weekly scored feed: streaming velocity + Reels breakout + league results + gig sell-through + regional fan density. Plus the tour demand heatmap — "you have 4,200 listeners in Indore, route the tour."</p>
+ <h4>Monetisation</h4><p>₹1.5–6L/yr per seat. Y5: 90 seats × ₹9L avg = <strong>₹8.1cr ($0.95M)</strong>.</p>`},
+{name:"Sponsorship marketplace",m:"Brands seeking youth reach; artists underpriced vs influencers",a:"You own the measurement layer nobody else has",rev:"₹6.0cr",
+ detail:`<h4>Market</h4><p>Artists are priced 3–5× below influencers at comparable reach, purely because there is no measurement layer to justify the rate.</p>
+ <h4>Angle</h4><p>The fan CRM and gig settlement history <em>are</em> the measurement layer. You can prove attendance, conversion and regional density — an influencer platform cannot.</p>
+ <h4>Product</h4><p>Brand brief intake → artist match on audience fit → priced proposal → contract → deliverable tracking → settlement through the same rail.</p>
+ <h4>Monetisation</h4><p>15% of sponsorship GMV. Y5: ₹40cr × 15% = <strong>₹6.0cr ($0.7M)</strong>.</p>`},
+{name:"Sync licensing catalog",m:"D2C brands, agencies, creators needing cleared music",a:"Pre-cleared Indian catalog vs unlicensed foreign tracks",rev:"₹3.6cr",
+ detail:`<h4>Market</h4><p>Every D2C brand, agency and creator in India needs cleared music. Most use unlicensed foreign tracks and carry silent takedown risk.</p>
+ <h4>Angle</h4><p>Curated Indian hip-hop, electronic and high-BPM catalog, pre-cleared, one-click licence, splits already registered in the SHOUTOUT credits registry so payment is automatic.</p>
+ <h4>Product</h4><p>₹999–₹9,999 ($12–$118) per licence by usage tier. AI-assisted stem variants cut to standard ad lengths (6s / 15s / 30s).</p>
+ <h4>Monetisation</h4><p>30% revenue share. Y5: ₹12cr licensed × 30% = <strong>₹3.6cr ($0.42M)</strong>.</p>`},
+{name:"LINER — lyric-decode media",m:"Music fans, 16–28, vertical video native",a:"Genius never localised for the subcontinent",rev:"Funnel",
+ detail:`<h4>Market</h4><p>Lyric-driven listening is the emotional core of the scene — storytelling, wordplay, the visual pictures bars create. There is no Indian Genius.</p>
+ <h4>Angle</h4><p>Distribution asset first, revenue second. LINER earns artist trust and generates inbound so you never cold-pitch a manager.</p>
+ <h4>Product</h4><p>Vertical breakdowns of Indian rap bars — wordplay, regional slang, the story behind the verse. Auto-generated from the audio pipeline: transcription → annotation drafting → human edit → publish.</p>
+ <h4>Monetisation</h4><p>Not a direct revenue line at Y5. Counted as CAC reduction across the artist and fan funnels, plus label promo retainers.</p>`}
+];
+buildTable('map-tb',MAPLINES,r=>`<td>${r.name}</td><td>${r.m}</td><td>${r.a}</td><td class="num-c">${r.rev}</td>`,'Business line');
+
+/* ---------- CH04 PERSONAS ---------- */
+const PERSONAS=[
+{name:"Artist manager",jtbd:"Keep 3–15 artists booked, priced correctly and paid on time — without losing a date or a commission",pri:"<span class='pill p1'>Primary user</span>",
+ detail:`<h4>Who</h4><p>Often a friend, a cousin, or a semi-professional operator carrying 3–15 artists. Runs everything on WhatsApp, Google Sheets and Gmail.</p>
+ <h4>Pains today</h4><ul><li>No pipeline view — deals live in chat threads</li><li>Verbal date holds cause double-bookings</li><li>Quotes from gut; routinely 40–60% under market</li><li>Chases balances for 30–90 days</li><li>Commission stack is invisible: manager 10–20%, agency 10–25%, broker on top, and nobody sees the whole thing</li></ul>
+ <h4>Success looks like</h4><p>Monday morning, one screen: who is booked, who owes money, who to call. Commission auto-calculated and auto-paid.</p>
+ <h4>Modules serving them</h4><p>Manager OS (primary), gig rail, holds ledger, settlement, benchmark index.</p>`},
+{name:"Independent artist",jtbd:"Get booked, get paid, and own the audience I build",pri:"<span class='pill p1'>Core supply</span>",
+ detail:`<h4>Who</h4><p>Past hobby, pre-label. 500–5,000 monthly listeners. Hip-hop, electronic, indie, Punjabi, folk, classical crossover. Half their working life is promotion, distribution, branding, fan comms and finance rather than music.</p>
+ <h4>Pains today</h4><ul><li>Streaming is visibility, not income — 100k monthly listeners is roughly ₹1L/month before distributor cuts</li><li>Fees delayed, part-paid or never paid</li><li>Audience rented from Instagram, Spotify and ticketing platforms — owns none of it</li><li>No EPK, no price benchmark, no negotiating position</li></ul>
+ <h4>Success looks like</h4><p>A professional EPK they didn't have to make, a fair price they can defend, money in T+2, and a fan list that is theirs.</p>
+ <h4>Modules</h4><p>Artist portal, EPK generator, fan CRM, growth OS, financing, credits registry.</p>`},
+{name:"Event organiser / promoter",jtbd:"Find the right act for a date and budget, and be certain they'll show up",pri:"<span class='pill p2'>Demand side</span>",
+ detail:`<h4>Who</h4><p>Club promoters, festival bookers, college fest committees, corporate event agencies, wedding planners, state tourism departments.</p>
+ <h4>Pains today</h4><ul><li>No price discovery — over- or under-pays with no reference</li><li>Verbal holds evaporate; acts drop out</li><li>No institutional memory, especially college committees which turn over annually</li><li>Rider surprises on the day</li></ul>
+ <h4>Success looks like</h4><p>Post a brief, get a ranked shortlist with real prices, place a hold that is actually binding, and receive a rider checklist before load-in.</p>
+ <h4>Why they join</h4><p>The holds ledger. Promoters join to stop losing dates — and once they are in, their bookings flow onto the rail. This is the two-sided network effect without having to build a marketplace from cold.</p>`},
+{name:"Wedding &amp; corporate planner",jtbd:"Source vetted talent fast for high-value private events",pri:"<span class='pill p2'>Highest value</span>",
+ detail:`<h4>Who</h4><p>The largest and least-served money pool. Weddings alone are an estimated ₹15,120cr of artist fees — 43% of India TAM.</p>
+ <h4>Pains today</h4><ul><li>Broker chains with opaque cuts</li><li>Cash-heavy, no paper trail, no recourse</li><li>No way to verify an act before booking</li></ul>
+ <h4>Strategic note</h4><p>This circuit funds the business but resists digitisation hardest. Do not lead with it. Enter after the corporate and festival circuits have proven the rail, and lead with verification and recourse rather than price.</p>`},
+{name:"Venue",jtbd:"Fill the calendar with acts that draw",pri:"<span class='pill'>Secondary</span>",
+ detail:`<h4>Who</h4><p>Clubs, cafés, listening rooms, hotel F&amp;B, amphitheatres.</p><h4>Job</h4><p>Fill dark nights with acts whose regional fan density actually converts to footfall. The tour demand heatmap is the feature that sells them.</p>`},
+{name:"Brand / sponsor",jtbd:"Reach a music audience with measurable outcomes",pri:"<span class='pill'>Secondary</span>",
+ detail:`<h4>Job</h4><p>Buy artist reach with the same measurement rigour as influencer marketing. Today artists are priced 3–5× below influencers at equal reach purely because no measurement layer exists.</p><h4>Modules</h4><p>Sponsorship marketplace, A&amp;R data seats, SHOUTOUT sponsorship inventory.</p>`},
+{name:"Label A&amp;R",jtbd:"Find the artist before anyone else does",pri:"<span class='pill'>Data buyer</span>",
+ detail:`<h4>Job</h4><p>Signal, not vibes. Streaming velocity plus gig sell-through plus league results plus regional density — the only place both online and offline signal exist together.</p><h4>Note</h4><p>A&amp;R is a data customer, never a partner with access to raw rows. Sell percentile bands and ranked feeds, never underlying deal data.</p>`},
+{name:"Fan",jtbd:"Get closer to artists I love; get access first",pri:"<span class='pill'>Graph node</span>",
+ detail:`<h4>Job</h4><p>Presale access, drops, proof-of-attendance status. The fan is not a paying customer of SHOUTOUT directly — the fan is the asset the artist owns and SHOUTOUT processes.</p><h4>Consent architecture</h4><p>Consent is granted to the artist, not to SHOUTOUT. This is a DPDP requirement and also the entire positioning: it is their audience, held on your rail.</p>`}
+];
+buildTable('persona-tb',PERSONAS,r=>`<td>${r.name}</td><td>${r.jtbd}</td><td>${r.pri}</td>`,'Persona');
+
+/* ---------- CH04 MODULES ---------- */
+const MODULES=[
+{name:"Manager OS",ph:"<span class='pill p2'>Phase 2</span>",mos:"<span class='pill p1'>Must</span>",cap:"Multi-artist roster pipeline, holds calendar, quotes, commission splits",
+ detail:`<h4>Features</h4><ul><li>Roster management with per-artist commission terms and exclusivity flags</li><li>Kanban pipeline: enquiry → quoted → held → confirmed → performed → settled</li><li>Shared holds calendar across the whole roster, colour-coded by state</li><li>Quote generator pulling live percentiles from the benchmark index</li><li>Commission auto-split across manager, agency, sidemen and artist</li><li>Artist read-only portals — the artist sees their own dates and money, nothing else</li><li>WhatsApp-native notifications on every state change</li></ul>
+ <h4>Acceptance criteria</h4><ul><li>A manager can go from inbound WhatsApp message to sent quote in under 90 seconds</li><li>No date can be double-confirmed across the roster — enforced at the database level, not the UI</li><li>Commission math reconciles to zero on every settlement or the settlement cannot close</li><li>Works fully on a phone at 3G</li></ul>`},
+{name:"Gig rail &amp; holds ledger",ph:"<span class='pill p2'>Phase 2</span>",mos:"<span class='pill p1'>Must</span>",cap:"Brief → match → quote → hold → contract → settle → payout",
+ detail:`<h4>Features</h4><ul><li>Brief intake — web form plus auto-parse of forwarded WhatsApp messages and PDF briefs</li><li>Match scoring: genre fit × city fan density × fee band × availability × organiser settlement reliability</li><li>Auto-quote grounded on benchmark percentiles, editable before send</li><li>Holds ledger with mandatory expiry, priority ladder and 48-hour challenge window</li><li>Contract generation with Aadhaar eSign and per-state stamping</li><li>Split settlement via licensed PA with hold period</li><li>Rider checklist travelling with the booking, confirmed by both sides pre-load-in</li><li>Payout tracker with UTR reconciliation</li><li>Re-book sequence at T+11 months</li></ul>
+ <h4>Acceptance criteria</h4><ul><li>Auto-release fires from a scheduled job with 99.99% reliability</li><li>Settlement cannot enter <code>settled</code> until every split reconciles to zero</li><li>TDS and GST computed and shown before contract signature, never after</li></ul>`},
+{name:"SHOUTOUT audition engine",ph:"<span class='pill p1'>Phase 1</span>",mos:"<span class='pill p1'>Must</span>",cap:"Intake → auto-score → HITL review → rejection-to-onboarding",
+ detail:`<h4>Features</h4><ul><li>Multi-language open-call landing pages per genre bracket and city</li><li>Phone-OTP entry, no password, no app install</li><li>Sub-90-second video upload direct to storage with auto-transcode</li><li>Auto-scoring: audio quality, originality flag, BPM/key/genre, engagement history</li><li>Human review queue with model rationale shown — the model never decides alone</li><li>Genre brackets so high-volume hip-hop does not crowd out folk and classical</li><li><strong>Rejection sequence:</strong> scorecard + auto-generated EPK + open gigs in their city + Manager OS invite</li><li>Alumni track — every entrant persists as bookable supply and A&amp;R signal</li></ul>
+ <h4>Acceptance criteria</h4><ul><li>Upload to scored in under 3 minutes</li><li>Reviewer throughput above 250/hour</li><li><strong>Rejection → profile completion above 60%</strong> — this is the number the company lives on</li></ul>`},
+{name:"Fan CRM &amp; superfan graph",ph:"<span class='pill p2'>Phase 2</span>",mos:"<span class='pill p2'>Should</span>",cap:"WhatsApp-first fan capture, drops, presales, proof-of-attendance tiers",
+ detail:`<h4>Features</h4><ul><li>QR capture at gigs → phone → consent → fan record owned by the artist</li><li>Segmentation by city, attendance count, purchase history</li><li>Superfan tiers from proof-of-attendance and spend</li><li>Drop store and presale access gated by tier</li><li>WhatsApp broadcast within template rules</li></ul>
+ <h4>Why it matters</h4><p>Once the fan list lives here, switching cost becomes real. This is the retention moat behind Manager OS.</p>
+ <h4>Acceptance criteria</h4><ul><li>Consent is recorded as granted to the artist, with SHOUTOUT as processor</li><li>Artist can export their full fan list at any time — the promise is ownership, so exit must be frictionless</li></ul>`},
+{name:"Benchmark index",ph:"<span class='pill p2'>Phase 2</span>",mos:"<span class='pill p1'>Must</span>",cap:"Fee percentiles by genre × city × slot × crowd band × season",
+ detail:`<h4>How it is built</h4><p>Materialised view over settled bookings, refreshed nightly. Seeded by the 25 concierge bookings in weeks 7–8 and every booking thereafter.</p>
+ <h4>Protection rules</h4><ul><li>Never expose raw rows — percentile bands only</li><li>Minimum sample size n≥5 per cell before a cell is published, to prevent reverse-engineering of individual deals</li><li>Anomaly review before a fee enters the index</li></ul>
+ <h4>Why it compounds</h4><p>No incumbent has it. It prices quotes, prices sponsorships, and underwrites advances. Every transaction makes it sharper, and it cannot be bought — only accumulated.</p>`},
+{name:"Growth OS",ph:"<span class='pill p2'>Phase 2</span>",mos:"<span class='pill p2'>Should</span>",cap:"Release campaigns, pre-save pages, ad templates, analytics",
+ detail:`<h4>Features</h4><ul><li>Release-day machine: pre-save landing page, announce creative, city-targeted ad audience built from the fan CRM</li><li>Reels hook testing framework</li><li>Playlist and save-rate dashboards</li><li>Gig-triggered promotion: booking confirmed → creative generated → presale to superfans → post-show content pack</li></ul>
+ <h4>Note</h4><p>This is the founder's existing performance-marketing and lifecycle stack repointed at a new customer profile. Fastest module to ship well.</p>`},
+{name:"Artist financing",ph:"<span class='pill p3'>Phase 3</span>",mos:"<span class='pill p2'>Should</span>",cap:"₹25k–₹5L advances against escrowed contracts, 48-hour funding",
+ detail:`<h4>Features</h4><ul><li>Underwriting on benchmark index + organiser settlement history + artist gig frequency + streaming trend</li><li>Advance against a signed, escrowed contract — materially safer than royalty-forecast lending</li><li>Automatic recovery from the same settlement rail</li></ul>
+ <h4>Hard requirement</h4><p>NBFC partnership or co-lending structure. Do not lend off the balance sheet. Begin partner conversations six months before launch.</p>
+ <h4>Why it is the moat</h4><p>Nobody switches CRMs. Everybody switches to whoever pays them early.</p>`},
+{name:"Credits &amp; splits registry",ph:"<span class='pill p3'>Phase 3</span>",mos:"<span class='pill p3'>Could</span>",cap:"Splits agreed at session time, auto-executed on payout",
+ detail:`<h4>Features</h4><ul><li>Session-time split agreement between artist, producer, writer, session players</li><li>Verified credits attached to the artist's universal SHOUTOUT ID</li><li>Auto-execution on any payout touching that work</li></ul>
+ <h4>Strategic role</h4><p>This is the entry point into recorded music and publishing, and the true "universal identity" play. It is also the cold-start protocol: once a producer's catalogue lives here, they never re-key it anywhere else.</p>`},
+{name:"A&amp;R signal engine",ph:"<span class='pill p3'>Phase 3</span>",mos:"<span class='pill p3'>Could</span>",cap:"Weekly scored feed + tour demand heatmap, sold by seat",
+ detail:`<h4>Features</h4><ul><li>Weekly ranked feed combining streaming velocity, short-form breakout, league results, gig sell-through, regional fan density</li><li>Tour demand heatmap — routing recommendations from real listener geography</li><li>Alerting on breakout thresholds</li></ul>
+ <h4>Economics</h4><p>Highest-margin line in the stack. Zero marginal cost — it is a byproduct of transactions already processed.</p>`},
+{name:"Sync catalog",ph:"<span class='pill p3'>Phase 3</span>",mos:"<span class='pill p3'>Could</span>",cap:"Pre-cleared catalog, one-click licence, auto-split payment",
+ detail:`<h4>Features</h4><ul><li>Curated catalog tagged by BPM, key, mood, genre from the audio pipeline</li><li>Usage tiers with territory and duration</li><li>Splits already registered, so licence payment distributes automatically</li><li>AI-assisted stem variants cut to 6s / 15s / 30s ad lengths</li></ul>`},
+{name:"LINER media engine",ph:"<span class='pill p1'>Phase 1</span>",mos:"<span class='pill p2'>Should</span>",cap:"Lyric transcription → annotation → vertical video publish",
+ detail:`<h4>Features</h4><ul><li>Multi-language transcription including code-switched Hindi, Punjabi, Tamil, Malayalam</li><li>Annotation drafting with human edit before publish</li><li>Vertical video template pipeline</li></ul>
+ <h4>Role</h4><p>Distribution asset, not a revenue line. It earns artist trust so managers arrive inbound instead of being cold-pitched.</p>`}
+];
+buildTable('module-tb',MODULES,r=>`<td>${r.name}</td><td>${r.ph}</td><td>${r.mos}</td><td>${r.cap}</td>`,'Module spec');
+
+/* ---------- CH05 FLOW ---------- */
+const FLOWS=[
+{name:"1. Brief intake",actor:"Organiser",sys:"Parse date, city, budget, genre, crowd size",trig:"Brief created → match job queued",
+ detail:`<h4>Detail</h4><p>Three entry paths: web form, forwarded WhatsApp message, or PDF upload. The last two are auto-parsed into structured fields — because that is how briefs actually arrive in this industry.</p><h4>Edge cases</h4><ul><li>Budget absent → infer band from crowd size and city, flag as inferred</li><li>Date range rather than fixed date → create a multi-date brief and check availability across all</li><li>Multi-artist brief (a lineup) → split into child briefs</li></ul><h4>Acceptance</h4><p>Parse accuracy above 90% on the five core fields, measured against human review on a rolling sample.</p>`},
+{name:"2. Match &amp; rank",actor:"System",sys:"Score and rank available artists, descending",trig:"Shortlist ready → notify organiser",
+ detail:`<h4>Scoring</h4><p><code>score = genre_fit × city_fan_density × fee_band_fit × availability × organiser_reliability</code></p><p>Semantic genre matching via embeddings so "chill house" matches an artist tagged "deep house / downtempo." Availability checked live against the holds ledger — never surface an artist who is already held on that date.</p><h4>Acceptance</h4><p>Shortlist open rate above 75%. If organisers are not opening it, the scoring is wrong and everything downstream fails.</p>`},
+{name:"3. Auto-quote",actor:"Manager",sys:"Generate priced proposal from index percentiles",trig:"Quote sent → 72h follow-up scheduled",
+ detail:`<h4>Detail</h4><p>Pulls p25/p50/p75 for that genre × city × slot × crowd band from the benchmark index, attaches the EPK, and drafts the proposal. The manager edits or sends in one tap.</p><h4>Critical rule</h4><p>The system never invents a price. If the index cell has n&lt;5, show "insufficient data" and let the manager price manually — that manual price then feeds the index.</p>`},
+{name:"4. Hold placed",actor:"Organiser",sys:"Enter holds ledger with mandatory expiry",trig:"Expiry job scheduled; challenge window armed",
+ detail:`<h4>State rules</h4><p>Every hold carries a release deadline. Priority ladder: hold 1 has right of first refusal. When a second party wants the date, hold 1 is challenged and has 48 hours to confirm or drop.</p><h4>Why this is the network effect</h4><p>Promoters join SHOUTOUT to stop losing dates. Once they are in, their bookings flow onto the rail — a two-sided marketplace acquired through a single-sided utility.</p><h4>Acceptance</h4><p>Auto-release reliability 99.99%. A missed release causes a double-booking, which is a reputational event for the manager, not merely a bug.</p>`},
+{name:"5. Contract &amp; eSign",actor:"Both",sys:"Generate, stamp, countersign",trig:"Signed → advance invoice raised",
+ detail:`<h4>Detail</h4><p>Template plus rider annexure. Aadhaar eSign, per-state stamping. Both parties countersign — no more one-sided PDFs and voice notes.</p><h4>Compliance</h4><p>TDS 194J and GST computed and displayed <em>before</em> signature. Surprising an artist with deductions after the fact destroys trust in one transaction.</p>`},
+{name:"6. Advance to escrow",actor:"Organiser",sys:"Funds held at PA with release condition",trig:"Advance received → artist notified, rider unlocked",
+ detail:`<h4>Legal structure</h4><p>SHOUTOUT does not hold funds. A licensed payment aggregator's split-settlement product holds them with a release condition. The nodal account is the PA's.</p><h4>Product implication</h4><p>Build the settlement layer provider-agnostic from day one so you can switch PA or add one per market at Wave 1 without a rewrite.</p>`},
+{name:"7. Rider confirm",actor:"Both",sys:"Checklist confirmed pre-load-in",trig:"T-7 and T-2 reminders fire",
+ detail:`<h4>Detail</h4><p>Backline, travel, hotel, soundcheck time, hospitality. Both sides tick off. Day-of disputes are routine in this industry and the artist absorbs the cost — a confirmed checklist with a timestamp ends that.</p>`},
+{name:"8. Performed",actor:"Organiser",sys:"Confirm performance; release condition met",trig:"Settlement job queued",
+ detail:`<h4>Detail</h4><p>Organiser confirms; artist counter-confirms. Dispute path available for either side within 48 hours, which freezes settlement pending review rather than blocking it indefinitely.</p>`},
+{name:"9. Settle &amp; split",actor:"System",sys:"Compute splits, deduct TDS/GST, release",trig:"Payouts initiated; UTRs tracked",
+ detail:`<h4>The rule that cannot bend</h4><p>Settlement cannot enter <code>settled</code> until every split — manager, agency, sidemen, artist — reconciles to zero. Sidemen get paid on the same rail, at the same time, which is the single most morally and commercially important design decision in the product.</p><h4>SLA</h4><p>T+2 business days from performance confirm, above 97%.</p>`},
+{name:"10. Index &amp; re-book",actor:"System",sys:"Write fee to benchmark index; schedule re-book",trig:"T+11 months → re-book sequence",
+ detail:`<h4>Detail</h4><p>The settled fee enters the benchmark index after anomaly review. Both sides rate each other; organiser settlement reliability updates.</p><h4>Re-book</h4><p>Most gigs are annual — weddings, college fests, corporate offsites, festival editions. A T+11-month sequence to both sides converts a one-time transaction into a recurring one and is the cheapest GMV in the model.</p>`}
+];
+buildTable('flow-tb',FLOWS,r=>`<td>${r.name}</td><td>${r.actor}</td><td>${r.sys}</td><td>${r.trig}</td>`,'Flow step');
+
+/* ---------- CH08 STACK ---------- */
+const STACK=[
+{name:"Frontend",choice:"Next.js 15 App Router · TypeScript · Tailwind · shadcn/ui · Vercel",why:"Already your deployment surface; ISR gives SEO-indexable public artist profiles for free",
+ detail:`<h4>Config</h4><ul><li>Route groups per role: <code>/app/(artist)</code>, <code>/app/(manager)</code>, <code>/app/(organiser)</code></li><li>ISR on public artist profiles and EPKs — these are your SEO surface and your inbound engine</li><li>Edge middleware for role routing and tenant resolution</li><li>Mobile-first breakpoints; target LCP under 2.5s on 4G</li></ul>`},
+{name:"Database",choice:"Supabase Postgres + pgvector + RLS",why:"One system for relational data, vector search, auth and storage; RLS is the multi-tenancy answer",
+ detail:`<h4>Config</h4><ul><li><code>org_id</code> on every table; RLS policies written in the first migration, never retrofitted</li><li>pgvector for artist ↔ brief semantic matching</li><li><code>pg_cron</code> for hold expiry and nightly index refresh</li><li><code>benchmark_index</code> as a materialised view with n≥5 minimum cell size</li><li>Read replica for Metabase so BI never touches the transactional path</li></ul>
+ <h4>Gotcha</h4><p>Write RLS tests as part of CI. Competing managers share this database; a policy regression is an existential bug, not a P2.</p>`},
+{name:"Auth",choice:"Supabase Auth · phone OTP primary · Google OAuth secondary",why:"India is phone-first; passwords add friction at the audition funnel where volume matters most",
+ detail:`<h4>Config</h4><ul><li>Phone OTP as the default path — audition entry must not require a password</li><li>PKCE with server-side code exchange in a route handler, never client-side</li><li>Tenant resolution on session, not on client-supplied parameters</li></ul>
+ <h4>Blocker to close first</h4><p>The existing Kolab shell has incomplete server-side OAuth code exchange and CSP conflicts. Both are security-critical and must be closed before multi-tenant work begins.</p>`},
+{name:"Workflow engine",choice:"Inngest",why:"This is the LifeCycle-OS trigger layer, productised — durable, replayable, sleep-until steps",
+ detail:`<h4>Config</h4><p>Every lifecycle sequence is a function with <code>step.sleepUntil</code>. Handles: hold expiry, payout SLA escalation, T+11-month re-book, rejection-to-onboarding, profile-completion nudges, brief-with-no-shortlist-opened at 48h.</p>
+ <h4>Why not cron</h4><p>These are long-lived, stateful, human-in-the-loop workflows spanning months. Durable execution with replay is the correct primitive.</p>`},
+{name:"Messaging",choice:"WhatsApp Business Cloud API via BSP · transactional email secondary",why:"WhatsApp is the market's primary rail; email is a fallback in India",
+ detail:`<h4>Config</h4><ul><li>Template pre-approval carries a 2–3 week lead time — <strong>submit in week 1</strong>, it is the critical path</li><li>Write templates for: hold expiring, quote sent, contract ready, advance received, rider confirm, payout sent, audition result</li><li>Per-message pricing — model it into unit economics, not as fixed overhead</li></ul>`},
+{name:"Payments &amp; settlement",choice:"Licensed PA split-settlement product with hold period",why:"You cannot legally hold customer funds; the PA's nodal account can",
+ detail:`<h4>Legal structure</h4><p>Under RBI payment-aggregator rules SHOUTOUT cannot hold customer funds. Use a licensed PA's split-settlement product with hold periods — functionally escrow, legally the PA's.</p>
+ <h4>Config</h4><ul><li>Abstract the settlement layer behind an interface from day one — you will add a PA per market at Wave 1</li><li>Penny-drop bank verification and PAN verification on every payee</li><li>TDS 194J computed at settlement, shown pre-signature</li><li>Double-entry ledger internally regardless of what the PA reports</li></ul>`},
+{name:"Video pipeline",choice:"Direct-to-R2 upload · managed transcode &amp; playback",why:"Audition volume is bursty and egress-heavy; object storage with cheap egress plus managed transcode is the right split",
+ detail:`<h4>Config</h4><ul><li>Signed direct upload from the phone — never proxy video through your API</li><li>Masters to R2 for cheap egress; transcode and playback via a managed service</li><li>Frame-sample quality gate before the human review queue</li><li>Hard cap at 90 seconds per submission — enforced client and server side</li></ul>`},
+{name:"AI serving",choice:"Anthropic API · queued through Inngest · prompt caching",why:"Reasoning quality on scoring and parsing is the differentiator; cost control comes from routing, not from a cheaper model everywhere",
+ detail:`<h4>Routing</h4><p>Sonnet for high-volume parsing, quoting and copy generation. Opus for low-volume reasoning: audition scoring rationale and benchmark anomaly review. Never call a model synchronously in a user-facing request path — queue it and stream the result.</p>
+ <h4>Guardrails</h4><ul><li>Schema-validate every structured output; reject and retry rather than persisting malformed data</li><li>Model output on scoring is advisory only — a human confirms before anything is final</li><li>Cache prompts aggressively; the benchmark and EPK prompts are highly repetitive</li></ul>`},
+{name:"Analytics &amp; BI",choice:"PostHog for product · Metabase on read replica for BI",why:"Product events and financial reporting are different jobs; do not force one tool to do both",
+ detail:`<h4>Config</h4><p>PostHog for funnels, session replay and the rejection-to-onboarding conversion metric. Metabase on a Postgres read replica for GMV, settlement SLA, index coverage and cohort revenue.</p>`},
+{name:"HITL admin",choice:"Internal admin routes (shadcn) or Retool",why:"Mirrors the existing LifeCycle-OS human-in-the-loop asset review pattern",
+ detail:`<h4>Queues</h4><ul><li>Audition review — target 250+ reviews/hour/reviewer</li><li>Asset approval for generated EPKs and campaign creative</li><li>Benchmark anomaly review before a fee enters the index</li><li>Dispute resolution on settlements</li></ul>`},
+{name:"Observability",choice:"Sentry · Vercel Analytics · structured logs",why:"Money movement needs an immutable audit trail separate from application logging",
+ detail:`<h4>Config</h4><p>Immutable audit log on contracts, holds and settlements — append-only, never updated. Alert on: hold-expiry job failure, settlement reconciliation mismatch, payout failure, WhatsApp template delivery below 97%.</p>`},
+{name:"eSign &amp; KYC",choice:"Aadhaar eSign provider · penny-drop · PAN verification",why:"Contracts must be stamped per state; payees must be verified before money moves",
+ detail:`<h4>Config</h4><p>Per-state stamping handled by the eSign provider. Penny-drop bank verification and PAN check on every payee before first payout. Cost ₹25–60 per document — model into unit economics.</p>`}
+];
+buildTable('stack-tb',STACK,r=>`<td>${r.name}</td><td>${r.choice}</td><td>${r.why}</td>`,'Stack layer');
+
+/* ---------- CH10 DECK ---------- */
+const DECK=[
+{name:"01 — Title",head:"SHOUTOUT — the operating system for the music economy",
+ detail:`<h4>On slide</h4><p>Logotype. One line: "The back office every working musician deserves." Your name, role, date, contact. Nothing else.</p><h4>Say</h4><p>Open with the hook, not the company: "India's live music market grew to ₹13,000 crore. Almost none of that money reaches artists on time."</p>`},
+{name:"02 — The moment",head:"The money arrived before the infrastructure",
+ detail:`<h4>On slide</h4><ul><li>India organised live events ≈ ₹13,000 cr ($1.53B), ~19% CAGR (EY-Parthenon/BookMyShow, Mar 2026)</li><li>Non-Bollywood concerts outdrawing Bollywood by ~40% in metros</li><li>Government targeting a top-5 global live entertainment position by 2030</li></ul><h4>Point</h4><p>This is not a market you have to create. It is a market that has already arrived without plumbing.</p>`},
+{name:"03 — The broken thing",head:"Seven steps from enquiry to payment. Money leaks at five.",
+ detail:`<h4>On slide</h4><p>The gig lifecycle as it exists today: inbound DM → gut quote → verbal hold → voice-note contract → partial advance → verbal rider → payment in 30–90 days, or never. Mark the five leak points in red.</p><h4>Data</h4><p>Artists report fees delayed, part-paid or never paid. 100k monthly Spotify listeners ≈ ₹1L/month before distributor cuts. Sidemen are paid last, least, sometimes not at all.</p>`},
+{name:"04 — Who we build for",head:"The manager, not the artist",
+ detail:`<h4>On slide</h4><p>Artists don't book gigs. The person with the WhatsApp thread does. Managers carry 3–15 artists on chat, Sheets and Gmail — no pipeline, no calendar, no settlement tracking, no commission reconciliation.</p><h4>Why this slide wins the room</h4><p>Every competitor builds for the artist. Naming a different buyer is the first proof you have actually looked at this market.</p>`},
+{name:"05 — Product",head:"One rail: book, contract, get paid, own the audience",
+ detail:`<h4>On slide</h4><p>The four layers — Demand, Identity, Money, Growth — with the seven lines mapped onto them. One clean product screenshot of the holds calendar. Resist showing every module.</p>`},
+{name:"06 — The wedge",head:"Escrow, because payment certainty is the pain",
+ detail:`<h4>On slide</h4><p>Discovery is not the bottleneck. Trust is. Money held, released on performance, split automatically to manager, agency, sidemen and artist.</p><h4>Say</h4><p>"We are not selling discovery. We are selling the certainty that the money arrives."</p>`},
+{name:"07 — The unfair funnel",head:"We run the show that acquires the market",
+ detail:`<h4>On slide</h4><p>A talent season pulls tens of thousands of entries and signs about fifteen. The other 99.9% are the most qualified artist leads in the country — and every existing format throws them away.</p><h4>The number</h4><p><strong>45,000 submissions → 27,000 activated profiles at ₹40 ($0.47) CAC.</strong> No competitor can match this, because none of them run the show.</p>`},
+{name:"08 — Market",head:"₹35,370 cr ($4.16B) of Indian artist fees. $52.9B globally.",
+ detail:`<h4>On slide</h4><p>The TAM build-up with the arithmetic visible — weddings ₹15,120cr, organised live ₹4,550cr, temple/folk ₹6,000cr, corporate ₹4,000cr, government ₹2,500cr, clubs ₹2,000cr, college ₹1,200cr. Then SAM ₹7,781cr, SOM ₹272cr.</p><h4>Why show the arithmetic</h4><p>Every founder shows a TAM. Almost none show how they got there. Showing the formula is the credibility move.</p>`},
+{name:"09 — Business model",head:"Seven lines, one rail, 71% contribution per booking",
+ detail:`<h4>On slide</h4><p>Revenue lines sorted descending with Y5 figures. Unit economics: ₹1.5L average gig → ₹15,000 revenue → ₹10,680 contribution.</p>`},
+{name:"10 — The compounding asset",head:"Nobody in this market has a price index. We build one by existing.",
+ detail:`<h4>On slide</h4><p>Every settled booking writes a row. Fee percentiles by genre × city × slot × crowd band × season. It prices quotes, prices sponsorships, and underwrites advances.</p><h4>Say</h4><p>"It cannot be bought. It can only be accumulated. That is the moat."</p>`},
+{name:"11 — Financing",head:"Nobody switches CRMs. Everybody switches to whoever pays them early.",
+ detail:`<h4>On slide</h4><p>₹25k–₹5L in 48 hours against a signed, escrowed contract, recovered from the same rail. Only SHOUTOUT can underwrite it, because only SHOUTOUT holds the streaming data, the contract and the fan list together.</p><h4>Caveat to state proactively</h4><p>NBFC co-lending partner, not balance-sheet lending. Investors will ask; answer before they do.</p>`},
+{name:"12 — Competition",head:"Everyone monetises the artist's attention. Nobody works for the artist.",
+ detail:`<h4>On slide</h4><p>2×2: horizontal = artist-side vs platform-side; vertical = transaction rail vs attention only. Distributors, streaming, ticketing and social all cluster in one quadrant. SHOUTOUT sits alone in the other.</p>`},
+{name:"13 — Traction &amp; plan",head:"90 days: one city, one season, 25 bookings by hand",
+ detail:`<h4>On slide</h4><p>The 90-day plan as a timeline with gates. Emphasise the concierge phase: 25 bookings brokered manually before a line of booking code is written.</p><h4>Why investors like this</h4><p>It shows you know the schema comes from the market, not from a whiteboard.</p>`},
+{name:"14 — Team",head:"Built by someone who has run this stack",
+ detail:`<h4>On slide</h4><p>Performance marketing, lifecycle and CRM, analytics, and AI-assisted product building — the exact stack Growth OS and the lifecycle engine require, already shipped elsewhere. Name the gaps honestly and the first two hires: a music-industry operator with manager relationships, and a payments engineer.</p>`},
+{name:"15 — Ask",head:"The raise, the milestones, the 18 months it buys",
+ detail:`<h4>On slide</h4><p>Amount, use of funds split across product, show production and market ops, and the three specific milestones it funds: Season 1 shipped, ₹12cr GMV on rail, 300 paying manager orgs. Close on the line: "You don't need a label. You need a back office."</p>`}
+];
+buildTable('deck-tb',DECK,r=>`<td class="num-c" style="text-align:left">${r.name.split(' — ')[0]}</td><td>${r.name.split(' — ')[1]}</td><td>${r.head}</td>`,'Deck slide');
+
+/* ---------- CH11 RISK ---------- */
+const RISKS=[
+{name:"Disintermediation",sev:"<span class='pill p1'>Critical</span>",mit:"Escrow + benchmark data + sidemen splits + financing",
+ detail:`<h4>The risk</h4><p>Manager and organiser match on SHOUTOUT, then transact on WhatsApp to avoid the take rate. This kills marketplaces more often than competition does.</p>
+ <h4>Mitigations — each a product decision</h4><ul><li><strong>Escrow:</strong> going off-rail means giving up payment certainty, which is the thing they came for</li><li><strong>Benchmark index:</strong> leaving means pricing blind again</li><li><strong>Sidemen splits:</strong> off-rail means paying four people manually</li><li><strong>Financing:</strong> off-rail transactions do not build the history that qualifies them for advances</li><li><strong>Re-book automation:</strong> the T+11-month sequence only fires for on-rail bookings</li></ul>
+ <h4>Leading indicator</h4><p>Off-platform leakage rate. Track shortlists opened but never converted to a hold, against organisers who later post the same event publicly. Target below 20%.</p>
+ <h4>Trigger to change strategy</h4><p>Leakage above 35% after month 12 means the take rate is priced above the perceived value of certainty. Response is to cut the rate and move margin to SaaS and financing, not to add enforcement.</p>`},
+{name:"Cash-circuit resistance",sev:"<span class='pill p1'>Critical</span>",mit:"Sequence entry — corporate and festivals first, weddings later",
+ detail:`<h4>The risk</h4><p>Weddings are 43% of TAM and run substantially on cash with opaque broker cuts. Digitising them means asking people to give up both the float and the invisibility.</p>
+ <h4>Mitigation</h4><p>Do not lead with weddings. Enter through the circuits where money is already digital — corporate, festivals, clubs, government. Prove the rail. Then approach the wedding circuit with verification and recourse as the pitch, not price transparency, which is the thing brokers will resist.</p>
+ <h4>Leading indicator</h4><p>Share of GMV from private events. If it stays below 10% by month 24, the wedding thesis needs rebuilding rather than more sales effort.</p>`},
+{name:"Two-sided cold start",sev:"<span class='pill p2'>High</span>",mit:"The show supplies one side for free; the holds ledger pulls the other",
+ detail:`<h4>The risk</h4><p>No artists means no organisers; no organisers means no artists. The classic marketplace deadlock.</p>
+ <h4>Mitigation</h4><p>SHOUTOUT solves the supply side outright — an open call produces tens of thousands of artists before any organiser exists. The holds ledger solves demand: promoters adopt it as a single-sided utility to stop losing dates, and their bookings arrive with them.</p>
+ <h4>Leading indicator</h4><p>Ratio of briefs posted to activated artists. Healthy is 1 brief per 80–120 activated artists in the same city.</p>`},
+{name:"Regulatory — payments &amp; licensing",sev:"<span class='pill p2'>High</span>",mit:"PA partnership, NBFC co-lending, early IPRS/PPL position",
+ detail:`<h4>The risks</h4><ul><li>Holding customer funds without a licence — resolved by using a licensed PA's split-settlement product</li><li>Lending off balance sheet — resolved by NBFC co-lending; start conversations six months early</li><li>Public performance licensing (IPRS/PPL) — establish per booking type whether SHOUTOUT, the organiser or the venue is the licensee. Ambiguity means inherited liability</li><li>DPDP Act — fan consent architecture is a product requirement, not a policy document</li></ul>
+ <h4>Note</h4><p>The government is actively de-regulating live events via single-window clearance and a centralised digital music licensing registry. This is tailwind, but it also means the rules will change during your build. Architect for change.</p>`},
+{name:"Show production capex",sev:"<span class='pill p2'>High</span>",mit:"Clip-first before broadcast; license the format rather than produce it",
+ detail:`<h4>The risk</h4><p>A broadcast season can consume the entire seed round and return nothing if it does not land.</p>
+ <h4>Mitigation</h4><p>Invert the usual order. Film cyphers and battles, publish weekly, prove clip velocity and audition volume, and only then approach OTT or broadcast with a proven format. The audition funnel — the part that actually matters to the business — works at a fraction of broadcast cost.</p>
+ <h4>Discipline</h4><p>Season 1 production budget capped at ₹18L ($21,176). If CAC per activated artist exceeds ₹120, the format is wrong, not underfunded.</p>`},
+{name:"Manager fragmentation",sev:"<span class='pill p3'>Medium</span>",mit:"Serve n=1 orgs as first-class, not as a degraded case",
+ detail:`<h4>The risk</h4><p>Manager OS assumes a manager. Many artists are self-managed, and many "managers" carry one artist. If the product only shines at roster size 5+, most of the market bounces.</p>
+ <h4>Mitigation</h4><p>A self-managed artist is an org with a roster of one and a commission of zero. Same schema, same product, no special-casing. The upgrade path from one artist to five must be invisible.</p>`},
+{name:"Trademark clearance failure",sev:"<span class='pill p3'>Medium</span>",mit:"Pre-cleared fallback name ready before any public use",
+ detail:`<h4>The risk</h4><p>SHOUTOUT fails clearance in Class 36 or 41 after brand investment has begun.</p>
+ <h4>Mitigation</h4><p>Run clearance on CANTO in parallel as the pre-approved fallback. Make no public use of the name — no domain announcement, no social posting, no deck circulation — until the opinion returns.</p>`},
+{name:"Key-person and relationship dependency",sev:"<span class='pill p3'>Medium</span>",mit:"Hire a music-industry operator early; systematise relationships into the graph",
+ detail:`<h4>The risk</h4><p>Early GMV comes from personal relationships. If those live in one person's phone, the business is not transferable and does not scale past one city.</p>
+ <h4>Mitigation</h4><p>Every concierge booking in weeks 7–8 must be recorded in the schema, not in a notebook. First operator hire brings manager relationships; the second city must be opened by someone who was not there for the first.</p>`}
+];
+buildTable('risk-tb',RISKS,r=>`<td>${r.name}</td><td>${r.sev}</td><td>${r.mit}</td>`,'Risk');
+
+
+/* ---------- COLLAB FEATURES ---------- */
+const COLLABF=[
+{name:"Multi-slot Shout",pri:"<span class='pill p1'>P0</span>",what:"One brief, independent role slots, separate terms per slot",
+ detail:`<h4>Spec</h4><p>A Shout carries 1–6 slots. Each slot has its own role, attribute filters, compensation model (flat fee / split points / both / unpaid credit), and deadline. Slots fill independently — a Shout can be half-closed.</p>
+ <h4>Compensation models per slot</h4><ul><li>Flat fee, escrowed</li><li>Split points (writer share, master share, or both — declared separately)</li><li>Hybrid: fee + points</li><li>Credit only — must be explicitly labelled, never the default</li></ul>
+ <h4>Visibility</h4><p>Open · invite-only · roster-only · verified-only. Producers with reputation will want to filter noise; new users need open reach. Both must exist from day one.</p>
+ <h4>Done when</h4><p>A producer can post a Shout with a songwriter slot and a vocalist slot, on different terms, and close each independently without touching the other.</p>`},
+{name:"Attribute-aware match engine",pri:"<span class='pill p1'>P0</span>",what:"Scores per slot on creative attributes, not just genre tags",
+ detail:`<h4>Scoring inputs</h4><p><code>score = role_match × attribute_fit × availability × price_band_fit × reliability × responsiveness</code></p>
+ <p>Attribute fit is where this wins: vocal range against the song's key, language against the lyric language, timbre tags against mood, BPM comfort, turnaround against deadline.</p>
+ <h4>Semantic layer</h4><p>Embeddings over <code>GENERATION_INTENT</code> so "nocturnal, restrained, late-night" matches a vocalist tagged "smoky, low-register, R&amp;B" without either party using the same words.</p>
+ <h4>Done when</h4><p>Shortlist open rate above 70% and answer rate above 25% on open Shouts.</p>`},
+{name:"Split sheet before file transfer",pri:"<span class='pill p1'>P0</span>",what:"No stems released until every slot's split is signed",
+ detail:`<h4>The rule</h4><p>Full-quality stems stay locked until every slot has an agreed, signed split. Watermarked previews only before that point.</p>
+ <h4>What gets captured</h4><ul><li>Writer share and master share, declared separately</li><li>Work-for-hire vs co-write per contributor</li><li>Publisher / PRO affiliation if known</li><li>Territory and term if non-standard</li></ul>
+ <h4>Downstream</h4><p>Writes straight into SHOUTOUT Credits. This is how the registry populates without anyone doing data entry — the single highest-leverage automation in the company.</p>
+ <h4>Done when</h4><p>100% of closed collabs have a signed split sheet. There is no path around it.</p>`},
+{name:"Collab Rooms",pri:"<span class='pill p1'>P0</span>",what:"Project workspace — versions, chat, references, deadline, escrow state",
+ detail:`<h4>Spec</h4><p>Opens on acceptance. Contains: stem versions with history, reference tracks, threaded chat, the split sheet, deadline countdown, escrow state, revision counter against the agreed policy.</p>
+ <h4>Version discipline</h4><p>Every upload is versioned and immutable. Disputes are resolved by version history, which means the Room is also the evidence log.</p>`},
+{name:"Escrowed delivery",pri:"<span class='pill p2'>P1</span>",what:"Funds held, released on accepted delivery, milestone-capable",
+ detail:`<h4>Spec</h4><p>Runs on the same Settle rail as gigs. Fee slots fund on signature; release on delivery acceptance or auto-release after a review window. Milestones for larger jobs (demo → full take → revisions).</p>
+ <h4>Revision policy</h4><p>Declared on the slot before anyone applies. Exceeding it triggers a priced change request, not an argument.</p>`},
+{name:"Watermarked stem exchange",pri:"<span class='pill p2'>P1</span>",what:"Preview-safe sharing before the deal closes",
+ detail:`<h4>Spec</h4><p>Audible watermark on preview streams, no download. Full files unlock on split signature and, for paid slots, on escrow funding. Applies to beats going out and to vocal takes coming back — protection runs both directions.</p>`},
+{name:"Reliability score",pri:"<span class='pill p2'>P1</span>",what:"Per-role trust signal that decays with inactivity",
+ detail:`<h4>Inputs</h4><p>On-time delivery rate, revision adherence, split disputes raised against them, response latency, completion rate on accepted slots.</p>
+ <h4>Design rules</h4><ul><li>Scored per role, not per person — a great producer can be an unreliable mix engineer</li><li>Decays with inactivity so dormant accounts don't hold rank</li><li>New users get a provisional band, not a zero — a cold-start penalty kills supply</li></ul>`},
+{name:"Discovery feed",pri:"<span class='pill p2'>P1</span>",what:"Browse open Shouts and available collaborators by role",
+ detail:`<h4>Spec</h4><p>Two directions: "Shouts you could answer" ranked by fit against your declared roles, and "people who could answer yours." Filterable by role, genre, language, city, remote-vs-in-person, paid-vs-points.</p>
+ <h4>Habit mechanic</h4><p>A daily digest of three high-fit Shouts. This is the retention loop — collaboration is the only module with a genuine daily reason to open the app.</p>`},
+{name:"Demo-to-Shout",pri:"<span class='pill p3'>P2</span>",what:"Voice note or rough audio → structured Shout",
+ detail:`<h4>Spec</h4><p>Upload a hum, a phone voice note, or a rough loop. Audio analysis extracts BPM, key and mood; the semantic engine drafts a <code>GENERATION_INTENT</code>; the user confirms and posts.</p>
+ <h4>Why it matters</h4><p>Lowest-friction entry path in the entire product, and it converts the least articulate users — often the most talented ones — into posters.</p>`},
+{name:"Remote session booking",pri:"<span class='pill p3'>P2</span>",what:"Book studio time or an in-person session player",
+ detail:`<h4>Spec</h4><p>Bridges Collab and Gig. Studio owners list rooms with rates and gear; session players list in-person availability by city. Books through the same holds ledger, settles through the same rail.</p>`},
+{name:"Collab-to-release handoff",pri:"<span class='pill p3'>P2</span>",what:"Finished collab flows into Growth OS and the sync catalog",
+ detail:`<h4>Spec</h4><p>On Room close: credits registered, work created, optional push into the sync catalog with splits pre-registered, and a release campaign scaffolded in Growth OS with every collaborator's audience available for the announce.</p>
+ <h4>Why it closes the loop</h4><p>The collab produced a work; the work has verified splits; the work can now earn — sync, release, live. Nothing else on the market carries a track from "I need a vocalist" to "everyone got paid."</p>`}
+];
+buildTable('collabfeat-tb',COLLABF,r=>`<td>${r.name}</td><td>${r.pri}</td><td>${r.what}</td>`,'Collab feature');
+
+/* ---------- BUILD PRIORITY ---------- */
+const PRIO=[
+{name:"1. Foundation",unb:"Everything",wk:"W1–2",
+ detail:`<h4>Scope</h4><ul><li>New repo, monorepo scaffold, CI, preview deploys</li><li>New Supabase project — migration 001 creates <code>org_id</code> and RLS policies</li><li>Auth: phone OTP primary, server-side PKCE code exchange done correctly</li><li>Design system package</li><li>RLS test suite in CI — non-negotiable</li></ul>
+ <h4>Done when</h4><p>Two test orgs cannot see each other's rows, proven by an automated test that runs on every commit.</p>
+ <h4>Also in scope</h4><p>Stand up <code>apps/workers</code> as a Dockerised FastAPI service using the Third Eye backend pattern — it will host audio analysis, ML inference and transcode hooks from week 7.</p>
+ <h4>Parallel, non-code</h4><p>WhatsApp BSP application and template submission. 2–3 week lead time — this starts on day one or it blocks week 5.</p>`},
+{name:"2. Shout object + match engine",unb:"Collab, gigs, auditions, brand briefs",wk:"W3–5",
+ detail:`<h4>Scope</h4><p>The single highest-leverage build in the company. One polymorphic Shout with typed slots, one scoring engine, one answer model.</p>
+ <ul><li><code>shouts</code>, <code>shout_slots</code>, <code>answers</code> tables</li><li>Port <code>@shoutout/intent</code> from MusicGenAI and use it as the sonic-brief schema</li><li>pgvector embeddings over intent objects</li><li>Scoring function with per-slot independence</li></ul>
+ <h4>Why first</h4><p>Every other module is a specialisation of this object. Build it once, correctly, and gigs, auditions and brand briefs are configuration rather than new systems.</p>`},
+{name:"3. Collab network v1",unb:"Daily active usage with zero cold start",wk:"W5–8",
+ detail:`<h4>Scope</h4><p>Role profiles, multi-slot Shouts, discovery feed, Rooms with versioned stems, split sheets, watermarked previews.</p>
+ <h4>Why before gigs</h4><p>Collaboration needs no organisers, no season, no sales team. Two producers and one vocalist is already a functioning network. It is the cheapest possible proof that the primitive works, and it creates daily habit — gig booking never will.</p>
+ <h4>Done when</h4><p>50 collabs closed with signed split sheets, unprompted.</p>`},
+{name:"4. Studio v1 — merge both assets",unb:"Reference-driven Shouts, better matching, sync variants",wk:"W7–10",
+ detail:`<h4>Scope — this is a merge, not a port</h4>
+ <p><strong>From MusicGenAI / MuseForge Pro (front half):</strong></p>
+ <ul><li><code>@shoutout/intent</code> — the 19-field → GENERATION_INTENT semantic engine</li><li>AI suggest that enhances existing input rather than replacing it</li><li>Web Audio scratch preview for instant iteration before queueing a real job</li><li>Album mode semantic drift</li></ul>
+ <p><strong>From the Third Eye music studio (back half):</strong></p>
+ <ul><li>The nine-stage pipeline, carried over intact and strictly ordered</li><li>BullMQ queue + worker execution — generation must never block a request</li><li>Python ML inference workers, extended with Essentia/librosa for BPM, key and genre</li><li>FFmpeg post-processing, file lifecycle, object storage</li><li>Video worker for Liner and release assets, failing gracefully</li></ul>
+ <h4>The seam</h4><p>Stage 3 of the pipeline is the Music Intent Object — which <em>is</em> GENERATION_INTENT. Both projects were already built around the same object without being connected. That is what makes this merge cheap.</p>
+ <h4>Blocker to clear first</h4><p>Confirm which repo the nine-stage pipeline actually lives in, and whether the Python ML stage is real inference or scaffolded. That answer moves this estimate by weeks in either direction.</p>
+ <h4>Sequencing note</h4><p>Deliberately overlaps Collab. Reference generation makes Shouts dramatically better, so it should land while the first cohort is still forming habits.</p>`},
+{name:"5. Settle rail",unb:"All paid Shouts — collab and gig",wk:"W9–12",
+ detail:`<h4>Scope</h4><p>PA-agnostic settlement package, double-entry ledger, contract eSign, split execution, payout tracking with UTR reconciliation, TDS and GST computation shown pre-signature.</p>
+ <h4>Gate</h4><p>PA agreement signed before build starts. Confirm hold-period mechanics, refund and chargeback flow against the real API, not the docs.</p>
+ <h4>Done when</h4><p>A three-way collab split settles to zero automatically, with every payee's UTR tracked.</p>`},
+{name:"6. Manager OS + gig Shouts",unb:"GMV, the revenue engine",wk:"W10–16",
+ detail:`<h4>Scope</h4><p>Roster pipeline, holds ledger with auto-expiry, quote generator, gig-type Shouts reusing the existing match engine, rider checklists, commission splits.</p>
+ <h4>Prerequisite</h4><p>The 25 concierge bookings brokered by hand in weeks 7–8. Those deals define the schema and seed the benchmark index. Do not build this before doing that.</p>`},
+{name:"7. Stage — season 1 + audition engine",unb:"Artist acquisition at scale",wk:"W12–20",
+ detail:`<h4>Scope</h4><p>Open-call pages, phone-OTP video intake, auto-scoring, HITL review queue, genre brackets, and the rejection-to-onboarding sequence.</p>
+ <h4>The number that matters</h4><p>Rejection → profile completion above 60%. Everything else about the season is secondary to this one conversion.</p>
+ <h4>Budget discipline</h4><p>Cap season 1 at ₹18L ($21,176). Clip-first, not broadcast-first. If CAC per activated artist exceeds ₹120, the format is wrong — not underfunded.</p>`},
+{name:"8. Credits registry",unb:"Publishing entry, sync, universal identity",wk:"W16–22",
+ detail:`<h4>Scope</h4><p>Works, contributors, verified credits attached to SHOUTOUT IDs. Populated automatically by every collab split sheet — no separate data entry.</p>
+ <h4>Why it can wait until here</h4><p>It needs volume to be worth anything. Ship Collab first, let split sheets accumulate for three months, then surface the registry that was quietly building itself.</p>`},
+{name:"9. Circle — fan CRM",unb:"Retention moat, sponsorship measurement",wk:"W20–26",
+ detail:`<h4>Scope</h4><p>QR capture at gigs, consent to the artist, segmentation, superfan tiers, drops and presales.</p>
+ <h4>Consent architecture</h4><p>Fans consent to the artist; SHOUTOUT is the processor. Full export available at any time — the promise is ownership, so exit must be frictionless.</p>`},
+{name:"10. Growth OS + sync catalog",unb:"Release monetisation",wk:"W24–32",
+ detail:`<h4>Scope</h4><p>Release campaigns, pre-save pages, city-targeted audiences built from Circle, playlist and save-rate dashboards. Sync catalog with pre-registered splits and Studio-generated ad-length variants.</p>
+ <h4>Note</h4><p>Fastest module to ship well — this is the founder's existing performance-marketing and lifecycle stack repointed at a new customer.</p>`},
+{name:"11. Advance + A&R data",unb:"The moat and the margin",wk:"M8–M18",
+ detail:`<h4>Scope</h4><p>Underwriting on benchmark index, settlement history and gig frequency. A&amp;R signal feed and tour demand heatmap sold by seat.</p>
+ <h4>Prerequisite</h4><p>NBFC co-lending agreement — begin conversations six months before build. Benchmark index must cover 8 genres × 12 cities at n≥5 before underwriting anything.</p>`}
+];
+buildTable('prio-tb',PRIO,r=>`<td class="num-c" style="text-align:left">${r.name.split('. ')[0]}</td><td>${r.name.split('. ')[1]}</td><td>${r.unb}</td><td class="num-c">${r.wk}</td>`,'Build item');
+
+/* ---------- OBSERVE ---------- */
+SECTIONS.forEach(s=>{const el=document.getElementById(s[0]);if(el)obs.observe(el);});
+
+
+
+/* ---------- RESPONSIVE TABLES ---------- */
+function prepTables(){
+  document.querySelectorAll('.tw').forEach(wrap=>{
+    const t=wrap.querySelector('table');
+    if(!t||t.dataset.prepped)return;
+    t.dataset.prepped='1';
+    // tables using rowspan can't become cards — keep them scrollable with a hint
+    if(t.querySelector('[rowspan]')){
+      wrap.classList.add('scrollable');
+      const h=document.createElement('p');
+      h.className='scrollhint';
+      h.textContent='← swipe to see all columns';
+      wrap.insertAdjacentElement('afterend',h);
+      return;
+    }
+    const heads=[...t.querySelectorAll('thead th')].map(h=>h.textContent.trim());
+    t.querySelectorAll('tbody tr').forEach(r=>{
+      [...r.children].forEach((c,i)=>{ if(heads[i]) c.setAttribute('data-label',heads[i]); });
+    });
+    t.classList.add('cards');
+  });
+}
+prepTables();
+
+/* ---------- DRAWER: lock background scroll, prep nested tables ---------- */
+const _open=openDrawer;
+openDrawer=function(k,t,h){
+  _open(k,t,h);
+  document.body.style.overflow='hidden';
+};
+const _close=closeDrawer;
+closeDrawer=function(){
+  _close();
+  document.body.style.overflow='';
+};
+document.getElementById('dr-close').onclick=closeDrawer;
+scrim.onclick=closeDrawer;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drawer.classList.contains('on'))closeDrawer();});
+
+/* ---------- MOBILE: keep active chapter chip in view ---------- */
+const chansEl=document.getElementById('chans');
+function centerChip(){
+  if(window.innerWidth>900)return;
+  const on=chansEl.querySelector('.chan.on');
+  if(!on)return;
+  const target=on.offsetLeft-(chansEl.clientWidth/2)+(on.offsetWidth/2);
+  chansEl.scrollTo({left:Math.max(0,target),behavior:'smooth'});
+}
+let chipTimer;
+const chipObs=new MutationObserver(()=>{clearTimeout(chipTimer);chipTimer=setTimeout(centerChip,120);});
+chansEl.querySelectorAll('.chan').forEach(c=>chipObs.observe(c,{attributes:true,attributeFilter:['class']}));
+
+
+
+/* ---------- OVERFLOW AFFORDANCES (measure, don't assume) ---------- */
+function measureOverflow(){
+  document.querySelectorAll('.tw.scrollable').forEach(w=>{
+    w.classList.toggle('is-over', w.scrollWidth > w.clientWidth + 4);
+  });
+  document.querySelectorAll('.fx').forEach(f=>{
+    let hint=f.nextElementSibling;
+    if(!hint||!hint.classList.contains('fxhint')){
+      hint=document.createElement('p');
+      hint.className='fxhint';
+      hint.textContent='← swipe to read the full line';
+      f.insertAdjacentElement('afterend',hint);
+    }
+    hint.classList.toggle('on', f.scrollWidth > f.clientWidth + 4);
+  });
+}
+measureOverflow();
+window.addEventListener('resize',()=>{clearTimeout(window._ovT);window._ovT=setTimeout(measureOverflow,150);});
+window.addEventListener('load',measureOverflow);
+
+</script>
+</body>
+</html>

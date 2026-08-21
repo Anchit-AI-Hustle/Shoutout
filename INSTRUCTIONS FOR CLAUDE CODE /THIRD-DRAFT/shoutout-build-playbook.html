@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1A1E22">
+<title>SHOUTOUT — Build Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --desk:#1A1E22;--desk-2:#23282D;--panel:#E2DED3;--panel-2:#D5D0C3;
+  --ink:#15181B;--ink-soft:#4E5259;--neve:#14456F;--api:#C1272D;--led:#E8B33A;
+  --line:#B6B0A1;--ok:#3E6B47;--rail-w:236px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--panel);color:var(--ink);font-family:'Archivo',system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.rail{position:fixed;top:0;left:0;bottom:0;width:var(--rail-w);background:var(--desk);color:var(--panel);display:flex;flex-direction:column;z-index:60;border-right:3px solid var(--api)}
+.rail-head{padding:20px 18px 14px;border-bottom:1px solid #33383E}
+.rail-mark{font-family:'Archivo Black',sans-serif;font-size:19px;letter-spacing:.1em;line-height:1}
+.rail-sub{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;color:#8D949C;margin-top:7px;text-transform:uppercase}
+.chans{flex:1;overflow-y:auto;padding:10px 0 24px}
+.chan{display:flex;align-items:center;gap:10px;width:100%;padding:9px 16px;background:none;border:0;cursor:pointer;color:#A9B0B8;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;transition:background .15s,color .15s;border-left:3px solid transparent}
+.chan:hover{background:#2A3037;color:var(--panel)}
+.chan .led{width:7px;height:7px;border-radius:50%;background:#3E454C;flex:none;transition:background .2s,box-shadow .2s}
+.chan .num{color:#5E666E;font-size:10px;width:16px;flex:none}
+.chan.on{background:#2E353C;color:#fff;border-left-color:var(--led)}
+.chan.on .led{background:var(--led);box-shadow:0 0 8px var(--led)}
+.chan.on .num{color:var(--led)}
+.rail-foot{padding:12px 16px;border-top:1px solid #33383E;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6E767E;letter-spacing:.08em}
+
+main{margin-left:var(--rail-w);max-width:1080px;padding:0 clamp(28px,5vw,64px) 120px}
+section{padding:52px 0;border-bottom:1px solid var(--line)}
+.hero{padding:60px 0 44px;border-bottom:3px solid var(--ink)}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--api);font-weight:600}
+.hero h1{font-family:'Archivo Black',sans-serif;font-size:clamp(40px,7vw,74px);line-height:.92;letter-spacing:-.02em;margin:14px 0 0}
+.hero .rule{height:6px;background:var(--ink);margin:20px 0 16px;position:relative}
+.hero .rule::after{content:"";position:absolute;left:0;top:0;height:6px;width:34%;background:var(--api)}
+.hero .thesis{font-size:18px;line-height:1.45;max-width:640px;font-weight:500}
+.meters{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);margin-top:30px;border:1px solid var(--line)}
+.meter{background:var(--panel-2);padding:13px}
+.meter .lbl{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft)}
+.meter .val{font-family:'Archivo Black',sans-serif;font-size:25px;line-height:1.05;margin-top:5px}
+
+.shead{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+.shead .ch{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--api);letter-spacing:.16em;font-weight:600}
+.shead .win{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);letter-spacing:.1em;margin-left:auto}
+h2{font-family:'Archivo Black',sans-serif;font-size:clamp(24px,3.2vw,34px);letter-spacing:-.01em;line-height:1.05}
+.sdek{color:var(--ink-soft);max-width:660px;margin-top:8px;font-size:15px}
+.pcount{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--api);margin:18px 0 4px}
+p{margin:10px 0;max-width:760px}
+
+.callout{border:1px solid var(--ink);border-left:5px solid var(--neve);background:#EAE7DE;padding:14px 16px;margin:18px 0}
+.callout .k{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--neve);font-weight:600;display:block;margin-bottom:5px}
+.callout.warn{border-left-color:var(--api)}
+.callout.warn .k{color:var(--api)}
+
+.tw{overflow-x:auto;margin:16px 0;border:1px solid var(--ink);position:relative}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:#EAE7DE;min-width:520px}
+th{background:var(--desk);color:var(--panel);text-align:left;padding:9px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:500}
+td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top;word-break:break-word}
+tbody tr:nth-child(even){background:#E4E0D6}
+tr.clickable{cursor:pointer}
+tr.clickable:hover{background:#DAD3C0}
+tr.clickable:focus-visible{outline:2px solid var(--api);outline-offset:-2px}
+td:first-child{font-family:'IBM Plex Mono',monospace;font-weight:600}
+
+.pill{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:2px 7px;border:1px solid var(--ink);background:var(--panel-2);white-space:nowrap}
+.v-keep{background:var(--ok);color:#fff;border-color:var(--ok)}
+.v-adapt{background:var(--led);border-color:#A8802A}
+.v-replace{background:var(--api);color:#fff;border-color:var(--api)}
+.v-skip{background:#9A958A;color:#fff;border-color:#7E7A70}
+
+.prompt{border:1px solid var(--ink);background:#EAE7DE;margin:14px 0}
+.p-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:11px 14px;background:var(--panel-2);border-bottom:1px solid var(--line)}
+.p-head > div{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap;min-width:0}
+.p-id{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--api);letter-spacing:.1em;flex:none}
+.p-head h4{font-family:'Archivo',sans-serif;font-weight:700;font-size:15.5px;letter-spacing:.01em}
+.copy{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:7px 12px;min-height:36px;background:var(--desk);color:var(--panel);border:0;cursor:pointer;flex:none}
+.copy:hover{background:var(--api)}
+.copy.done{background:var(--ok)}
+.copy:focus-visible{outline:2px solid var(--api);outline-offset:2px}
+.p-body{font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.7;padding:14px;white-space:pre-wrap;overflow-x:auto;color:#22262A;tab-size:2}
+
+.scrim{position:fixed;inset:0;background:rgba(21,24,27,.55);opacity:0;pointer-events:none;transition:opacity .2s;z-index:80}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100%);background:var(--panel);border-left:4px solid var(--api);transform:translateX(102%);transition:transform .26s cubic-bezier(.4,0,.2,1);z-index:90;display:flex;flex-direction:column}
+.drawer.on{transform:translateX(0)}
+.dr-head{background:var(--desk);color:var(--panel);padding:18px 22px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.dr-head h3{font-family:'Archivo Black',sans-serif;font-size:18px;color:#fff}
+.dr-head .k{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.15em;color:var(--led);text-transform:uppercase;display:block;margin-bottom:5px}
+.dr-close{background:none;border:1px solid #565D65;color:var(--panel);font-size:17px;line-height:1;padding:8px 12px;cursor:pointer;flex:none;min-width:44px;min-height:44px}
+.dr-close:hover{background:var(--api);border-color:var(--api)}
+.dr-body{padding:20px 22px 60px;overflow-y:auto;flex:1;font-size:15px}
+
+@media (min-width:1500px){main{padding-inline:clamp(40px,6vw,110px);max-width:1240px}}
+@media (max-width:1100px){:root{--rail-w:200px}.chan{font-size:10.5px;padding:9px 12px}}
+@media (max-width:900px){
+  :root{--rail-w:0px}
+  .rail{position:sticky;top:0;bottom:auto;width:100%;height:auto;flex-direction:column;border-right:0;border-bottom:3px solid var(--api);padding-top:env(safe-area-inset-top)}
+  .rail-head{display:flex;align-items:baseline;gap:10px;padding:11px 16px 9px}
+  .rail-mark{font-size:15px;letter-spacing:.16em}
+  .rail-sub{margin-top:0;font-size:8.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chans{display:flex;flex-wrap:nowrap;overflow-x:auto;padding:0;scroll-snap-type:x proximity;scrollbar-width:none}
+  .chans::-webkit-scrollbar{display:none}
+  .chan{width:auto;flex:0 0 auto;border-left:0;border-bottom:3px solid transparent;padding:11px 14px;min-height:44px;white-space:nowrap;scroll-snap-align:center}
+  .chan.on{border-left:0;border-bottom-color:var(--led)}
+  .chan .num{display:none}
+  .rail-foot{display:none}
+  main{margin-left:0;padding:0 18px 80px}
+  section{padding:36px 0;scroll-margin-top:96px}
+  .hero{padding:32px 0;scroll-margin-top:96px}
+  h2{font-size:24px}
+  .shead .win{margin-left:0;width:100%}
+  .meters{grid-template-columns:repeat(2,1fr)}
+  /* preserve column alignment; swipe rather than mangle the wrap */
+  .p-body{font-size:11px;line-height:1.7;padding:12px;white-space:pre;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .p-body::-webkit-scrollbar{height:5px}
+  .p-body::-webkit-scrollbar-thumb{background:#B6B0A1;border-radius:3px}
+  .p-head{padding:10px 12px;align-items:center}
+  .p-head h4{font-size:14.5px}
+  .copy{padding:8px 11px;font-size:10px}
+}
+@media (max-width:760px){
+  .tw{border:0;overflow:visible}
+  table{min-width:0;display:block;background:none}
+  thead{display:none}
+  tbody{display:block}
+  tbody tr{display:block;background:#EAE7DE;border:1px solid var(--line);border-left:3px solid var(--api);padding:12px 14px;margin-bottom:9px}
+  tbody tr:nth-child(even){background:#EAE7DE}
+  td{display:block;border:0;padding:5px 0}
+  td::before{content:attr(data-label);display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:3px}
+  td:first-child{font-size:15px;padding-top:0}
+  td:first-child::before{display:none}
+  .note-cell{display:none}
+  .drawer{width:100%;border-left:0;border-top:4px solid var(--api);padding-top:env(safe-area-inset-top)}
+  .dr-head{padding:15px 17px;position:sticky;top:0;z-index:2}
+  .dr-body{padding:17px 17px calc(70px + env(safe-area-inset-bottom))}
+}
+@media (max-width:400px){main{padding:0 14px 70px}.meters{grid-template-columns:1fr}.p-body{font-size:10.5px}}
+a:focus-visible,button:focus-visible,tr:focus-visible{outline:2px solid var(--api);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<nav class="rail" aria-label="Playbook sections">
+  <div class="rail-head"><div class="rail-mark">SHOUTOUT</div><div class="rail-sub">Build Playbook · v1.0</div></div>
+  <div class="chans" id="chans"></div>
+  <div class="rail-foot">Tap Copy · paste into your IDE</div>
+</nav>
+
+<main>
+<header class="hero" id="top">
+  <div class="eyebrow">Sequential build prompts — one at a time, in order</div>
+  <h1>BUILD<br>PLAYBOOK</h1>
+  <div class="rule"></div>
+  <p class="thesis">The generic 80-prompt playbook mapped against SHOUTOUT's actual architecture, plus the 71 prompts it doesn't have. Every prompt is copy-ready.</p>
+  <div class="meters">
+    <div class="meter"><div class="lbl">SHOUTOUT prompts</div><div class="val">71</div></div>
+    <div class="meter"><div class="lbl">Generic — keep</div><div class="val">31</div></div>
+    <div class="meter"><div class="lbl">Adapt</div><div class="val">36</div></div>
+    <div class="meter"><div class="lbl">Replace</div><div class="val">8</div></div>
+    <div class="meter"><div class="lbl">Skip</div><div class="val">5</div></div>
+  </div>
+</header>
+
+<section id="map">
+  <div class="shead"><span class="ch">MAP</span><h2>Mapping the 80</h2></div>
+  <p class="sdek">The uploaded playbook is titled 100 prompts and contains 80 — Parts I to VIII, numbered 1 to 80. Here is what each one is worth on this build.</p>
+
+  <div class="callout warn"><span class="k">The conflict that matters most</span>The generic playbook enforces ownership with an application-level check — compare <code>userId</code> in a controller. That is not sufficient for SHOUTOUT. Competing managers share one database and you hold payout data. Isolation has to be enforced at the row level in Postgres, so that a route someone forgets to guard still returns nothing. The playbook never mentions row-level security once.</div>
+
+  <div class="callout"><span class="k">Other stack conflicts</span>It assumes Express and MongoDB (you are on Next.js App Router and Supabase Postgres), hand-rolled JWT in localStorage (Supabase Auth, phone-OTP first, tokens never in localStorage), Bull only (you need Inngest for month-long lifecycle workflows <em>and</em> BullMQ for the generation pipeline), Stripe (an Indian payment aggregator, because you cannot legally hold funds), and email-first messaging (WhatsApp is the rail here).</div>
+
+  <div class="tw"><table>
+    <thead><tr><th>#</th><th>Prompt</th><th>Verdict</th><th>Why</th></tr></thead>
+    <tbody><tr class="clickable" tabindex="0" data-note="Express + Vite + separate frontend/backend. You are on a Next.js App Router monorepo with packages. The folder shape, the package list and the two-app split are all wrong for you. Use SHOUTOUT prompt F1 instead." data-title="1 — Project Bootstrap &amp; Structure" data-verdict="REPLACE"><td>1</td><td>Project Bootstrap &amp; Structure</td><td><span class="pill v-replace">REPLACE</span></td><td class="note-cell">Express + Vite + separate frontend/backend. You are on a Next.js App Router monorepo with packages. The folder shape, the package list and the two-app split are all wrong for you. Use SHOUTOUT prompt F1 instead.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Keep the discipline, change the variables. You need Supabase URL and keys, the PA credentials, WhatsApp BSP token, Anthropic key, R2 credentials — not DATABASE_URL and JWT_SECRET. Add runtime validation on boot." data-title="2 — Environment Configuration" data-verdict="ADAPT"><td>2</td><td>Environment Configuration</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Keep the discipline, change the variables. You need Supabase URL and keys, the PA credentials, WhatsApp BSP token, Anthropic key, R2 credentials — not DATABASE_URL and JWT_SECRET. Add runtime validation on boot.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Mongoose or Prisma connection pooling does not apply. Supabase gives you the client and the pool. What you actually need is the RLS test harness, which this playbook never mentions. See F3, F4." data-title="3 — Database Connection &amp; Setup" data-verdict="REPLACE"><td>3</td><td>Database Connection &amp; Setup</td><td><span class="pill v-replace">REPLACE</span></td><td class="note-cell">Mongoose or Prisma connection pooling does not apply. Supabase gives you the client and the pool. What you actually need is the RLS test harness, which this playbook never mentions. See F3, F4.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Controller-Service-Model is fine as a principle. In App Router it becomes route handlers plus a service layer in packages. Keep the standard response envelope and the async error wrapper." data-title="4 — Base API Architecture" data-verdict="ADAPT"><td>4</td><td>Base API Architecture</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Controller-Service-Model is fine as a principle. In App Router it becomes route handlers plus a service layer in packages. Keep the standard response envelope and the async error wrapper.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Your identity model is org + artist + roster with commission terms, not a flat user table. A self-managed artist is an org with a roster of one. See F5." data-title="5 — User Schema Design" data-verdict="REPLACE"><td>5</td><td>User Schema Design</td><td><span class="pill v-replace">REPLACE</span></td><td class="note-cell">Your identity model is org + artist + roster with commission terms, not a flat user table. A self-managed artist is an org with a roster of one. See F5.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Do not hand-roll JWT signup and login. Supabase Auth handles it, and phone OTP is the primary path in India because the audition funnel cannot ask 45,000 people for a password. See F6." data-title="6 — Authentication System — Backend" data-verdict="REPLACE"><td>6</td><td>Authentication System — Backend</td><td><span class="pill v-replace">REPLACE</span></td><td class="note-cell">Do not hand-roll JWT signup and login. Supabase Auth handles it, and phone OTP is the primary path in India because the audition funnel cannot ask 45,000 people for a password. See F6.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Supabase handles hashing. Hand-rolling bcrypt here adds risk with no benefit." data-title="7 — Password Security &amp; Hashing" data-verdict="SKIP"><td>7</td><td>Password Security &amp; Hashing</td><td><span class="pill v-skip">SKIP</span></td><td class="note-cell">Supabase handles hashing. Hand-rolling bcrypt here adds risk with no benefit.</td></tr>
+<tr class="clickable" tabindex="0" data-note="You still need role routing in middleware, but authorisation lives in RLS policies, not in a requireRole wrapper. Middleware decides which UI you see; the database decides which rows you get." data-title="8 — Auth Middleware &amp; Route Protection" data-verdict="ADAPT"><td>8</td><td>Auth Middleware &amp; Route Protection</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">You still need role routing in middleware, but authorisation lives in RLS policies, not in a requireRole wrapper. Middleware decides which UI you see; the database decides which rows you get.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Genuinely good and stack-agnostic. Take the AppError class, the catchAsync wrapper and the environment-specific responses as written." data-title="9 — Global Error Handling" data-verdict="KEEP"><td>9</td><td>Global Error Handling</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Genuinely good and stack-agnostic. Take the AppError class, the catchAsync wrapper and the environment-specific responses as written.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Keep the collection discipline. Your critical collections are Shouts, holds, settlements and splits — not generic CRUD." data-title="10 — API Testing &amp; Documentation" data-verdict="ADAPT"><td>10</td><td>API Testing &amp; Documentation</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Keep the collection discipline. Your critical collections are Shouts, holds, settlements and splits — not generic CRUD.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Two distinct paths for you: audition entry (phone OTP, no password, sub-90-second flow) and manager signup (org creation, roster, KYC). The generic form is neither." data-title="11 — User Registration Flow" data-verdict="ADAPT"><td>11</td><td>User Registration Flow</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Two distinct paths for you: audition entry (phone OTP, no password, sub-90-second flow) and manager signup (org creation, roster, KYC). The generic form is neither.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Phone OTP first. And do not store tokens in localStorage as this suggests — you are holding payout data." data-title="12 — Login System &amp; Frontend" data-verdict="ADAPT"><td>12</td><td>Login System &amp; Frontend</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Phone OTP first. And do not store tokens in localStorage as this suggests — you are holding payout data.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Supabase Auth provides this. Building it yourself is wasted effort and added attack surface." data-title="13 — Password Reset Flow" data-verdict="SKIP"><td>13</td><td>Password Reset Flow</td><td><span class="pill v-skip">SKIP</span></td><td class="note-cell">Supabase Auth provides this. Building it yourself is wasted effort and added attack surface.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Your profiles are role-declared with structured match attributes — vocal range, BPM comfort, languages, turnaround. A bio and a phone number is not a profile in this product. See C1." data-title="14 — User Profile Management" data-verdict="REPLACE"><td>14</td><td>User Profile Management</td><td><span class="pill v-replace">REPLACE</span></td><td class="note-cell">Your profiles are role-declared with structured match attributes — vocal range, BPM comfort, languages, turnaround. A bio and a phone number is not a profile in this product. See C1.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Your roles are org-scoped, not global. A person can be an owner in their own org and a viewer in another. RLS policies must express that; a global enum cannot." data-title="15 — Role-Based Access Control" data-verdict="ADAPT"><td>15</td><td>Role-Based Access Control</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Your roles are org-scoped, not global. A person can be an owner in their own org and a viewer in another. RLS policies must express that; a global enum cannot.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Right idea, wrong metrics. The manager dashboard answers three questions on Monday morning: who is booked, who owes me money, who do I call next." data-title="16 — User Dashboard" data-verdict="ADAPT"><td>16</td><td>User Dashboard</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Right idea, wrong metrics. The manager dashboard answers three questions on Monday morning: who is booked, who owes me money, who do I call next.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Solid as written. Add KYC status and payout bank details as their own sections." data-title="17 — Account Settings Page" data-verdict="KEEP"><td>17</td><td>Account Settings Page</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Solid as written. Add KYC status and payout bank details as their own sections.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Phone verification, not email. Email is secondary in this market." data-title="18 — Email Verification System" data-verdict="ADAPT"><td>18</td><td>Email Verification System</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Phone verification, not email. Email is secondary in this market.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Defer to Phase 3, then make it mandatory for any org that has enabled Advance or has payout details on file — not optional as this suggests." data-title="19 — Two-Factor Authentication" data-verdict="ADAPT"><td>19</td><td>Two-Factor Authentication</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Defer to Phase 3, then make it mandatory for any org that has enabled Advance or has payout details on file — not optional as this suggests.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good as written and genuinely needed. Managers work from venues on shared devices." data-title="20 — Session Management" data-verdict="KEEP"><td>20</td><td>Session Management</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good as written and genuinely needed. Managers work from venues on shared devices.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Your core object is a polymorphic Shout with typed slots, not a flat entity with title and description. This is the single most important schema decision in the build. See S1." data-title="21 — Core App Data Schema" data-verdict="REPLACE"><td>21</td><td>Core App Data Schema</td><td><span class="pill v-replace">REPLACE</span></td><td class="note-cell">Your core object is a polymorphic Shout with typed slots, not a flat entity with title and description. This is the single most important schema decision in the build. See S1.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Creating a Shout means creating slots with independent terms. The generic single-record create does not cover it." data-title="22 — Create Operation" data-verdict="ADAPT"><td>22</td><td>Create Operation</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Creating a Shout means creating slots with independent terms. The generic single-record create does not cover it.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Pagination envelope and ownership filtering are fine. Note that RLS does the ownership filtering for you." data-title="23 — Read Operations" data-verdict="KEEP"><td>23</td><td>Read Operations</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Pagination envelope and ownership filtering are fine. Note that RLS does the ownership filtering for you.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Most of your updates are state transitions, not field edits. A hold does not get &#x27;updated&#x27; — it advances or it releases." data-title="24 — Update Operation" data-verdict="ADAPT"><td>24</td><td>Update Operation</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Most of your updates are state transitions, not field edits. A hold does not get &#x27;updated&#x27; — it advances or it releases.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Soft delete for Shouts and profiles. Contracts, settlements and holds are append-only — never deleted, never updated in place." data-title="25 — Delete Operation" data-verdict="ADAPT"><td>25</td><td>Delete Operation</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Soft delete for Shouts and profiles. Contracts, settlements and holds are append-only — never deleted, never updated in place.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Fine as written." data-title="26 — Pagination Implementation" data-verdict="KEEP"><td>26</td><td>Pagination Implementation</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Fine as written.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Text search is not your problem. You need hybrid semantic matching over GENERATION_INTENT with pgvector plus attribute filters. See S3." data-title="27 — Search Functionality" data-verdict="REPLACE"><td>27</td><td>Search Functionality</td><td><span class="pill v-replace">REPLACE</span></td><td class="note-cell">Text search is not your problem. You need hybrid semantic matching over GENERATION_INTENT with pgvector plus attribute filters. See S3.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Your filters are role, genre, language, city, BPM band, price band, remote versus in-person. Keep the URL-persistence pattern." data-title="28 — Filtering System" data-verdict="ADAPT"><td>28</td><td>Filtering System</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Your filters are role, genre, language, city, BPM band, price band, remote versus in-person. Keep the URL-persistence pattern.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Fine. Default descending everywhere." data-title="29 — Sorting Mechanism" data-verdict="KEEP"><td>29</td><td>Sorting Mechanism</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Fine. Default descending everywhere.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Zod schemas and React Hook Form are exactly right. Every AI structured output must be schema-validated too." data-title="30 — Data Validation" data-verdict="KEEP"><td>30</td><td>Data Validation</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Zod schemas and React Hook Form are exactly right. Every AI structured output must be schema-validated too.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Signed direct-to-R2 upload from the phone. Never proxy audio or video through your API as multer does." data-title="31 — File Upload System" data-verdict="ADAPT"><td>31</td><td>File Upload System</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Signed direct-to-R2 upload from the phone. Never proxy audio or video through your API as multer does.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Useful for EPK images and cover art. Your harder pipeline is audio, which this playbook does not cover at all." data-title="32 — Image Processing" data-verdict="KEEP"><td>32</td><td>Image Processing</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Useful for EPK images and cover art. Your harder pipeline is audio, which this playbook does not cover at all.</td></tr>
+<tr class="clickable" tabindex="0" data-note="WhatsApp is the notification rail, in-app is secondary. Invert this prompt&#x27;s priority." data-title="33 — Real-Time Notifications" data-verdict="ADAPT"><td>33</td><td>Real-Time Notifications</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">WhatsApp is the notification rail, in-app is secondary. Invert this prompt&#x27;s priority.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Use Supabase Realtime rather than standing up Socket.io. Needed for Collab Rooms and the holds calendar." data-title="34 — WebSocket for Real-Time Updates" data-verdict="ADAPT"><td>34</td><td>WebSocket for Real-Time Updates</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Use Supabase Realtime rather than standing up Socket.io. Needed for Collab Rooms and the holds calendar.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Build the WhatsApp template pipeline first — 2 to 3 week approval lead time. Email second." data-title="35 — Email Service Integration" data-verdict="ADAPT"><td>35</td><td>Email Service Integration</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Build the WhatsApp template pipeline first — 2 to 3 week approval lead time. Email second.</td></tr>
+<tr class="clickable" tabindex="0" data-note="The service-per-API structure and key handling are sound." data-title="36 — Third-Party API Integration" data-verdict="KEEP"><td>36</td><td>Third-Party API Integration</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">The service-per-API structure and key handling are sound.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Stripe does not solve your problem. You need an Indian PA split-settlement product with hold periods, because you cannot legally hold funds. See M1." data-title="37 — Payment Integration (Stripe)" data-verdict="REPLACE"><td>37</td><td>Payment Integration (Stripe)</td><td><span class="pill v-replace">REPLACE</span></td><td class="note-cell">Stripe does not solve your problem. You need an Indian PA split-settlement product with hold periods, because you cannot legally hold funds. See M1.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Two queues, not one: Inngest for month-long lifecycle workflows with sleepUntil, BullMQ for the Studio generation pipeline. This prompt only describes the second." data-title="38 — Background Jobs" data-verdict="ADAPT"><td>38</td><td>Background Jobs</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Two queues, not one: Inngest for month-long lifecycle workflows with sleepUntil, BullMQ for the Studio generation pipeline. This prompt only describes the second.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Fine. PostHog for product, Metabase on a read replica for money." data-title="39 — Analytics &amp; Tracking" data-verdict="KEEP"><td>39</td><td>Analytics &amp; Tracking</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Fine. PostHog for product, Metabase on a read replica for money.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Needed for settlement statements and artist data export under DPDP." data-title="40 — Export &amp; Reporting" data-verdict="KEEP"><td>40</td><td>Export &amp; Reporting</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Needed for settlement statements and artist data export under DPDP.</td></tr>
+<tr class="clickable" tabindex="0" data-note="shadcn/ui is already your choice. Good as written." data-title="41 — Frontend Component Library" data-verdict="KEEP"><td>41</td><td>Frontend Component Library</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">shadcn/ui is already your choice. Good as written.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good." data-title="42 — Loading &amp; Skeleton States" data-verdict="KEEP"><td>42</td><td>Loading &amp; Skeleton States</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good, and important — a two-sided marketplace is mostly empty at launch." data-title="43 — Empty States &amp; Fallbacks" data-verdict="KEEP"><td>43</td><td>Empty States &amp; Fallbacks</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good, and important — a two-sided marketplace is mostly empty at launch.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good." data-title="44 — Error Handling &amp; User Feedback" data-verdict="KEEP"><td>44</td><td>Error Handling &amp; User Feedback</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Mobile is not an afterthought here. Managers work backstage, in venues and in cars. Design mobile first and add Capacitor at Phase 2." data-title="45 — Responsive Design &amp; Mobile" data-verdict="ADAPT"><td>45</td><td>Responsive Design &amp; Mobile</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Mobile is not an afterthought here. Managers work backstage, in venues and in cars. Design mobile first and add Capacitor at Phase 2.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Not a launch requirement. Revisit after Phase 2." data-title="46 — Dark Mode Implementation" data-verdict="SKIP"><td>46</td><td>Dark Mode Implementation</td><td><span class="pill v-skip">SKIP</span></td><td class="note-cell">Not a launch requirement. Revisit after Phase 2.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good. Add: never call a model synchronously in a user-facing request path." data-title="47 — Performance Optimization" data-verdict="KEEP"><td>47</td><td>Performance Optimization</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good. Add: never call a model synchronously in a user-facing request path.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Important — public artist profiles and EPKs are your inbound engine. ISR them." data-title="48 — SEO &amp; Meta Tags" data-verdict="KEEP"><td>48</td><td>SEO &amp; Meta Tags</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Important — public artist profiles and EPKs are your inbound engine. ISR them.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Everything here is necessary but insufficient. It never mentions row-level security, which is your actual isolation boundary. See F4." data-title="49 — Security Hardening" data-verdict="ADAPT"><td>49</td><td>Security Hardening</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Everything here is necessary but insufficient. It never mentions row-level security, which is your actual isolation boundary. See F4.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Keep, and add the RLS test suite as a blocking CI gate." data-title="50 — Testing Setup" data-verdict="ADAPT"><td>50</td><td>Testing Setup</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Keep, and add the RLS test suite as a blocking CI gate.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good." data-title="51 — Environment Separation" data-verdict="KEEP"><td>51</td><td>Environment Separation</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Only apps/workers needs Docker. Vercel handles the web app." data-title="52 — Docker Setup" data-verdict="ADAPT"><td>52</td><td>Docker Setup</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Only apps/workers needs Docker. Vercel handles the web app.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Vercel for web, a container host for Python workers, Supabase for data." data-title="53 — Backend Deployment" data-verdict="ADAPT"><td>53</td><td>Backend Deployment</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Vercel for web, a container host for Python workers, Supabase for data.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good as written." data-title="54 — Frontend Deployment" data-verdict="KEEP"><td>54</td><td>Frontend Deployment</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good as written.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Supabase migrations with branching. Migration 001 creates org_id and RLS or the build does not proceed." data-title="55 — Database Migration" data-verdict="ADAPT"><td>55</td><td>Database Migration</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Supabase migrations with branching. Migration 001 creates org_id and RLS or the build does not proceed.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Add the RLS test and the settlement reconciliation test as blocking gates." data-title="56 — CI/CD Pipeline" data-verdict="ADAPT"><td>56</td><td>CI/CD Pipeline</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Add the RLS test and the settlement reconciliation test as blocking gates.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Add an immutable audit log on contracts, holds and settlements, separate from application logging." data-title="57 — Monitoring &amp; Logging" data-verdict="ADAPT"><td>57</td><td>Monitoring &amp; Logging</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Add an immutable audit log on contracts, holds and settlements, separate from application logging.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good. Test the restore, not just the backup." data-title="58 — Backup Strategy" data-verdict="KEEP"><td>58</td><td>Backup Strategy</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good. Test the restore, not just the backup.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Mostly automatic on your hosts." data-title="59 — SSL/HTTPS Configuration" data-verdict="KEEP"><td>59</td><td>SSL/HTTPS Configuration</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Mostly automatic on your hosts.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Add: RLS proven by test, settlements reconcile to zero, hold auto-release verified, TDS shown pre-signature, WhatsApp templates approved." data-title="60 — Production Checklist" data-verdict="ADAPT"><td>60</td><td>Production Checklist</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Add: RLS proven by test, settlements reconcile to zero, hold auto-release verified, TDS shown pre-signature, WhatsApp templates approved.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Needed for the benchmark index and the tour demand heatmap." data-title="61 — Advanced Data Visualization" data-verdict="KEEP"><td>61</td><td>Advanced Data Visualization</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Needed for the benchmark index and the tour demand heatmap.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Your primary user is on a phone. Defer indefinitely." data-title="62 — Keyboard Shortcuts" data-verdict="SKIP"><td>62</td><td>Keyboard Shortcuts</td><td><span class="pill v-skip">SKIP</span></td><td class="note-cell">Your primary user is on a phone. Defer indefinitely.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Right pattern for the Collab discovery feed." data-title="63 — Infinite Scroll" data-verdict="KEEP"><td>63</td><td>Infinite Scroll</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Right pattern for the Collab discovery feed.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Useful for the manager pipeline board. Not a Phase 1 item." data-title="64 — Drag and Drop" data-verdict="ADAPT"><td>64</td><td>Drag and Drop</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Useful for the manager pipeline board. Not a Phase 1 item.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Merge with the match engine rather than building separately. Faceted counts by role are worth having." data-title="65 — Advanced Search with Filters" data-verdict="ADAPT"><td>65</td><td>Advanced Search with Filters</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Merge with the match engine rather than building separately. Faceted counts by role are worth having.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Presence in Collab Rooms is genuinely useful. Live cursors are not — you are exchanging audio files, not documents." data-title="66 — Real-Time Collaboration" data-verdict="ADAPT"><td>66</td><td>Real-Time Collaboration</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Presence in Collab Rooms is genuinely useful. Live cursors are not — you are exchanging audio files, not documents.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good. Your activity types are Shout posted, answered, hold placed, contract signed, settled." data-title="67 — Activity Feed &amp; Timeline" data-verdict="KEEP"><td>67</td><td>Activity Feed &amp; Timeline</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good. Your activity types are Shout posted, answered, hold placed, contract signed, settled.</td></tr>
+<tr class="clickable" tabindex="0" data-note="One considered design position, not a theme engine." data-title="68 — Theming System" data-verdict="SKIP"><td>68</td><td>Theming System</td><td><span class="pill v-skip">SKIP</span></td><td class="note-cell">One considered design position, not a theme engine.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Non-negotiable, and a procurement requirement for government and corporate clients." data-title="69 — Accessibility" data-verdict="KEEP"><td>69</td><td>Accessibility</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Non-negotiable, and a procurement requirement for government and corporate clients.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Needed earlier than this playbook implies. Audition intake is multi-language from day one." data-title="70 — Internationalization" data-verdict="ADAPT"><td>70</td><td>Internationalization</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Needed earlier than this playbook implies. Audition intake is multi-language from day one.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good." data-title="71 — Unit Testing — Backend" data-verdict="KEEP"><td>71</td><td>Unit Testing — Backend</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Your critical integration tests are the hold state machine and split reconciliation, not signup." data-title="72 — Integration Testing — API" data-verdict="ADAPT"><td>72</td><td>Integration Testing — API</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Your critical integration tests are the hold state machine and split reconciliation, not signup.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good." data-title="73 — Frontend Component Testing" data-verdict="KEEP"><td>73</td><td>Frontend Component Testing</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good.</td></tr>
+<tr class="clickable" tabindex="0" data-note="The flow that must never break: post a Shout, answer it, sign the split, release stems, settle to zero." data-title="74 — E2E Testing" data-verdict="ADAPT"><td>74</td><td>E2E Testing</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">The flow that must never break: post a Shout, answer it, sign the split, release stems, settle to zero.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good. Load-test audition intake for burst — a season opens and 5,000 uploads arrive in an hour." data-title="75 — Performance Testing" data-verdict="KEEP"><td>75</td><td>Performance Testing</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good. Load-test audition intake for burst — a season opens and 5,000 uploads arrive in an hour.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Add a cross-tenant test: authenticate as org A and attempt every read and write against org B&#x27;s rows." data-title="76 — Security Testing" data-verdict="ADAPT"><td>76</td><td>Security Testing</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Add a cross-tenant test: authenticate as org A and attempt every read and write against org B&#x27;s rows.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good as written." data-title="77 — Code Quality &amp; Linting" data-verdict="KEEP"><td>77</td><td>Code Quality &amp; Linting</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good as written.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good." data-title="78 — Documentation" data-verdict="KEEP"><td>78</td><td>Documentation</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Good." data-title="79 — Continuous Improvement" data-verdict="KEEP"><td>79</td><td>Continuous Improvement</td><td><span class="pill v-keep">KEEP</span></td><td class="note-cell">Good.</td></tr>
+<tr class="clickable" tabindex="0" data-note="Add: nightly benchmark index refresh verification, and monthly reconciliation audit." data-title="80 — Maintenance Plan" data-verdict="ADAPT"><td>80</td><td>Maintenance Plan</td><td><span class="pill v-adapt">ADAPT</span></td><td class="note-cell">Add: nightly benchmark index refresh verification, and monthly reconciliation audit.</td></tr></tbody>
+  </table></div>
+  <p class="sdek" style="font-size:13px">Tap any row for the full reasoning.</p>
+</section>
+
+<section id="F">
+  <div class="shead"><span class="ch">F</span><h2>Foundation</h2><span class="win">W1–2</span></div>
+  <p class="sdek">Nothing ships until org isolation is proven by a test that runs on every commit.</p>
+  <p class="pcount">12 prompts</p>
+  <article class="prompt" id="p-F1">
+  <header class="p-head">
+    <div><span class="p-id">F1</span><h4>Monorepo bootstrap</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt F1">Copy</button>
+  </header>
+  <pre class="p-body">Initialize the SHOUTOUT monorepo at shoutout-platform.
+
+Structure:
+  apps/web      Next.js 15 App Router, TypeScript, Tailwind, shadcn/ui
+  apps/admin    internal HITL queues
+  apps/workers  Python FastAPI, Dockerised — audio, ML, transcode
+  packages/intent      @shoutout/intent (semantic engine, ported)
+  packages/studio-core generation pipeline (ported)
+  packages/match       scoring engine, one engine for all Shout types
+  packages/money       settlement abstraction, PA-agnostic
+  packages/db          Supabase client, generated types, RLS tests
+  packages/ui          design system
+  workflows/           Inngest functions
+  supabase/migrations/
+
+Include: pnpm workspaces, turbo, shared tsconfig, ESLint + Prettier,
+Husky pre-commit, .env.example per app, GET /api/health returning
+DB and worker status.
+
+Do NOT create a separate Express backend. Route handlers in apps/web
+plus service functions in packages are the backend.</pre>
+</article><article class="prompt" id="p-F2">
+  <header class="p-head">
+    <div><span class="p-id">F2</span><h4>Environment and secrets</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt F2">Copy</button>
+  </header>
+  <pre class="p-body">Set up environment configuration for SHOUTOUT.
+
+apps/web:
+  NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
+  SUPABASE_SERVICE_ROLE_KEY (server only, never exposed)
+  ANTHROPIC_API_KEY, INNGEST_EVENT_KEY, INNGEST_SIGNING_KEY
+  WHATSAPP_BSP_TOKEN, WHATSAPP_PHONE_ID
+  PA_KEY_ID, PA_KEY_SECRET, PA_WEBHOOK_SECRET
+  R2_ACCOUNT_ID, R2_ACCESS_KEY, R2_SECRET, R2_BUCKET
+  ESIGN_API_KEY, KYC_API_KEY
+
+apps/workers:
+  DATABASE_URL, R2 creds, REDIS_URL, ANTHROPIC_API_KEY
+
+Write a Zod schema validating every variable at boot. The process must
+refuse to start on a missing or malformed value, not fail at first use.
+Separate dev / staging / prod. Never commit real values.</pre>
+</article><article class="prompt" id="p-F3">
+  <header class="p-head">
+    <div><span class="p-id">F3</span><h4>Supabase project and migration 001</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt F3">Copy</button>
+  </header>
+  <pre class="p-body">Create the SHOUTOUT Supabase project and write migration 001.
+
+Migration 001 must establish, before any domain table exists:
+  - orgs table (the tenant boundary)
+  - org_members table (user to org, with org-scoped role)
+  - a current_org_id() helper reading from JWT claims
+  - RLS enabled by default on every schema
+  - a template RLS policy pair (select / write) other tables will follow
+
+Every domain table added later carries org_id NOT NULL and references
+orgs. There is no exception to this and no retrofitting later.
+
+Give me this migration alone. I will run it and paste the output before
+you write 002.</pre>
+</article><article class="prompt" id="p-F4">
+  <header class="p-head">
+    <div><span class="p-id">F4</span><h4>RLS test harness — blocking gate</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt F4">Copy</button>
+  </header>
+  <pre class="p-body">Build the row-level security test suite for SHOUTOUT.
+
+Create two seeded orgs, A and B, each with a member. Then, for every
+table in the schema, assert that a session authenticated as org A:
+  - cannot SELECT any row belonging to org B
+  - cannot INSERT a row with org_id = B
+  - cannot UPDATE or DELETE any row of org B
+  - cannot escalate by setting org_id in a payload
+
+Make the suite enumerate tables from information_schema so a new table
+with no policy FAILS the suite automatically rather than passing silently.
+
+Wire it into CI as a blocking gate. A policy regression is not a P2 in
+this product — competing managers share this database and it holds
+payout data.</pre>
+</article><article class="prompt" id="p-F5">
+  <header class="p-head">
+    <div><span class="p-id">F5</span><h4>Identity model</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt F5">Copy</button>
+  </header>
+  <pre class="p-body">Write migration 002: the SHOUTOUT identity model.
+
+  orgs        id, type (manager|agency|self), name, gst, pan,
+              kyc_status, plan_tier
+  artists     id, org_id, stage_name, genres[], home_city, verified,
+              shoutout_id (public stable identifier)
+  roster      org_id, artist_id, commission_pct, exclusive,
+              start_date, end_date
+  profiles    person-level: display name, phone, avatar, languages[]
+  org_members user_id, org_id, role
+
+Rules:
+  - a self-managed artist is an org with a roster of one and commission 0
+  - the upgrade path from one artist to five must require no migration
+  - shoutout_id is the stable public identifier credits will point at
+
+RLS policies for all five tables, following the 001 template.</pre>
+</article><article class="prompt" id="p-F6">
+  <header class="p-head">
+    <div><span class="p-id">F6</span><h4>Auth — phone OTP primary</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt F6">Copy</button>
+  </header>
+  <pre class="p-body">Implement authentication for SHOUTOUT on Supabase Auth.
+
+  - phone OTP as the primary path (India is phone-first, and audition
+    entry cannot ask 45,000 people to create a password)
+  - Google OAuth secondary
+  - PKCE with the code exchange in a server-side route handler, never
+    on the client
+  - org context resolved server-side from session, never from a
+    client-supplied parameter
+  - middleware routes by org role for UI only; authorisation is RLS
+
+Also: an onboarding step that creates an org for a new user, so there
+is never a user without a tenant.
+
+Do not hand-roll JWT, bcrypt or refresh-token rotation.</pre>
+</article><article class="prompt" id="p-F7">
+  <header class="p-head">
+    <div><span class="p-id">F7</span><h4>Design system package</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt F7">Copy</button>
+  </header>
+  <pre class="p-body">Build packages/ui for SHOUTOUT.
+
+Base on shadcn/ui with a deliberate design position — this is not a
+default Tailwind theme. Tokens split by surface:
+  - culture surfaces (Stage, Collab, Liner): warm, high-contrast
+  - money surfaces (Settle, Advance): precise, quiet, numerate
+
+Components: Button, Input, Select, Combobox, Card, Sheet, Dialog,
+Table, DataList (mobile card fallback for dense tables), Toast,
+StatusPill, MoneyValue (dual currency INR and USD at a single
+configurable rate), EmptyState, Skeleton.
+
+Mobile first. Minimum 44px tap targets. WCAG 2.2 AA. Dense tables must
+degrade to stacked cards below 760px, not horizontal scroll.</pre>
+</article><article class="prompt" id="p-F8">
+  <header class="p-head">
+    <div><span class="p-id">F8</span><h4>Workers service skeleton</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt F8">Copy</button>
+  </header>
+  <pre class="p-body">Stand up apps/workers for SHOUTOUT.
+
+Dockerised FastAPI with Alembic, following the Third Eye backend
+pattern. Endpoints stubbed now, implemented in Phase Studio:
+  POST /analyze    BPM, key, genre via Essentia or librosa
+  POST /transcribe lyric transcription, multi-language incl. code-switch
+  POST /embed      text embeddings for match
+  POST /separate   stem separation
+
+Include: health endpoint, structured logging, request signing between
+web and workers, and a docker-compose for local development.
+
+Stand this up now even though it is empty — Studio lands in week 7 and
+the deployment path should already be proven.</pre>
+</article><article class="prompt" id="p-F9">
+  <header class="p-head">
+    <div><span class="p-id">F9</span><h4>Inngest workflow layer</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt F9">Copy</button>
+  </header>
+  <pre class="p-body">Wire Inngest into SHOUTOUT as the lifecycle engine.
+
+This is the LifeCycle-OS trigger layer, productised. Set up the client,
+the serve handler, and one worked example: a hold-expiry function using
+step.sleepUntil that fires at the release deadline and transitions the
+hold to released.
+
+Why Inngest and not cron: these workflows are long-lived, stateful and
+human-in-the-loop, spanning months. Hold expiry, payout SLA escalation,
+the T+11-month re-book, rejection-to-onboarding. Durable execution with
+replay is the correct primitive.
+
+Note: the Studio generation pipeline uses a separate BullMQ queue.
+Two queues, different jobs. Do not merge them.</pre>
+</article><article class="prompt" id="p-F10">
+  <header class="p-head">
+    <div><span class="p-id">F10</span><h4>WhatsApp template pipeline</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt F10">Copy</button>
+  </header>
+  <pre class="p-body">Set up WhatsApp Business Cloud API for SHOUTOUT via a BSP.
+
+Submit these templates for approval TODAY — approval takes 2 to 3 weeks
+and blocks week 5:
+  shout_answered, shout_slot_filled
+  hold_expiring_48h, hold_challenged
+  quote_sent, contract_ready, contract_signed
+  advance_received, rider_confirm_t7, rider_confirm_t2
+  payout_sent, payout_delayed
+  audition_received, audition_result
+  split_sheet_ready
+
+Build: a send abstraction with template name and typed variables,
+delivery-status webhook capture, a per-template delivery rate metric,
+and an alert below 97%.
+
+Email is the secondary rail. Build it after.</pre>
+</article><article class="prompt" id="p-F11">
+  <header class="p-head">
+    <div><span class="p-id">F11</span><h4>Observability and audit</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt F11">Copy</button>
+  </header>
+  <pre class="p-body">Add observability to SHOUTOUT.
+
+Application: Sentry, structured logs, PostHog for product events.
+
+Separately — and this matters more — an immutable audit log for
+contracts, holds, settlements and splits. Append-only. Never updated.
+Every state change writes actor, timestamp, before state, after state.
+Disputes in this industry are routine; the log is the referee.
+
+Alerts on: hold-expiry job failure, settlement reconciliation mismatch,
+payout failure, WhatsApp template delivery below 97%, and any RLS
+policy error in production.</pre>
+</article><article class="prompt" id="p-F12">
+  <header class="p-head">
+    <div><span class="p-id">F12</span><h4>CI/CD with blocking gates</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt F12">Copy</button>
+  </header>
+  <pre class="p-body">Set up CI/CD for SHOUTOUT on GitHub Actions.
+
+Pipeline: lint, typecheck, unit tests, RLS suite, build, deploy.
+
+Blocking gates — deployment fails if any of these fail:
+  - the RLS cross-tenant suite
+  - the settlement reconciliation test (splits must sum to zero)
+  - the hold state machine test (no double-confirm on one date)
+
+Supabase branching for database preview environments. Vercel preview
+deploys per PR. Migrations run before code deploys, never after.</pre>
+</article>
+</section>
+<section id="S">
+  <div class="shead"><span class="ch">S</span><h2>The Shout object</h2><span class="win">W3–5</span></div>
+  <p class="sdek">The highest-leverage build in the company. Every other module is a specialisation of this.</p>
+  <p class="pcount">8 prompts</p>
+  <article class="prompt" id="p-S1">
+  <header class="p-head">
+    <div><span class="p-id">S1</span><h4>The polymorphic Shout schema</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt S1">Copy</button>
+  </header>
+  <pre class="p-body">Write the SHOUTOUT Shout schema — the core of the entire product.
+
+A Shout is a call that someone answers. One object serves five types:
+Collab, Gig, Open (audition), Brand, Sync.
+
+  shouts       id, org_id, type, title, body, status, visibility
+               (open|invite|roster|verified), deadline, city,
+               intent jsonb (a GENERATION_INTENT object), created_by
+  shout_slots  id, shout_id, role, attributes jsonb, comp_model
+               (fee|points|hybrid|credit), fee_amount, points_pct,
+               deadline, status, filled_by
+  answers      id, slot_id, responder_org_id, responder_artist_id,
+               pitch, media_url, status, created_at
+
+Requirements:
+  - slots fill INDEPENDENTLY. A Shout can be half-closed.
+  - one Shout can carry a songwriter slot and a vocalist slot on
+    entirely different terms
+  - comp_model &#x27;credit&#x27; must be explicitly labelled and never default
+  - RLS: visibility governs read; only the owning org can write
+
+Do not model this as five separate tables. Resist that.</pre>
+</article><article class="prompt" id="p-S2">
+  <header class="p-head">
+    <div><span class="p-id">S2</span><h4>Shout lifecycle state machine</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt S2">Copy</button>
+  </header>
+  <pre class="p-body">Implement the Shout and slot state machine for SHOUTOUT.
+
+Shout:  draft -&gt; open -&gt; partially_filled -&gt; filled -&gt; closed
+        exits: cancelled, expired
+Slot:   open -&gt; answered -&gt; shortlisted -&gt; accepted -&gt; contracted
+        -&gt; delivered -&gt; settled
+        exits: withdrawn, declined, expired
+
+Enforce transitions in the database with a trigger, not in application
+code. An invalid transition must be rejected by Postgres.
+
+Every transition emits an Inngest event carrying the actor and both
+states. Those events drive notifications and the audit log.</pre>
+</article><article class="prompt" id="p-S3">
+  <header class="p-head">
+    <div><span class="p-id">S3</span><h4>The match engine</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt S3">Copy</button>
+  </header>
+  <pre class="p-body">Build packages/match for SHOUTOUT — one engine, all Shout types.
+
+  score = role_match
+        x attribute_fit
+        x availability
+        x price_band_fit
+        x reliability
+        x responsiveness
+
+attribute_fit is the differentiator. Match a slot&#x27;s requirements against
+a responder&#x27;s declared attributes: vocal range against the song key,
+language against lyric language, timbre tags against mood, BPM comfort,
+turnaround against deadline.
+
+Semantic layer: embeddings over the GENERATION_INTENT object in pgvector,
+so &#x27;nocturnal, restrained, late-night&#x27; matches a vocalist tagged
+&#x27;smoky, low-register, R&amp;B&#x27; without either party using the same words.
+Hybrid with Postgres full-text. Do not add a search cluster.
+
+Return ranked results with a score_components breakdown — the breakdown
+is shown in the UI, because an unexplained ranking is not trusted.
+
+Availability must be checked live against the holds ledger. Never
+surface someone already held on that date.</pre>
+</article><article class="prompt" id="p-S4">
+  <header class="p-head">
+    <div><span class="p-id">S4</span><h4>Intent capture — port @shoutout/intent</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt S4">Copy</button>
+  </header>
+  <pre class="p-body">Port the MusicGenAI semantic engine into packages/intent.
+
+Source: the 19-field form to deterministic GENERATION_INTENT JSON
+converter, plus the AI-suggest system that ENHANCES existing user input
+rather than replacing it (field-specific prompts, lower temperature for
+enhancement, higher for generation from scratch).
+
+Target: a versioned internal package with a Zod schema for
+GENERATION_INTENT and parity tests against the original.
+
+This object has four consumers — Studio generation, Collab matching,
+sync catalog tagging, gig genre matching. Design the package for four
+callers, not one.
+
+Write the parity test suite first. Archive the MusicGenAI repo only
+after it passes.</pre>
+</article><article class="prompt" id="p-S5">
+  <header class="p-head">
+    <div><span class="p-id">S5</span><h4>Shout composer</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt S5">Copy</button>
+  </header>
+  <pre class="p-body">Build the Shout composer UI for SHOUTOUT.
+
+One composer, type-aware. Steps:
+  1. what kind of Shout
+  2. describe it — free text, with AI-suggest from @shoutout/intent
+     enhancing what the user wrote
+  3. add slots — role, attributes, terms, deadline, per slot
+  4. attach a reference (upload, or generate in Studio)
+  5. visibility and publish
+
+Mobile first, resumable as a draft, under 90 seconds for the common
+case (one slot, open visibility).
+
+Copy rule: the verb is &#x27;put out a shout&#x27;. Never &#x27;create a listing&#x27;,
+never &#x27;post a request&#x27;.</pre>
+</article><article class="prompt" id="p-S6">
+  <header class="p-head">
+    <div><span class="p-id">S6</span><h4>Answer flow</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt S6">Copy</button>
+  </header>
+  <pre class="p-body">Build the answer flow for SHOUTOUT.
+
+A responder sees a Shout, picks a slot, and answers with a pitch plus
+optional media — for a Collab slot, a 30-second demo recorded against
+the actual attached beat.
+
+  - answer limits per responder per day, to prevent spam
+  - the poster gets a ranked answer list with score breakdown
+  - shortlist, decline with a reason, or accept
+  - accepting a slot opens a Room (Collab) or a hold (Gig)
+
+Notify on every state change via WhatsApp template.</pre>
+</article><article class="prompt" id="p-S7">
+  <header class="p-head">
+    <div><span class="p-id">S7</span><h4>Discovery feed</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt S7">Copy</button>
+  </header>
+  <pre class="p-body">Build the SHOUTOUT discovery feed.
+
+Two directions:
+  - &#x27;Shouts you could answer&#x27; — ranked by fit against declared roles
+  - &#x27;People who could answer yours&#x27;
+
+Filters: role, genre, language, city, remote vs in-person, paid vs
+points, deadline. Infinite scroll. URL-persisted filters.
+
+Habit mechanic: a daily digest of three high-fit Shouts, delivered by
+WhatsApp. This is the retention loop — collaboration is the only module
+with a genuine daily reason to open the app.</pre>
+</article><article class="prompt" id="p-S8">
+  <header class="p-head">
+    <div><span class="p-id">S8</span><h4>Reliability score</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt S8">Copy</button>
+  </header>
+  <pre class="p-body">Implement the SHOUTOUT reliability score.
+
+Per ROLE, not per person — a great producer can be an unreliable mix
+engineer.
+
+Inputs: on-time delivery rate, revision adherence, split disputes
+raised against them, response latency, completion rate on accepted slots.
+
+Design rules:
+  - decays with inactivity so dormant accounts do not hold rank
+  - new users get a provisional band, never a zero. A cold-start
+    penalty kills supply.
+  - visible to both sides, with the inputs shown
+
+Feeds directly into match scoring.</pre>
+</article>
+</section>
+<section id="C">
+  <div class="shead"><span class="ch">C</span><h2>Collab network</h2><span class="win">W5–8</span></div>
+  <p class="sdek">No cold start, daily habit, and it populates the credits registry for free.</p>
+  <p class="pcount">8 prompts</p>
+  <article class="prompt" id="p-C1">
+  <header class="p-head">
+    <div><span class="p-id">C1</span><h4>Role taxonomy and profiles</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt C1">Copy</button>
+  </header>
+  <pre class="p-body">Build role-based profiles for SHOUTOUT.
+
+Role families and their match attributes:
+  Voice        vocalist, topliner, rapper, backing, harmony, VO
+               -&gt; range, timbre tags, languages, accent, key comfort
+  Writing      songwriter, lyricist, hook writer, composer, arranger
+               -&gt; languages, themes, co-write vs work-for-hire
+  Production   beat producer, instrumental, sound design, programmer
+               -&gt; genres, BPM range, typical keys, DAW, turnaround
+  Engineering  mix, mastering, vocal edit, tuning
+               -&gt; genre specialism, stem capacity, revision policy
+  Players      guitar, bass, drums, keys, tabla, sitar, flute,
+               strings, brass, percussion
+               -&gt; instrument, style, reading vs by-ear, remote vs live
+  Stage        DJ, live band, hype, MD, backline tech, FOH
+  Visual       video director, DOP, editor, VFX, cover art, stylist
+  Business     manager, agent, publicist, scout, studio owner
+
+Many-to-many: one person, several roles. Matching happens per role,
+never per person. Each role carries proof of work — audio or video
+samples, and credits.</pre>
+</article><article class="prompt" id="p-C2">
+  <header class="p-head">
+    <div><span class="p-id">C2</span><h4>Collab Rooms</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt C2">Copy</button>
+  </header>
+  <pre class="p-body">Build Collab Rooms for SHOUTOUT.
+
+Opens automatically when a slot is accepted. Contains:
+  - versioned stem uploads, immutable, full history
+  - reference tracks
+  - threaded chat with presence via Supabase Realtime
+  - the split sheet
+  - deadline countdown
+  - escrow state
+  - revision counter against the agreed policy
+
+Version discipline: every upload is versioned and immutable. Disputes
+are resolved from version history, which makes the Room the evidence log.
+
+Mobile first — people record vocals on a phone.</pre>
+</article><article class="prompt" id="p-C3">
+  <header class="p-head">
+    <div><span class="p-id">C3</span><h4>Split sheet — gates file transfer</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt C3">Copy</button>
+  </header>
+  <pre class="p-body">Implement split sheets for SHOUTOUT. This is the most important rule
+in the module.
+
+NO full-quality stems are released until every slot&#x27;s split is agreed
+and signed. Watermarked previews only before that point. There is no
+path around this and no override.
+
+Capture:
+  - writer share and master share, declared SEPARATELY
+  - work-for-hire vs co-write per contributor
+  - publisher or PRO affiliation if known
+  - territory and term if non-standard
+
+On signature: write directly into SHOUTOUT Credits. This is how the
+registry populates without anyone doing data entry — the single
+highest-leverage automation in the company.
+
+The industry&#x27;s oldest problem is undocumented splits discovered years
+later when money finally arrives. Make the split a precondition of the
+file transfer, not an afterthought.</pre>
+</article><article class="prompt" id="p-C4">
+  <header class="p-head">
+    <div><span class="p-id">C4</span><h4>Watermarked stem exchange</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt C4">Copy</button>
+  </header>
+  <pre class="p-body">Build watermarked media exchange for SHOUTOUT.
+
+  - audible watermark on preview streams, no download
+  - full files unlock on split signature and, for paid slots, on
+    escrow funding
+  - applies to beats going OUT and vocal takes coming BACK —
+    protection runs both directions
+  - signed, expiring URLs; never a public bucket path
+  - watermarking runs in apps/workers, not in the request path</pre>
+</article><article class="prompt" id="p-C5">
+  <header class="p-head">
+    <div><span class="p-id">C5</span><h4>Escrowed delivery</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt C5">Copy</button>
+  </header>
+  <pre class="p-body">Implement escrowed delivery for Collab slots in SHOUTOUT.
+
+Runs on the same Settle rail as gigs — do not build a second payment path.
+
+  - fee slots fund on signature
+  - release on delivery acceptance, or auto-release after a review
+    window
+  - milestones for larger jobs: demo, full take, revisions
+  - revision policy declared on the slot BEFORE anyone applies;
+    exceeding it triggers a priced change request, not an argument
+  - dispute freezes escrow and preserves version history as evidence</pre>
+</article><article class="prompt" id="p-C6">
+  <header class="p-head">
+    <div><span class="p-id">C6</span><h4>Demo-to-Shout</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt C6">Copy</button>
+  </header>
+  <pre class="p-body">Build demo-to-Shout for SHOUTOUT.
+
+Upload a hum, a phone voice note, or a rough loop. Then:
+  1. apps/workers extracts BPM, key and mood
+  2. @shoutout/intent drafts a GENERATION_INTENT
+  3. the composer opens pre-filled
+  4. the user confirms and posts
+
+This is the lowest-friction entry path in the product, and it converts
+the least articulate users — often the most talented ones — into posters.
+
+Target: voice note to published Shout in under 60 seconds.</pre>
+</article><article class="prompt" id="p-C7">
+  <header class="p-head">
+    <div><span class="p-id">C7</span><h4>Trust and safety</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt C7">Copy</button>
+  </header>
+  <pre class="p-body">Implement trust and safety for the SHOUTOUT Collab network.
+
+  - verified identity (phone plus PAN or equivalent) required before
+    any PAID Shout; free collabs stay lighter-weight
+  - work-for-hire vs co-write declared up front on every slot —
+    ambiguity here is where relationships die
+  - dispute path that freezes escrow and surfaces version history
+  - report and block, per person and per org
+  - rate limits on Shout posting and answering
+  - detection for: duplicate profiles, collusive reviews between two
+    orgs, escrow abuse patterns, and stem leakage</pre>
+</article><article class="prompt" id="p-C8">
+  <header class="p-head">
+    <div><span class="p-id">C8</span><h4>Collab-to-release handoff</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt C8">Copy</button>
+  </header>
+  <pre class="p-body">Build the collab-to-release handoff for SHOUTOUT.
+
+On Room close:
+  - credits registered against every contributor&#x27;s shoutout_id
+  - a work record created
+  - optional push into the sync catalog with splits pre-registered
+  - a release campaign scaffolded in Growth OS, with every
+    collaborator&#x27;s audience available for the announce
+
+This closes the loop: the collab produced a work, the work has verified
+splits, the work can now earn. Nothing else on the market carries a
+track from &#x27;I need a vocalist&#x27; to &#x27;everyone got paid&#x27;.</pre>
+</article>
+</section>
+<section id="T">
+  <div class="shead"><span class="ch">T</span><h2>Creation studio</h2><span class="win">W7–10</span></div>
+  <p class="sdek">A merge of two existing assets, not a port of one.</p>
+  <p class="pcount">9 prompts</p>
+  <article class="prompt" id="p-T1">
+  <header class="p-head">
+    <div><span class="p-id">T1</span><h4>Port the nine-stage pipeline</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt T1">Copy</button>
+  </header>
+  <pre class="p-body">Port the Third Eye music studio pipeline into SHOUTOUT.
+
+Carry the nine stages over INTACT. No stage is skippable or combinable:
+  1 Input Freeze          input locked, no mutation past this point
+  2 Text to Meaning       semantic analysis
+  3 Music Intent Object   this IS GENERATION_INTENT — the seam
+  4 Structure Planning    sections, arrangement, arc
+  5 Section-by-Section    not single-pass; this is what yields stems
+  6 Combine Sections
+  7 Decode to Audio
+  8 Post-Processing       FFmpeg; also where sync variants are cut
+  9 Encode and Persist    object storage, lifecycle managed
+
+Stage 3 is where @shoutout/intent joins. Both projects were already
+built around the same object without being connected.
+
+Before you start: confirm which repo the pipeline actually lives in,
+and whether the Python ML stage is real inference or scaffolded.</pre>
+</article><article class="prompt" id="p-T2">
+  <header class="p-head">
+    <div><span class="p-id">T2</span><h4>Generation queue</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt T2">Copy</button>
+  </header>
+  <pre class="p-body">Wire the Studio generation queue for SHOUTOUT.
+
+BullMQ on Redis, worker execution, async job with polling. Generation
+must NEVER block a request — a Shout reference generation is a job,
+not a synchronous call.
+
+  - job status endpoint and realtime subscription
+  - per-org rate limits and a cost ceiling
+  - graceful degradation: if generation fails, the Shout still posts
+    without a reference
+  - the video worker fails independently and never affects audio
+    job status
+
+Note this is a SECOND queue alongside Inngest. Inngest runs month-long
+lifecycle workflows; BullMQ runs the generation pipeline. Different
+jobs, different tools.</pre>
+</article><article class="prompt" id="p-T3">
+  <header class="p-head">
+    <div><span class="p-id">T3</span><h4>Reference generator</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt T3">Copy</button>
+  </header>
+  <pre class="p-body">Build the Studio reference generator for SHOUTOUT.
+
+From the Shout composer: generate a 30-second reference to ATTACH to a
+Shout, instead of writing &#x27;make it vibey&#x27;.
+
+This removes the single biggest cause of failed collaborations —
+describing sound in words. Three variations per generation so the user
+picks a direction rather than accepting one.
+
+Positioning discipline in every string of copy: this is a communication
+tool that helps you show someone the sound in your head. Never &#x27;AI
+music generator&#x27;.</pre>
+</article><article class="prompt" id="p-T4">
+  <header class="p-head">
+    <div><span class="p-id">T4</span><h4>Scratch preview</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt T4">Copy</button>
+  </header>
+  <pre class="p-body">Port the MuseForge Web Audio synthesis into SHOUTOUT Studio.
+
+Instant, in-browser, no queue. The user iterates on direction with
+immediate feedback, and only commits to the real nine-stage pipeline
+when the direction is right.
+
+This saves generation cost and, more importantly, saves the user from
+waiting on jobs while still exploring.</pre>
+</article><article class="prompt" id="p-T5">
+  <header class="p-head">
+    <div><span class="p-id">T5</span><h4>Audio analysis on every upload</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt T5">Copy</button>
+  </header>
+  <pre class="p-body">Implement audio analysis in apps/workers for SHOUTOUT.
+
+On EVERY audio upload anywhere in the product — Collab stems, audition
+entries, catalog works, references:
+  - BPM, key, mode
+  - genre and mood tags
+  - loudness, duration
+  - a quality gate flag
+
+Essentia or librosa. Deterministic feature extraction, not an LLM job.
+
+This auto-tags everything, which is what makes matching work without
+anyone doing manual metadata entry. It is the quiet backbone of the
+whole product.</pre>
+</article><article class="prompt" id="p-T6">
+  <header class="p-head">
+    <div><span class="p-id">T6</span><h4>Stem separation</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt T6">Copy</button>
+  </header>
+  <pre class="p-body">Add stem separation to SHOUTOUT Studio.
+
+Section-by-section generation already produces stem-aware output.
+Extend separation to UPLOADED audio so a collaborator can build against
+a reference, and so live acts can pull backing tracks.
+
+Outputs: vocals, drums, bass, other. Stored versioned in the Room.</pre>
+</article><article class="prompt" id="p-T7">
+  <header class="p-head">
+    <div><span class="p-id">T7</span><h4>Sync variants</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt T7">Copy</button>
+  </header>
+  <pre class="p-body">Build sync variant generation for SHOUTOUT.
+
+Stage 8 post-processing: auto-cut a licensed work to 6s, 15s and 30s,
+preserving the hook rather than truncating.
+
+Feeds the sync catalog directly. This is a revenue feature, not a
+convenience — cleared, ad-length Indian music is what D2C brands and
+agencies cannot currently buy easily.</pre>
+</article><article class="prompt" id="p-T8">
+  <header class="p-head">
+    <div><span class="p-id">T8</span><h4>Album and project mode</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt T8">Copy</button>
+  </header>
+  <pre class="p-body">Port MuseForge album mode into SHOUTOUT Studio.
+
+Controlled semantic drift across tracks, for coherent multi-track
+projects. Same GENERATION_INTENT with bounded variation per track.
+
+Surfaces as artist project planning, not just generation.</pre>
+</article><article class="prompt" id="p-T9">
+  <header class="p-head">
+    <div><span class="p-id">T9</span><h4>AI provenance</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt T9">Copy</button>
+  </header>
+  <pre class="p-body">Implement provenance for generated audio in SHOUTOUT.
+
+Every generated asset carries: generated flag, model, intent object,
+timestamp, and the human who commissioned it.
+
+Rules enforced in code, not policy:
+  - generated audio is never presented as a finished work
+  - generated audio never enters the sync catalog as a licensable
+    asset without human authorship recorded in Credits
+  - provenance travels with the file into Rooms and exports
+
+Disclose in the UI wherever a generated asset appears.</pre>
+</article>
+</section>
+<section id="M">
+  <div class="shead"><span class="ch">M</span><h2>Settle rail</h2><span class="win">W9–12</span></div>
+  <p class="sdek">Money movement. Zero tolerance on reconciliation.</p>
+  <p class="pcount">6 prompts</p>
+  <article class="prompt" id="p-M1">
+  <header class="p-head">
+    <div><span class="p-id">M1</span><h4>Payment aggregator integration</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt M1">Copy</button>
+  </header>
+  <pre class="p-body">Integrate the payment rail for SHOUTOUT.
+
+CRITICAL: SHOUTOUT cannot legally hold customer funds under RBI payment
+aggregator rules. Use a licensed PA&#x27;s split-settlement product with hold
+periods — functionally escrow, legally theirs. The nodal account is the
+PA&#x27;s.
+
+Build packages/money as a PROVIDER-AGNOSTIC interface:
+  createHold, fundHold, releaseToSplits, refund, reconcile
+with one concrete adapter now and the expectation of one per market
+at Wave 1.
+
+Before writing code, confirm against the live API — not the docs —
+hold-period mechanics, refund and chargeback flow, settlement reporting
+format, and webhook signature verification.
+
+Do not use Stripe. It does not solve this problem in India.</pre>
+</article><article class="prompt" id="p-M2">
+  <header class="p-head">
+    <div><span class="p-id">M2</span><h4>Double-entry ledger</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt M2">Copy</button>
+  </header>
+  <pre class="p-body">Build the internal ledger for SHOUTOUT.
+
+Double-entry, regardless of what the PA reports. Every money movement
+is two entries. The ledger is the source of truth; the PA is a
+counterparty you reconcile against.
+
+  ledger_entries  id, org_id, account, direction, amount, currency,
+                  ref_type, ref_id, occurred_at
+  accounts        per org, per artist, per payee, plus platform
+                  revenue and PA float
+
+Invariant, enforced and tested: the sum of every settlement&#x27;s entries
+is zero. A settlement that does not balance cannot close.</pre>
+</article><article class="prompt" id="p-M3">
+  <header class="p-head">
+    <div><span class="p-id">M3</span><h4>Contracts and eSign</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt M3">Copy</button>
+  </header>
+  <pre class="p-body">Implement contracts for SHOUTOUT.
+
+  contracts  booking_id or slot_id, template_version, esign_provider_id,
+             stamp_state, signed_by[], signed_at, pdf_url, hash
+
+  - Aadhaar eSign with per-state stamping
+  - both parties countersign — no more one-sided PDFs and voice notes
+  - rider annexure attached by reference
+  - immutable once signed; amendments create a new version
+  - the PDF hash is stored so tampering is detectable
+
+Reuse the Third Eye JARVIS PDF generation tooling rather than building
+document rendering from scratch.</pre>
+</article><article class="prompt" id="p-M4">
+  <header class="p-head">
+    <div><span class="p-id">M4</span><h4>TDS, GST and settlement maths</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt M4">Copy</button>
+  </header>
+  <pre class="p-body">Implement Indian tax handling for SHOUTOUT settlements.
+
+  - TDS 194J on professional fees, 194C where applicable
+  - GST on platform service fee
+  - computed and DISPLAYED BEFORE contract signature, never after
+
+Surprising an artist with deductions after the fact destroys trust in
+a single transaction. The quote, the contract and the settlement must
+all show the same net figure.
+
+Generate a settlement statement PDF per payout showing gross,
+deductions, splits and net. This is the document artists will forward
+to their accountant.</pre>
+</article><article class="prompt" id="p-M5">
+  <header class="p-head">
+    <div><span class="p-id">M5</span><h4>Splits and payouts</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt M5">Copy</button>
+  </header>
+  <pre class="p-body">Implement split execution and payout for SHOUTOUT.
+
+  splits   settlement_id, payee_type, payee_id, pct, amount, paid_at
+  payouts  split_id, method, utr, status, failure_reason
+
+Rules:
+  - a settlement cannot enter &#x27;settled&#x27; until every split reconciles
+    to zero — manager, agency, sidemen, artist
+  - sidemen are paid on the SAME rail at the SAME time. This is the
+    most important design decision in the product, commercially and
+    morally.
+  - penny-drop bank verification and PAN check on every payee before
+    first payout
+  - retry with backoff on failure, and an alert on second failure
+
+SLA: T+2 business days from performance confirm, above 97%. Track and
+alert on the miss rate.</pre>
+</article><article class="prompt" id="p-M6">
+  <header class="p-head">
+    <div><span class="p-id">M6</span><h4>Reconciliation and disputes</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt M6">Copy</button>
+  </header>
+  <pre class="p-body">Build reconciliation and dispute handling for SHOUTOUT.
+
+Daily reconciliation: internal ledger against PA settlement reports.
+Any mismatch raises an alert and blocks nothing automatically — a human
+resolves it, but it is visible within a day, never a month.
+
+Disputes: either party may raise within 48 hours of a state change.
+Raising freezes the settlement, preserves evidence (version history,
+audit log, rider confirmations) and opens an admin queue item. It does
+not block indefinitely — there is a resolution SLA.
+
+Zero tolerance on reconciliation errors. This is tested in CI.</pre>
+</article>
+</section>
+<section id="G">
+  <div class="shead"><span class="ch">G</span><h2>Manager OS and Gig Shouts</h2><span class="win">W10–16</span></div>
+  <p class="sdek">Only after 25 bookings have been brokered by hand.</p>
+  <p class="pcount">8 prompts</p>
+  <article class="prompt" id="p-G1">
+  <header class="p-head">
+    <div><span class="p-id">G1</span><h4>Concierge data capture</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt G1">Copy</button>
+  </header>
+  <pre class="p-body">Before building Manager OS, build the concierge capture tool for
+SHOUTOUT.
+
+A minimal internal form to record the 25 bookings brokered by hand in
+weeks 7 and 8. Capture every field of every deal: who asked, what they
+asked for, what was quoted, what was negotiated, what was agreed, what
+was paid, when, and to whom.
+
+This exercise IS the schema and the first rows of the benchmark index.
+Do not skip it and do not build Manager OS before it is done.</pre>
+</article><article class="prompt" id="p-G2">
+  <header class="p-head">
+    <div><span class="p-id">G2</span><h4>Holds ledger</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt G2">Copy</button>
+  </header>
+  <pre class="p-body">Implement the SHOUTOUT holds ledger.
+
+States: enquiry -&gt; soft_hold_1 -&gt; soft_hold_2 -&gt; soft_hold_3 -&gt;
+confirmed -&gt; contracted -&gt; advance_paid -&gt; performed -&gt; settled -&gt; closed
+Exits: released, cancelled, disputed, expired
+
+Rules:
+  - every soft hold carries a MANDATORY release deadline
+  - hold 1 has right of first refusal; when challenged it has 48 hours
+    to confirm or drop
+  - auto-release fires from a scheduled Inngest job, not a user action,
+    at 99.99% reliability
+  - &#x27;confirmed&#x27; requires an attached contract draft
+  - a date cannot be double-confirmed across a roster — enforce this
+    with a database constraint, not application code
+
+A missed auto-release causes a double-booking, which is a reputational
+event for the manager, not merely a bug.</pre>
+</article><article class="prompt" id="p-G3">
+  <header class="p-head">
+    <div><span class="p-id">G3</span><h4>Brief intake and parsing</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt G3">Copy</button>
+  </header>
+  <pre class="p-body">Build Gig Shout intake for SHOUTOUT.
+
+Three entry paths, because this is how briefs actually arrive:
+  - web form
+  - forwarded WhatsApp message, auto-parsed
+  - PDF upload, auto-parsed
+
+Parse with Claude into the Shout schema: date, city, budget band,
+genres, crowd size, slot count. Schema-validate the output; reject and
+retry rather than persisting malformed data.
+
+Edge cases: absent budget (infer band from crowd size and city, flag
+as inferred), date ranges (multi-date brief, check availability across
+all), lineup briefs (split into child Shouts).
+
+Target: parse accuracy above 90% on the five core fields, measured
+against human review on a rolling sample.</pre>
+</article><article class="prompt" id="p-G4">
+  <header class="p-head">
+    <div><span class="p-id">G4</span><h4>Benchmark index</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt G4">Copy</button>
+  </header>
+  <pre class="p-body">Build the SHOUTOUT benchmark index — the compounding asset.
+
+A materialised view over settled bookings, refreshed nightly by pg_cron:
+  genre x city x slot x crowd_band x season -&gt; p25, p50, p75, sample_n
+
+Protection rules, enforced in the API not the UI:
+  - never expose raw rows, only percentile bands
+  - minimum cell size n &gt;= 5 before a cell is published, to prevent
+    reverse-engineering of individual deals
+  - anomaly review before a fee enters the index
+
+Seeded by the 25 concierge bookings, sharpened by every booking after.
+No incumbent has this. It prices quotes, prices sponsorships and
+underwrites advances.</pre>
+</article><article class="prompt" id="p-G5">
+  <header class="p-head">
+    <div><span class="p-id">G5</span><h4>Auto-quote</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt G5">Copy</button>
+  </header>
+  <pre class="p-body">Build the SHOUTOUT quote generator.
+
+Pull p25/p50/p75 for the matching index cell, attach the EPK, draft the
+proposal. The manager edits or sends in one tap.
+
+CRITICAL RULE: the system never invents a price. If the index cell has
+n &lt; 5, show &#x27;insufficient data&#x27; and let the manager price manually —
+and that manual price then feeds the index.
+
+Include: validity window, terms, deposit percentage, cancellation
+ladder. Send by WhatsApp with a web fallback link.</pre>
+</article><article class="prompt" id="p-G6">
+  <header class="p-head">
+    <div><span class="p-id">G6</span><h4>Manager OS</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt G6">Copy</button>
+  </header>
+  <pre class="p-body">Build Manager OS for SHOUTOUT — the core paying product.
+
+The manager is the buyer, not the artist. On Monday morning, one screen
+answers three questions: who is booked, who owes me money, who do I
+call next.
+
+  - multi-artist roster with per-artist commission and exclusivity
+  - pipeline board: enquiry, quoted, held, confirmed, performed, settled
+  - shared holds calendar across the whole roster, colour-coded by state
+  - quote generator with live index comps
+  - commission auto-split across manager, agency, sidemen, artist
+  - artist read-only portals — they see their own dates and money,
+    nothing else
+
+A self-managed artist is an org with a roster of one. Serve n=1 as
+first-class, never as a degraded case.
+
+Acceptance: inbound WhatsApp message to sent quote in under 90 seconds,
+on a phone, at 3G.</pre>
+</article><article class="prompt" id="p-G7">
+  <header class="p-head">
+    <div><span class="p-id">G7</span><h4>Riders</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt G7">Copy</button>
+  </header>
+  <pre class="p-body">Implement rider checklists for SHOUTOUT.
+
+Backline, travel, hotel, soundcheck time, hospitality. Travels with the
+booking. Both sides tick off. Reminders at T-7 and T-2.
+
+Day-of disputes are routine in this industry and the artist absorbs the
+cost. A confirmed checklist with a timestamp ends that.
+
+Reusable rider templates per artist so it is not re-entered every time.</pre>
+</article><article class="prompt" id="p-G8">
+  <header class="p-head">
+    <div><span class="p-id">G8</span><h4>Re-book automation</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt G8">Copy</button>
+  </header>
+  <pre class="p-body">Build the SHOUTOUT re-book sequence.
+
+Most gigs are annual — weddings, college fests, corporate offsites,
+festival editions. An Inngest function with step.sleepUntil fires at
+T+11 months to BOTH sides: &#x27;this time last year you booked X. Same
+date this year?&#x27;
+
+This converts a one-time transaction into a recurring one and is the
+cheapest GMV in the entire model.
+
+Fires only for on-rail bookings, which is also a disintermediation
+defence.</pre>
+</article>
+</section>
+<section id="A">
+  <div class="shead"><span class="ch">A</span><h2>Stage and auditions</h2><span class="win">W12–20</span></div>
+  <p class="sdek">The artist acquisition engine. One number decides it.</p>
+  <p class="pcount">6 prompts</p>
+  <article class="prompt" id="p-A1">
+  <header class="p-head">
+    <div><span class="p-id">A1</span><h4>Open call intake</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt A1">Copy</button>
+  </header>
+  <pre class="p-body">Build SHOUTOUT Stage open-call intake.
+
+  - multi-language landing pages per genre bracket and city
+  - phone-OTP entry, no password, no app install
+  - sub-90-second video, signed direct-to-R2 upload from the phone
+  - 90-second hard cap enforced client AND server side
+  - resumable upload — connections drop at scale
+  - never proxy video through the API
+
+Load-test for burst: a season opens and 5,000 uploads arrive in an hour.
+
+Target: cost per submission under Rs 40 (about $0.47).</pre>
+</article><article class="prompt" id="p-A2">
+  <header class="p-head">
+    <div><span class="p-id">A2</span><h4>Auto-scoring and HITL queue</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt A2">Copy</button>
+  </header>
+  <pre class="p-body">Build audition scoring for SHOUTOUT Stage.
+
+Auto-score on submission: audio quality, originality flag, BPM/key/genre
+from apps/workers, engagement history. Claude Opus writes the rationale
+— low volume, reasoning quality matters more than cost here.
+
+Then a HUMAN review queue. The model rationale is shown; the model
+never decides alone. Reviewer throughput target above 250 per hour.
+
+Genre brackets so high-volume hip-hop does not crowd out folk and
+classical — the folk and classical brackets are where government,
+tourism and corporate money already sits.
+
+Upload to scored in under 3 minutes.</pre>
+</article><article class="prompt" id="p-A3">
+  <header class="p-head">
+    <div><span class="p-id">A3</span><h4>Rejection-to-onboarding — the whole thesis</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt A3">Copy</button>
+  </header>
+  <pre class="p-body">Build the SHOUTOUT rejection sequence. This is the most valuable
+automation in the company.
+
+A season signs about fifteen people. The other 99.9% are the most
+qualified artist leads in the country, and every existing format throws
+them away.
+
+On non-selection, an Inngest sequence delivers by WhatsApp:
+  1. a real scorecard with the reviewer&#x27;s notes — not a form rejection
+  2. an auto-generated EPK, free, theirs to keep
+  3. open Gig Shouts in their city, right now
+  4. an invitation to declare roles and answer Collab Shouts
+
+Then a 7-day and 21-day follow-up on profile completion.
+
+TARGET: rejection to profile completion above 60%. Instrument this
+above everything else — 45,000 submissions at 60% is 27,000 activated
+artists at roughly Rs 40 CAC. The entire acquisition model rests on
+this one number.</pre>
+</article><article class="prompt" id="p-A4">
+  <header class="p-head">
+    <div><span class="p-id">A4</span><h4>EPK generator</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt A4">Copy</button>
+  </header>
+  <pre class="p-body">Build the SHOUTOUT EPK generator.
+
+From a profile plus best media: a public, SEO-indexable artist page and
+a downloadable PDF. Bio drafted by Claude from the artist&#x27;s own
+material, human-editable, never auto-published.
+
+Include: photos, best three tracks, credits from the registry, past
+venues, fee band if the artist opts in, contact routed through SHOUTOUT.
+
+Reuse Third Eye JARVIS PDF tooling. ISR the public page — these pages
+are the inbound engine.
+
+Give this away free to every rejected auditionee. It is the single
+strongest reason they complete a profile.</pre>
+</article><article class="prompt" id="p-A5">
+  <header class="p-head">
+    <div><span class="p-id">A5</span><h4>Seasons, brackets and standings</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt A5">Copy</button>
+  </header>
+  <pre class="p-body">Build season and league structure for SHOUTOUT Stage.
+
+  seasons   format, city, bracket, air_date, sponsor_ids[]
+  episodes
+  scores    submission_id, judge_id, criteria jsonb, total
+
+Formats: season show, improv battle, city league with standings and
+playoffs, weekly open calls.
+
+Public standings pages, ISR, shareable. League tables drive return
+visits between episodes.</pre>
+</article><article class="prompt" id="p-A6">
+  <header class="p-head">
+    <div><span class="p-id">A6</span><h4>Alumni track</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt A6">Copy</button>
+  </header>
+  <pre class="p-body">Build the SHOUTOUT alumni track.
+
+Every past entrant persists in the graph as bookable supply and as A&amp;R
+signal — not as a dead record.
+
+  - alumni flag with season and placement
+  - re-engagement at the next season open
+  - alumni surfaced first in Gig Shout matching for their city
+  - alumni progress (bookings, collabs, earnings) feeds the A&amp;R feed
+
+Target: above 25% of alumni book within 12 months.</pre>
+</article>
+</section>
+<section id="R">
+  <div class="shead"><span class="ch">R</span><h2>Registry, Circle, Growth</h2><span class="win">W16–32</span></div>
+  <p class="sdek">The assets that compound quietly.</p>
+  <p class="pcount">8 prompts</p>
+  <article class="prompt" id="p-R1">
+  <header class="p-head">
+    <div><span class="p-id">R1</span><h4>Credits and splits registry</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt R1">Copy</button>
+  </header>
+  <pre class="p-body">Build SHOUTOUT Credits.
+
+  works        id, title, iswc, isrc, created_from_room_id
+  credits      work_id, contributor_shoutout_id, role, split_pct,
+               verified_by, verified_at
+
+Populated automatically by every Collab split sheet. No separate data
+entry, ever.
+
+  - public verified credit page per person, attached to shoutout_id
+  - dispute and correction flow with an audit trail
+  - export in a standard format for PRO registration
+
+Strategic role: this is the entry point into recorded music and
+publishing, and the real &#x27;universal identity&#x27; play. It is also the
+cold-start protocol — once a producer&#x27;s catalogue lives here, they
+never re-key it anywhere else.</pre>
+</article><article class="prompt" id="p-R2">
+  <header class="p-head">
+    <div><span class="p-id">R2</span><h4>Circle — fan CRM</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt R2">Copy</button>
+  </header>
+  <pre class="p-body">Build SHOUTOUT Circle.
+
+  - QR capture at gigs -&gt; phone -&gt; consent -&gt; fan record OWNED BY THE
+    ARTIST
+  - segmentation by city, attendance count, purchase history
+  - superfan tiers from proof-of-attendance and spend
+  - drops and presales gated by tier
+  - WhatsApp broadcast within template rules
+
+Consent architecture: fans consent to the ARTIST; SHOUTOUT is the
+processor. This is a DPDP requirement and it is also the entire
+positioning.
+
+Full export at any time. The promise is ownership, so exit must be
+frictionless. Build the export before the import.</pre>
+</article><article class="prompt" id="p-R3">
+  <header class="p-head">
+    <div><span class="p-id">R3</span><h4>Growth OS</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt R3">Copy</button>
+  </header>
+  <pre class="p-body">Build SHOUTOUT Growth OS.
+
+  - release-day machine: pre-save landing page, announce creative,
+    city-targeted ad audience built from Circle
+  - Reels hook testing framework
+  - playlist and save-rate dashboards
+  - gig-triggered promotion: booking confirmed -&gt; creative generated
+    -&gt; presale to superfans -&gt; post-show content pack
+
+Zero manual work between booking and promotion.
+
+This is the founder&#x27;s existing performance-marketing and lifecycle
+stack repointed at a new customer. It should be the fastest module to
+ship well.</pre>
+</article><article class="prompt" id="p-R4">
+  <header class="p-head">
+    <div><span class="p-id">R4</span><h4>Sync catalog</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt R4">Copy</button>
+  </header>
+  <pre class="p-body">Build the SHOUTOUT sync catalog.
+
+  - catalog tagged by BPM, key, mood, genre from the audio pipeline
+  - usage tiers with territory and duration
+  - splits already registered, so licence payment distributes
+    automatically
+  - Studio-generated ad-length variants at 6s, 15s, 30s
+  - licence PDF generated on purchase
+
+Pricing Rs 999 to Rs 9,999 ($12 to $118) by usage tier. 30% revenue
+share to SHOUTOUT.</pre>
+</article><article class="prompt" id="p-R5">
+  <header class="p-head">
+    <div><span class="p-id">R5</span><h4>A&amp;R signal engine</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt R5">Copy</button>
+  </header>
+  <pre class="p-body">Build the SHOUTOUT A&amp;R signal engine.
+
+Weekly ranked feed combining streaming velocity, short-form breakout,
+league results, gig sell-through and regional fan density. Plus the
+tour demand heatmap — &#x27;you have 4,200 listeners in Indore, route the
+tour&#x27;.
+
+Sold by seat to labels, promoters and brand teams. Highest-margin line
+in the stack, zero marginal cost — a byproduct of transactions already
+processed.
+
+Sell percentile bands and ranked feeds. NEVER raw rows, never
+underlying deal data. A&amp;R is a data customer, not a partner.</pre>
+</article><article class="prompt" id="p-R6">
+  <header class="p-head">
+    <div><span class="p-id">R6</span><h4>Sponsorship marketplace</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt R6">Copy</button>
+  </header>
+  <pre class="p-body">Build the SHOUTOUT sponsorship marketplace.
+
+Brand Shout intake -&gt; artist match on audience fit -&gt; priced proposal
+-&gt; contract -&gt; deliverable tracking -&gt; settlement on the same rail.
+
+The wedge: artists are priced 3 to 5 times below influencers at equal
+reach purely because no measurement layer exists. Circle and settlement
+history ARE that layer — you can prove attendance, conversion and
+regional density in a way an influencer platform cannot.
+
+15% of sponsorship GMV.</pre>
+</article><article class="prompt" id="p-R7">
+  <header class="p-head">
+    <div><span class="p-id">R7</span><h4>Advance — artist financing</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt R7">Copy</button>
+  </header>
+  <pre class="p-body">Build SHOUTOUT Advance.
+
+Rs 25,000 to Rs 5,00,000 ($295 to $5,900) in 48 hours against a signed,
+escrowed contract, recovered automatically from the same settlement rail.
+
+Underwriting inputs: benchmark index, organiser settlement reliability,
+artist gig frequency, streaming trend, Collab delivery record.
+
+HARD REQUIREMENT: NBFC co-lending partner. Never lend off the balance
+sheet. Begin partner conversations six months before build.
+
+Prerequisite: the benchmark index must cover 8 genres x 12 cities at
+n &gt;= 5 before underwriting anything.
+
+Why this is the moat: nobody switches CRMs. Everybody switches to
+whoever pays them early.</pre>
+</article><article class="prompt" id="p-R8">
+  <header class="p-head">
+    <div><span class="p-id">R8</span><h4>Liner media engine</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt R8">Copy</button>
+  </header>
+  <pre class="p-body">Build the Liner content pipeline for SHOUTOUT.
+
+  - multi-language transcription including code-switched Hindi,
+    Punjabi, Tamil, Malayalam
+  - annotation drafting by Claude, human edit before publish
+  - vertical video template pipeline
+  - publish and distribution scheduling
+
+Liner is a distribution asset, not a revenue line. It earns artist
+trust so managers arrive inbound rather than being cold-pitched.
+
+Brand it independently — &#x27;Liner, from SHOUTOUT&#x27;, small, outro frame
+only. It needs its own editorial credibility.</pre>
+</article>
+</section>
+<section id="Q">
+  <div class="shead"><span class="ch">Q</span><h2>Quality, security, launch</h2><span class="win">Continuous</span></div>
+  <p class="sdek">The gates that decide whether this is shippable.</p>
+  <p class="pcount">6 prompts</p>
+  <article class="prompt" id="p-Q1">
+  <header class="p-head">
+    <div><span class="p-id">Q1</span><h4>Cross-tenant penetration test</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt Q1">Copy</button>
+  </header>
+  <pre class="p-body">Run a cross-tenant security test on SHOUTOUT.
+
+Authenticate as org A. Attempt every read and every write against every
+one of org B&#x27;s rows, through:
+  - the REST API
+  - direct PostgREST calls
+  - Realtime subscriptions
+  - storage object paths
+  - the workers service
+
+Every attempt must fail. Any single success is a launch blocker, not a
+bug ticket.
+
+Also test: org_id injection in payloads, JWT claim tampering, and
+privilege escalation via org_members.</pre>
+</article><article class="prompt" id="p-Q2">
+  <header class="p-head">
+    <div><span class="p-id">Q2</span><h4>Money invariant tests</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt Q2">Copy</button>
+  </header>
+  <pre class="p-body">Write the money invariant test suite for SHOUTOUT.
+
+Assert, in CI:
+  - every settlement&#x27;s ledger entries sum to zero
+  - a settlement cannot enter &#x27;settled&#x27; with an unreconciled split
+  - TDS and GST shown at quote equal those at contract equal those at
+    settlement
+  - no date can be double-confirmed across a roster
+  - hold auto-release fires within tolerance of the deadline
+  - a failed payout never marks a split as paid
+  - watermarked media cannot be fetched at full quality before split
+    signature
+
+These are blocking gates. A regression here is existential, not
+cosmetic.</pre>
+</article><article class="prompt" id="p-Q3">
+  <header class="p-head">
+    <div><span class="p-id">Q3</span><h4>The critical E2E flow</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt Q3">Copy</button>
+  </header>
+  <pre class="p-body">Write the SHOUTOUT end-to-end test for the flow that must never break.
+
+Collab path:
+  post a Shout with two slots on different terms
+  -&gt; two different people answer
+  -&gt; poster accepts both
+  -&gt; Room opens
+  -&gt; split sheet signed by all three
+  -&gt; stems release at full quality
+  -&gt; escrow funds and releases
+  -&gt; credits registered
+  -&gt; ledger sums to zero
+
+Gig path:
+  brief parsed from a forwarded WhatsApp message
+  -&gt; shortlist -&gt; quote -&gt; hold -&gt; challenge -&gt; confirm -&gt; contract
+  -&gt; advance -&gt; rider -&gt; performed -&gt; settled -&gt; index row written
+
+Playwright, run in CI, screenshot on failure.</pre>
+</article><article class="prompt" id="p-Q4">
+  <header class="p-head">
+    <div><span class="p-id">Q4</span><h4>Compliance implementation</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt Q4">Copy</button>
+  </header>
+  <pre class="p-body">Implement compliance requirements for SHOUTOUT.
+
+  - DPDP: consent architecture (fans consent to the artist), data
+    residency, export and deletion, processing records
+  - IPRS/PPL: establish per booking type whether SHOUTOUT, the
+    organiser or the venue is the licensee. Ambiguity means inherited
+    liability. Encode the answer in the contract template per type.
+  - Artist ToS: commission handling, fan-data ownership, content
+    licence for Stage footage, dispute process
+  - Organiser ToS: hold obligations, cancellation ladder, settlement
+    timing, liability
+  - AI provenance disclosure wherever generated audio appears
+
+Flag every point requiring counsel. Do not treat this as a policy
+document — most of it is product behaviour.</pre>
+</article><article class="prompt" id="p-Q5">
+  <header class="p-head">
+    <div><span class="p-id">Q5</span><h4>Mobile shell</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt Q5">Copy</button>
+  </header>
+  <pre class="p-body">Add the mobile shell for SHOUTOUT.
+
+Capacitor wrapping the Next.js app into iOS and Android, following the
+Third Eye pattern — one codebase, three platforms.
+
+Native capability needed: camera and microphone for audition and demo
+capture, push notifications, share sheet intake for forwarded briefs,
+background upload.
+
+Managers work backstage, in venues and in cars. Desktop-first is a
+non-starter in this product.</pre>
+</article><article class="prompt" id="p-Q6">
+  <header class="p-head">
+    <div><span class="p-id">Q6</span><h4>Launch checklist</h4></div>
+    <button class="copy" type="button" aria-label="Copy prompt Q6">Copy</button>
+  </header>
+  <pre class="p-body">Produce the SHOUTOUT production launch checklist.
+
+Isolation
+  [ ] RLS suite green, every table covered
+  [ ] cross-tenant penetration test clean
+Money
+  [ ] every settlement reconciles to zero
+  [ ] TDS and GST shown pre-signature
+  [ ] payout SLA instrumented and alerting
+  [ ] PA webhook signature verified
+Reliability
+  [ ] hold auto-release at 99.99%
+  [ ] WhatsApp template delivery above 97%, all templates approved
+  [ ] generation queue degrades gracefully
+Product
+  [ ] rejection-to-onboarding instrumented, above 60%
+  [ ] split sheet gates stem release, no override path
+  [ ] benchmark index refuses cells with n &lt; 5
+Legal
+  [ ] artist and organiser ToS live
+  [ ] DPDP consent and export working
+  [ ] contract stamping correct per state
+Ops
+  [ ] audit log immutable and queryable
+  [ ] backups tested by restore, not by existence
+  [ ] on-call rotation and incident plan</pre>
+</article>
+</section>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dr-title">
+  <div class="dr-head"><div><span class="k" id="dr-kicker">Verdict</span><h3 id="dr-title">—</h3></div>
+  <button class="dr-close" id="dr-close" aria-label="Close">✕</button></div>
+  <div class="dr-body" id="dr-body"></div>
+</aside>
+
+<script>
+const SECTIONS=[["map", "Mapping the 80"], ["F", "Foundation"], ["S", "The Shout object"], ["C", "Collab network"], ["T", "Creation studio"], ["M", "Settle rail"], ["G", "Manager OS and Gig Shouts"], ["A", "Stage and auditions"], ["R", "Registry, Circle, Growth"], ["Q", "Quality, security, launch"]];
+const chans=document.getElementById('chans');
+SECTIONS.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.className='chan';b.dataset.target=s[0];
+  b.innerHTML='<span class="led"></span><span class="num">'+String(i+1).padStart(2,'0')+'</span><span>'+s[1]+'</span>';
+  b.onclick=()=>document.getElementById(s[0]).scrollIntoView({behavior:'smooth'});
+  chans.appendChild(b);
+});
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)
+  document.querySelectorAll('.chan').forEach(c=>c.classList.toggle('on',c.dataset.target===e.target.id));});},
+  {rootMargin:'-45% 0px -50% 0px'});
+SECTIONS.forEach(s=>{const el=document.getElementById(s[0]);if(el)obs.observe(el);});
+
+/* copy */
+document.querySelectorAll('.prompt').forEach(p=>{
+  const btn=p.querySelector('.copy'), body=p.querySelector('.p-body');
+  btn.addEventListener('click',async()=>{
+    const text=body.textContent;
+    try{ await navigator.clipboard.writeText(text); }
+    catch(e){
+      const ta=document.createElement('textarea');ta.value=text;
+      ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);
+      ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    }
+    btn.textContent='Copied';btn.classList.add('done');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('done');},1600);
+  });
+});
+
+/* drawer */
+const scrim=document.getElementById('scrim'),drawer=document.getElementById('drawer');
+let lastFocus=null;
+function open(k,t,h){lastFocus=document.activeElement;
+  document.getElementById('dr-kicker').textContent=k;
+  document.getElementById('dr-title').textContent=t;
+  document.getElementById('dr-body').innerHTML=h;
+  drawer.classList.add('on');scrim.classList.add('on');
+  document.body.style.overflow='hidden';
+  document.getElementById('dr-close').focus();}
+function close(){drawer.classList.remove('on');scrim.classList.remove('on');
+  document.body.style.overflow='';lastFocus&&lastFocus.focus();}
+document.getElementById('dr-close').onclick=close;
+scrim.onclick=close;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drawer.classList.contains('on'))close();});
+document.querySelectorAll('tr.clickable').forEach(tr=>{
+  const fire=()=>open('Verdict · '+tr.dataset.verdict, tr.dataset.title, '<p>'+tr.dataset.note+'</p>');
+  tr.onclick=fire;
+  tr.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fire();}};
+});
+
+/* mobile table labels */
+document.querySelectorAll('table').forEach(t=>{
+  const heads=[...t.querySelectorAll('thead th')].map(h=>h.textContent.trim());
+  t.querySelectorAll('tbody tr').forEach(r=>{
+    [...r.children].forEach((c,i)=>{if(heads[i])c.setAttribute('data-label',heads[i]);});
+  });
+});
+
+/* keep active chip centred on mobile */
+const chansEl=document.getElementById('chans');
+function centerChip(){
+  if(window.innerWidth>900)return;
+  const on=chansEl.querySelector('.chan.on');if(!on)return;
+  chansEl.scrollTo({left:Math.max(0,on.offsetLeft-chansEl.clientWidth/2+on.offsetWidth/2),behavior:'smooth'});
+}
+let ct;const mo=new MutationObserver(()=>{clearTimeout(ct);ct=setTimeout(centerChip,120);});
+chansEl.querySelectorAll('.chan').forEach(c=>mo.observe(c,{attributes:true,attributeFilter:['class']}));
+</script>
+</body>
+</html>
