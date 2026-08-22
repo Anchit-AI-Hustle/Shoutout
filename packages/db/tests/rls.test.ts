@@ -286,3 +286,83 @@ describe('Profiles: cross-org isolation on artist_roles and roster', () => {
     }
   });
 });
+
+describe('Gigs: cross-org isolation on briefs and holds', () => {
+  it('org A cannot SELECT a brief belonging to org B', async () => {
+    const briefId = randomUUID();
+    await admin.query('BEGIN');
+    await admin.query(
+      `insert into briefs (id, org_id, city, event_type) values ($1, $2, 'Mumbai', 'club')`,
+      [briefId, orgB],
+    );
+    await admin.query('COMMIT');
+
+    try {
+      const result = await withSession(userA, orgA, (c) =>
+        c.query('select id from briefs where id = $1', [briefId]),
+      );
+      expect(result.rows).toHaveLength(0);
+    } finally {
+      await admin.query('delete from briefs where id = $1', [briefId]);
+    }
+  });
+
+  it('org A cannot SELECT a hold belonging to org B', async () => {
+    const holdId = randomUUID();
+    await admin.query('BEGIN');
+    await admin.query(
+      `insert into holds (id, org_id, artist_id, event_date, expires_at)
+       values ($1, $2, $3, '2027-01-01', now() + interval '3 days')`,
+      [holdId, orgB, artistB],
+    );
+    await admin.query('COMMIT');
+
+    try {
+      const result = await withSession(userA, orgA, (c) =>
+        c.query('select id from holds where id = $1', [holdId]),
+      );
+      expect(result.rows).toHaveLength(0);
+    } finally {
+      await admin.query('delete from holds where id = $1', [holdId]);
+    }
+  });
+
+  it('org A cannot hold a date against an artist it does not own, even claiming its own org_id', async () => {
+    // Defense in depth beyond RLS (migration 012's holds_artist_org_guard
+    // trigger): org A's WITH CHECK passes (org_id = orgA, its own), but the
+    // artist belongs to org B — this must still be rejected.
+    await expect(
+      withSession(userA, orgA, (c) =>
+        c.query(
+          `insert into holds (org_id, artist_id, event_date, expires_at)
+           values ($1, $2, '2027-02-01', now() + interval '3 days')`,
+          [orgA, artistB],
+        ),
+      ),
+    ).rejects.toThrow(/FORBIDDEN/);
+  });
+
+  it('a date cannot be double-confirmed for one artist — proven by the partial unique index', async () => {
+    const holdOneId = randomUUID();
+    const holdTwoId = randomUUID();
+    await admin.query('BEGIN');
+    await admin.query(
+      `insert into holds (id, org_id, artist_id, event_date, state, expires_at)
+       values ($1, $2, $3, '2027-03-01', 'confirmed', now() + interval '3 days')`,
+      [holdOneId, orgA, artistA],
+    );
+    await admin.query('COMMIT');
+
+    try {
+      await expect(
+        admin.query(
+          `insert into holds (id, org_id, artist_id, event_date, state, expires_at)
+           values ($1, $2, $3, '2027-03-01', 'confirmed', now() + interval '3 days')`,
+          [holdTwoId, orgA, artistA],
+        ),
+      ).rejects.toThrow(/duplicate key|unique constraint/i);
+    } finally {
+      await admin.query('delete from holds where id in ($1, $2)', [holdOneId, holdTwoId]);
+    }
+  });
+});
