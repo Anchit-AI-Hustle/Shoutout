@@ -17,10 +17,20 @@ port = 54323
 
 [auth]
 enabled = true
-site_url = "http://localhost:3000"
+site_url = "https://shoutout.anchit-tandon.com"
 additional_redirect_urls = ["http://localhost:3000"]
 
 [auth.sms]
 enable_signup = true
 enable_confirmations = false
 # Phone OTP only — ADR-004. No passwords anywhere in the product.
+# No provider configured below: real OTP delivery needs an SMS provider
+# (Twilio, MessageBird, ...) set up with its own account — external
+# dependency, same category as the WhatsApp BSP application. Until then,
+# signInWithOtp() will fail at the provider step even though everything
+# else in the auth flow (hook, org provisioning, session handling) works.
+# See docs/09-BUILD-SEQUENCE.md M0.
+
+[auth.hook.custom_access_token]
+enabled = true
+uri = "pg-functions://postgres/public/custom_access_token_hook"
