@@ -9,6 +9,11 @@ import { getServerSupabaseClient } from '@/lib/supabase-server';
 // Tuesday afternoon with no gig in sight"). A Server Component, same
 // direct-module-call pattern as /gigs.
 
+// See apps/web/app/gigs/page.tsx for the full reasoning — same fix, same
+// root cause (getServerSupabaseClient() throws before Next can infer this
+// route is dynamic from its cookies() call).
+export const dynamic = 'force-dynamic';
+
 function rise(step: number): CSSProperties {
   return { '--motion-delay': step } as CSSProperties;
 }

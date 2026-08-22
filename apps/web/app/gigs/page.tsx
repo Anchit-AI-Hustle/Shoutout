@@ -9,6 +9,19 @@ function rise(step: number): CSSProperties {
   return { '--motion-delay': step } as CSSProperties;
 }
 
+// Forces this route to render per-request rather than being attempted as a
+// static page at build time. Without this, Next's "Generating static pages"
+// pass invokes the page during `pnpm build` before it ever reaches
+// cookies() (the call that would otherwise make Next infer this route is
+// dynamic on its own) — getServerSupabaseClient() throws synchronously on
+// missing config before that point, and CI's build step intentionally
+// doesn't set NEXT_PUBLIC_SUPABASE_URL/ANON_KEY (they're Vercel deploy-time
+// config, not something docs/15-TESTING.md's `pnpm build` gate injects),
+// so the uncaught throw crashed the whole build. Confirmed by reproducing
+// locally with .env.local removed. This page also cannot be static anyway
+// — it reads the caller's session on every request.
+export const dynamic = 'force-dynamic';
+
 // The Manager OS pipeline board (docs/05-GIGS.md: "Pipeline board: enquiry
 // → quoted → held → confirmed → performed → settled"). A Server Component
 // calling the module directly, same pattern as /a/[slug] calling Supabase
