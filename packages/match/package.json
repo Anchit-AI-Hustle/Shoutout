@@ -8,12 +8,13 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"match engine not yet built — see docs/09-BUILD-SEQUENCE.md M1\" && exit 0"
+    "test": "vitest run"
   },
   "dependencies": {
     "@shoutout/shout-types": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
   }
 }

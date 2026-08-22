@@ -8,7 +8,7 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test:registry": "echo \"registry not yet built — see docs/09-BUILD-SEQUENCE.md M1\" && exit 0"
+    "test:registry": "node scripts/check-registry.mjs"
   },
   "dependencies": {
     "zod": "^3.23.0"
