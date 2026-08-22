@@ -44,9 +44,6 @@ importers:
       '@shoutout/money':
         specifier: workspace:*
         version: link:../../packages/money
-      '@shoutout/shout-types':
-        specifier: workspace:*
-        version: link:../../packages/shout-types
       '@shoutout/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -90,15 +87,9 @@ importers:
       '@shoutout/intent':
         specifier: workspace:*
         version: link:../../packages/intent
-      '@shoutout/match':
-        specifier: workspace:*
-        version: link:../../packages/match
       '@shoutout/money':
         specifier: workspace:*
         version: link:../../packages/money
-      '@shoutout/shout-types':
-        specifier: workspace:*
-        version: link:../../packages/shout-types
       '@shoutout/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -177,34 +168,11 @@ importers:
         specifier: ^5.6.0
         version: 5.9.3
 
-  packages/match:
-    dependencies:
-      '@shoutout/shout-types':
-        specifier: workspace:*
-        version: link:../shout-types
-    devDependencies:
-      typescript:
-        specifier: ^5.6.0
-        version: 5.9.3
-      vitest:
-        specifier: ^2.1.0
-        version: 2.1.9(@types/node@20.19.43)(lightningcss@1.32.0)
-
   packages/money:
     dependencies:
       '@shoutout/db':
         specifier: workspace:*
         version: link:../db
-    devDependencies:
-      typescript:
-        specifier: ^5.6.0
-        version: 5.9.3
-
-  packages/shout-types:
-    dependencies:
-      zod:
-        specifier: ^3.23.0
-        version: 3.25.76
     devDependencies:
       typescript:
         specifier: ^5.6.0
@@ -222,9 +190,6 @@ importers:
 
   packages/ui:
     dependencies:
-      '@shoutout/shout-types':
-        specifier: workspace:*
-        version: link:../shout-types
       react:
         specifier: ^18.3.0
         version: 18.3.1

@@ -11,7 +11,6 @@
   "dependencies": {
     "@shoutout/db": "workspace:*",
     "@shoutout/ui": "workspace:*",
-    "@shoutout/shout-types": "workspace:*",
     "@shoutout/money": "workspace:*",
     "next": "^15.0.0",
     "react": "^18.3.0",
