@@ -2,7 +2,14 @@ name: CI
 
 # Pipeline order per docs/10-TESTING.md:
 # lint -> typecheck -> unit -> test:registry -> test:rls -> test:money -> build -> test:e2e @critical -> deploy
-# test:rls and test:money are stub gates until B2 and B6 land — they must never be removed from this order.
+# test:money is still a stub gate until B6 lands — it must never be removed from this order.
+#
+# test:rls (B2, docs/10-TESTING.md Gate 1) needs a SUPABASE_DB_URL repo secret:
+# a direct Postgres connection string using the `postgres` role (bypasses RLS
+# for seeding test fixtures — this is test infrastructure, not a production
+# request path). Settings → Secrets and variables → Actions → New repository
+# secret. Without it this step fails closed, which is correct: an RLS gate
+# that silently skips is worse than no gate at all.
 
 on:
   push:
@@ -33,6 +40,8 @@ jobs:
       - run: pnpm test
       - run: pnpm test:registry
       - run: pnpm test:rls
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
       - run: pnpm test:money
       - run: pnpm build
       # test:e2e (@critical) enabled once Playwright specs exist — see docs/10-TESTING.md Gate 3
