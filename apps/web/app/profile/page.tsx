@@ -1,8 +1,14 @@
 'use client';
 
-import { useEffect, useState, type ChangeEvent } from 'react';
+import { useEffect, useState, type ChangeEvent, type CSSProperties } from 'react';
 import { ROLE_FAMILIES, type RoleFamily } from '@shoutout/identity';
-import { StatusPill, describeAttributeSchema } from '@shoutout/ui';
+import { EqualizerAccent, StatusPill, describeAttributeSchema } from '@shoutout/ui';
+
+// Culture surface (docs/13-DESIGN-SYSTEM.md) — staggered rise-in, same
+// pattern as the public /a/[slug] page.
+function rise(step: number): CSSProperties {
+  return { '--motion-delay': step } as CSSProperties;
+}
 
 interface Profile {
   id: string;
@@ -105,14 +111,17 @@ export default function ProfilePage() {
 
   return (
     <main className="mx-auto flex max-w-xl flex-col gap-8 px-4 py-12">
-      <div>
-        <h1 className="text-xl font-semibold text-ink">Your profile</h1>
+      <div className="motion-rise" style={rise(0)}>
+        <div className="flex items-center gap-2">
+          <h1 className="text-xl font-semibold text-ink">Your profile</h1>
+          <EqualizerAccent bars={3} />
+        </div>
         <p className="text-sm text-ink-soft">
           One account, many roles — matching happens per role, not per person.
         </p>
       </div>
 
-      <section className="flex flex-col gap-3">
+      <section className="motion-rise flex flex-col gap-3" style={rise(1)}>
         <div>
           <label className={labelClass}>Stage name</label>
           <input
@@ -151,18 +160,20 @@ export default function ProfilePage() {
           type="button"
           onClick={saveProfile}
           disabled={saving}
-          className="min-h-11 rounded-md bg-signal px-4 font-medium text-surface disabled:opacity-50"
+          className="motion-lift min-h-11 rounded-md bg-signal px-4 font-medium text-surface disabled:opacity-50"
         >
           {saving ? 'Saving…' : 'Save profile'}
         </button>
       </section>
 
       {profile ? (
-        <section className="flex flex-col gap-3">
+        <section className="motion-rise flex flex-col gap-3" style={rise(2)}>
           <h2 className="text-sm font-medium text-ink-soft">Roles</h2>
           <ul className="flex flex-wrap gap-2">
             {profile.roles.map((r) => (
-              <StatusPill key={r.role} label={r.role.replace(/_/g, ' ')} tone="active" />
+              <li key={r.role} className="motion-lift rounded-full">
+                <StatusPill label={r.role.replace(/_/g, ' ')} tone="active" />
+              </li>
             ))}
           </ul>
 
@@ -201,7 +212,7 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={addRole}
-            className="min-h-11 self-start rounded-md border border-line px-4 text-sm text-ink-soft"
+            className="motion-lift min-h-11 self-start rounded-md border border-line px-4 text-sm text-ink-soft"
           >
             + Declare this role
           </button>
