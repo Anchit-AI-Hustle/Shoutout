@@ -12,6 +12,8 @@
   "dependencies": {
     "@shoutout/db": "workspace:*",
     "@shoutout/ui": "workspace:*",
+    "@shoutout/identity": "workspace:*",
+    "@shoutout/profiles": "workspace:*",
     "@shoutout/money": "workspace:*",
     "@shoutout/intent": "workspace:*",
     "@supabase/ssr": "^0.5.0",
