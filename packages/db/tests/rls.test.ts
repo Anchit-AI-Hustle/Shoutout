@@ -198,44 +198,48 @@ describe('org_id escalation is rejected', () => {
   });
 });
 
-describe('public discovery is intentional, not a leak', () => {
-  it('a draft shout in org B is invisible to org A', async () => {
-    const shoutId = randomUUID();
+describe('Credits: cross-org isolation on works and contributors', () => {
+  it('org A cannot SELECT a work belonging to org B', async () => {
+    const workId = randomUUID();
     await admin.query('BEGIN');
-    await admin.query(
-      `insert into shouts (id, org_id, type, title, status, visibility, created_by)
-       values ($1, $2, 'collab', 'Draft — should not leak', 'draft', 'open', $3)`,
-      [shoutId, orgB, userB],
-    );
+    await admin.query(`insert into works (id, org_id, title) values ($1, $2, 'Org B Song')`, [
+      workId,
+      orgB,
+    ]);
     await admin.query('COMMIT');
 
     try {
       const result = await withSession(userA, orgA, (c) =>
-        c.query('select id from shouts where id = $1', [shoutId]),
+        c.query('select id from works where id = $1', [workId]),
       );
       expect(result.rows).toHaveLength(0);
     } finally {
-      await admin.query('delete from shouts where id = $1', [shoutId]);
+      await admin.query('delete from works where id = $1', [workId]);
     }
   });
 
-  it('an open+open shout in org B IS visible to org A — by design (migration 004)', async () => {
-    const shoutId = randomUUID();
+  it('org A cannot SELECT contributors on org B works', async () => {
+    const workId = randomUUID();
+    const contributorId = randomUUID();
     await admin.query('BEGIN');
+    await admin.query(`insert into works (id, org_id, title) values ($1, $2, 'Org B Song')`, [
+      workId,
+      orgB,
+    ]);
     await admin.query(
-      `insert into shouts (id, org_id, type, title, status, visibility, created_by)
-       values ($1, $2, 'collab', 'Open — should be discoverable', 'open', 'open', $3)`,
-      [shoutId, orgB, userB],
+      `insert into contributors (id, work_id, org_id, name, phone, role, signature_ref)
+       values ($1, $2, $3, 'Writer B', '+910000000000', 'songwriter', 'tok')`,
+      [contributorId, workId, orgB],
     );
     await admin.query('COMMIT');
 
     try {
       const result = await withSession(userA, orgA, (c) =>
-        c.query('select id from shouts where id = $1', [shoutId]),
+        c.query('select id from contributors where id = $1', [contributorId]),
       );
-      expect(result.rows).toHaveLength(1);
+      expect(result.rows).toHaveLength(0);
     } finally {
-      await admin.query('delete from shouts where id = $1', [shoutId]);
+      await admin.query('delete from works where id = $1', [workId]);
     }
   });
 });

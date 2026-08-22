@@ -1,8 +1,12 @@
 name: CI
 
-# Pipeline order per docs/10-TESTING.md:
-# lint -> typecheck -> unit -> test:registry -> test:rls -> test:money -> build -> test:e2e @critical -> deploy
-# test:money is still a stub gate until B6 lands — it must never be removed from this order.
+# Pipeline order per docs/15-TESTING.md (seventh draft):
+# lint -> typecheck -> unit -> test:boundaries -> test:rls -> test:money -> build -> test:e2e @critical -> deploy
+# test:boundaries replaces the old test:registry (retired with the
+# polymorphic Shout object, migration 008) — it now checks module boundary
+# conformance instead of registry type-branching. Still a stub; real modules/
+# and packages/discovery don't exist yet. test:money is also still a stub.
+# Neither may be removed from this order.
 #
 # test:rls (B2, docs/10-TESTING.md Gate 1) needs a SUPABASE_DB_URL repo secret:
 # a direct Postgres connection string using the `postgres` role (bypasses RLS
@@ -38,7 +42,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
-      - run: pnpm test:registry
+      - run: pnpm test:boundaries
       - run: pnpm test:rls
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}

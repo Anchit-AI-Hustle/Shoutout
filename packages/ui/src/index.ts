@@ -9,4 +9,7 @@ export * from './components/MoneyValue';
 export * from './components/SplitBar';
 export * from './components/ScoreBreakdown';
 export * from './components/DataList';
-export * from './components/ShoutComposer';
+// CollabComposer (docs/13-DESIGN-SYSTEM.md) replaces the old ShoutComposer,
+// removed with the polymorphic Shout object (migration 008). zod-form.ts
+// (the schema-introspection utility ShoutComposer used) is kept — it's
+// generic and CollabComposer will need the same approach.

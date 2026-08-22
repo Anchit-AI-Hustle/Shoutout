@@ -14,7 +14,7 @@
     "test": "turbo run test",
     "test:rls": "pnpm --filter @shoutout/db test:rls",
     "test:money": "pnpm --filter @shoutout/money test",
-    "test:registry": "pnpm --filter @shoutout/shout-types test:registry",
+    "test:boundaries": "echo \"module boundary conformance not yet built — see docs/15-TESTING.md\" && exit 0",
     "test:e2e": "pnpm --filter web test:e2e",
     "db:migrate": "pnpm --filter @shoutout/db db:migrate",
     "db:types": "pnpm --filter @shoutout/db db:types",
