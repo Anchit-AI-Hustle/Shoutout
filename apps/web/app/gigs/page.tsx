@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { listBriefs } from '@shoutout/gigs';
-import { StatusPill, EqualizerAccent } from '@shoutout/ui';
+import { StatusPill, EqualizerAccent, MoneyValue } from '@shoutout/ui';
 import { getServerSupabaseClient } from '@/lib/supabase-server';
-import { SignedOutExplainer } from '@/components/SignedOutExplainer';
+import { SignedOutExplainer, PreviewFrame } from '@/components/SignedOutExplainer';
 
 function rise(step: number): CSSProperties {
   return { '--motion-delay': step } as CSSProperties;
@@ -56,13 +56,60 @@ export default async function GigsPipelinePage() {
   if (!user) {
     return (
       <SignedOutExplainer
+        eyebrow="For artists, managers & agencies"
         title="Gigs"
-        description="Your booking pipeline — one screen that answers who's booked, who owes you money, and who to call next."
-        points={[
-          'Brief intake, shortlisting, and quotes in one place',
-          'A shared holds calendar across your whole roster',
-          'Riders confirmed and timestamped by both sides',
+        tagline="One screen that answers who's booked, who owes you money, and who to call next."
+        highlight="who owes you money"
+        features={[
+          {
+            tone: 'signal',
+            title: 'Every enquiry in one pipeline',
+            description:
+              'Briefs come in from WhatsApp, your public page, or typed in by hand — and land in the same list, not five different chats.',
+          },
+          {
+            tone: 'accent',
+            title: 'Quote without guessing',
+            description:
+              'See what comparable acts actually got paid for the same city, date and crowd size before you name a number.',
+          },
+          {
+            tone: 'trust',
+            title: 'A holds calendar that can’t double-book',
+            description:
+              'One date, one confirmed booking, across your whole roster — enforced by the database, not by whoever answers first.',
+          },
+          {
+            tone: 'ok',
+            title: 'Riders both sides signed',
+            description:
+              'Sound, stay, travel and payment terms confirmed and timestamped by organiser and artist. No “that’s not what we agreed”.',
+          },
         ]}
+        previewCaption="Your pipeline, once you’re in"
+        preview={
+          <PreviewFrame>
+            {[
+              { name: 'Sangeet · Jaipur', date: '14 Dec', fee: 12000000, status: 'confirmed' },
+              { name: 'Corporate · Mumbai', date: '02 Jan', fee: 8500000, status: 'quoted' },
+              { name: 'Festival · Goa', date: '18 Jan', fee: 22500000, status: 'held' },
+            ].map((row) => (
+              <div
+                key={row.name}
+                className="flex items-center justify-between rounded-md border border-line px-3 py-2"
+              >
+                <div>
+                  <p className="text-sm font-medium text-ink">{row.name}</p>
+                  <p className="text-xs text-ink-soft">{row.date}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MoneyValue paise={row.fee} size="sm" />
+                  <StatusPill label={row.status} tone={STATUS_TONE[row.status] ?? 'neutral'} />
+                </div>
+              </div>
+            ))}
+          </PreviewFrame>
+        }
       />
     );
   }

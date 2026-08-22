@@ -34,6 +34,12 @@ const MODULES = [
     description: 'Find people to make music with. Independent slots, closed independently.',
   },
   {
+    name: 'Find artists',
+    href: '/artists',
+    tone: 'signal',
+    description: 'Organising an event? Search by genre or city and send a booking request.',
+  },
+  {
     name: 'Profiles',
     href: '/profile',
     tone: 'trust',

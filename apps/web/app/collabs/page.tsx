@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { listRequests } from '@shoutout/collabs';
 import { EqualizerAccent, StatusPill } from '@shoutout/ui';
 import { getServerSupabaseClient } from '@/lib/supabase-server';
-import { SignedOutExplainer } from '@/components/SignedOutExplainer';
+import { SignedOutExplainer, PreviewFrame } from '@/components/SignedOutExplainer';
 
 // The Collabs feed (docs/06-COLLABS.md: "a producer opens the app on a
 // Tuesday afternoon with no gig in sight"). A Server Component, same
@@ -44,13 +44,61 @@ export default async function CollabsFeedPage() {
   if (!user) {
     return (
       <SignedOutExplainer
+        eyebrow="For anyone making music with anyone else"
         title="Collabs"
-        description="Find people to make music with — no gig or date needed. A producer needs a vocalist, a guitarist needs a drummer, an artist needs a tour manager."
-        points={[
-          'Post a request with up to six independent slots, each on its own terms',
-          'Apply to open slots and get ranked by fit, not just first-come',
-          'Every accepted slot drafts a split sheet automatically — nothing to re-enter',
+        tagline="Find people to make music with — no gig, no date, no budget required."
+        highlight="no gig, no date, no budget required"
+        features={[
+          {
+            tone: 'accent',
+            title: 'Up to six slots, each on its own terms',
+            description:
+              'A vocalist for a share of the master, a mixing engineer for a flat fee, a session drummer for credit. One post, six separate deals.',
+          },
+          {
+            tone: 'trust',
+            title: 'Ranked by fit, not by who refreshed first',
+            description:
+              'Applications are scored on genre, role, city and how reliably you’ve delivered before — the same engine that ranks gig matches.',
+          },
+          {
+            tone: 'ok',
+            title: 'Split sheets drafted automatically',
+            description:
+              'Accept a slot and the split sheet drafts itself from the terms you already agreed. Nobody re-types anything.',
+          },
+          {
+            tone: 'signal',
+            title: 'Nothing releases until everyone signs',
+            description:
+              'Stems and masters stay watermarked until every split on the work is signed. No override, no admin bypass.',
+          },
         ]}
+        previewCaption="An open collab, once you’re in"
+        preview={
+          <PreviewFrame>
+            <div className="rounded-md border border-line px-3 py-2">
+              <p className="text-sm font-medium text-ink">Indie-pop EP · Mumbai</p>
+              <p className="text-xs text-ink-soft">Posted 2 days ago · 3 slots open</p>
+            </div>
+            {[
+              { role: 'Vocalist', terms: '15% of master', applied: '7 applied' },
+              { role: 'Mixing engineer', terms: '₹40,000 flat', applied: '2 applied' },
+              { role: 'Session drummer', terms: 'Credit only', applied: '4 applied' },
+            ].map((slot) => (
+              <div
+                key={slot.role}
+                className="flex items-center justify-between rounded-md border border-line px-3 py-2"
+              >
+                <div>
+                  <p className="text-sm font-medium text-ink">{slot.role}</p>
+                  <p className="text-xs text-ink-soft">{slot.terms}</p>
+                </div>
+                <StatusPill label={slot.applied} tone="active" />
+              </div>
+            ))}
+          </PreviewFrame>
+        }
       />
     );
   }
