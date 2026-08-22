@@ -38,7 +38,10 @@ export function SiteHeader() {
             Collabs
           </Link>
           <Link href="/artists" className={linkClass}>
-            Find artists
+            Artists
+          </Link>
+          <Link href="/organisers" className={linkClass}>
+            Organisers
           </Link>
           {signedIn ? (
             <Link
