@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import { listBriefs } from '@shoutout/gigs';
 import { StatusPill, EqualizerAccent } from '@shoutout/ui';
 import { getServerSupabaseClient } from '@/lib/supabase-server';
+import { SignedOutExplainer } from '@/components/SignedOutExplainer';
 
 function rise(step: number): CSSProperties {
   return { '--motion-delay': step } as CSSProperties;
@@ -53,7 +53,19 @@ export default async function GigsPipelinePage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect('/login');
+  if (!user) {
+    return (
+      <SignedOutExplainer
+        title="Gigs"
+        description="Your booking pipeline — one screen that answers who's booked, who owes you money, and who to call next."
+        points={[
+          'Brief intake, shortlisting, and quotes in one place',
+          'A shared holds calendar across your whole roster',
+          'Riders confirmed and timestamped by both sides',
+        ]}
+      />
+    );
+  }
 
   const briefs = (await listBriefs(supabase).catch(() => [])) as Brief[];
 

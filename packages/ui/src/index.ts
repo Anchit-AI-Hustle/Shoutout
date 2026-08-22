@@ -13,6 +13,7 @@ export * from './components/EqualizerAccent';
 export * from './components/Reveal';
 export * from './components/TiltCard';
 export * from './components/Waveform';
+export * from './components/ProBadge';
 // CollabComposer (docs/13-DESIGN-SYSTEM.md) replaces the old ShoutComposer,
 // removed with the polymorphic Shout object (migration 008). zod-form.ts
 // (the schema-introspection utility ShoutComposer used) is kept — it's

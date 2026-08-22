@@ -4,6 +4,7 @@ import { useEffect, useState, type ChangeEvent, type CSSProperties } from 'react
 import Link from 'next/link';
 import { ROLE_FAMILIES, type RoleFamily } from '@shoutout/identity';
 import { EqualizerAccent, StatusPill, describeAttributeSchema } from '@shoutout/ui';
+import { SignedOutExplainer } from '@/components/SignedOutExplainer';
 
 // Culture surface (docs/13-DESIGN-SYSTEM.md) — staggered rise-in, same
 // pattern as the public /a/[slug] page.
@@ -30,6 +31,7 @@ const labelClass = 'text-sm text-ink-soft';
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [stageName, setStageName] = useState('');
   const [homeCity, setHomeCity] = useState('');
   const [bio, setBio] = useState('');
@@ -41,6 +43,11 @@ export default function ProfilePage() {
 
   async function load() {
     const res = await fetch('/api/profiles/me');
+    if (res.status === 401) {
+      setSignedIn(false);
+      return;
+    }
+    setSignedIn(true);
     if (res.status === 404) return; // no profile yet — that's fine
     const json = (await res.json()) as Profile & ApiErrorResponse;
     if (res.ok) {
@@ -109,6 +116,20 @@ export default function ProfilePage() {
   // type's. Attribute editing itself isn't wired up yet (roles are added
   // with empty attributes for now); this proves the fields render per role.
   const attributeFields = describeAttributeSchema(familyConfig.attributeSchema);
+
+  if (signedIn === false) {
+    return (
+      <SignedOutExplainer
+        title="Your profile"
+        description="One account, many roles — vocalist, producer, tour manager, whatever you actually do — each matched independently, not lumped into a single label."
+        points={[
+          'A public artist page other people can find and book you from',
+          'Declare as many roles as apply, each with its own match attributes',
+          'One profile feeds Gigs, Collabs, and Credits — no re-entering yourself',
+        ]}
+      />
+    );
+  }
 
   return (
     <main className="mx-auto flex max-w-xl flex-col gap-8 px-4 py-12">
