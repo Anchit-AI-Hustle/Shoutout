@@ -65,7 +65,7 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center gap-4 px-4">
-      <div className="grid w-full max-w-sm gap-3">
+      <div className="motion-rise grid w-full max-w-sm gap-3">
         <h1 className="text-center text-xl font-semibold text-ink">SHOUTOUT</h1>
 
         {step === 'phone' ? (
