@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import { listRequests } from '@shoutout/collabs';
 import { EqualizerAccent, StatusPill } from '@shoutout/ui';
 import { getServerSupabaseClient } from '@/lib/supabase-server';
+import { SignedOutExplainer } from '@/components/SignedOutExplainer';
 
 // The Collabs feed (docs/06-COLLABS.md: "a producer opens the app on a
 // Tuesday afternoon with no gig in sight"). A Server Component, same
@@ -41,7 +41,19 @@ export default async function CollabsFeedPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect('/login');
+  if (!user) {
+    return (
+      <SignedOutExplainer
+        title="Collabs"
+        description="Find people to make music with — no gig or date needed. A producer needs a vocalist, a guitarist needs a drummer, an artist needs a tour manager."
+        points={[
+          'Post a request with up to six independent slots, each on its own terms',
+          'Apply to open slots and get ranked by fit, not just first-come',
+          'Every accepted slot drafts a split sheet automatically — nothing to re-enter',
+        ]}
+      />
+    );
+  }
 
   const requests = (await listRequests(supabase, {}).catch(() => [])) as unknown as RequestRow[];
 

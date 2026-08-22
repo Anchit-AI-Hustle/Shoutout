@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use as usePromise } from 'react';
 import Link from 'next/link';
-import { StatusPill, MoneyValue } from '@shoutout/ui';
+import { StatusPill, MoneyValue, ProBadge } from '@shoutout/ui';
 
 // Brief workspace: shortlist → quote → hold, in one screen (docs/05-GIGS.md
 // "Manager OS": "inbound WhatsApp message to sent quote in under 90
@@ -178,8 +178,9 @@ export default function BriefWorkspacePage({ params }: { params: Promise<{ id: s
       </div>
 
       <section className="flex flex-col gap-3 rounded-lg border border-line p-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
           <h2 className="text-sm font-medium text-ink-soft">Price comps</h2>
+          <ProBadge />
         </div>
         <div className="flex flex-wrap items-end gap-2">
           <input

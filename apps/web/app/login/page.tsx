@@ -3,7 +3,8 @@
 import { useState, type ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
-type Step = 'phone' | 'otp';
+type Step = 'phone' | 'otp' | 'role';
+type OrgType = 'self' | 'organiser';
 
 interface ApiErrorResponse {
   error?: { message?: string };
@@ -12,13 +13,14 @@ interface ApiErrorResponse {
 const inputClass =
   'min-h-11 w-full rounded-md border border-line bg-surface px-3 text-base text-ink focus:outline-none focus:ring-2 focus:ring-trust';
 const primaryButtonClass =
-  'min-h-11 rounded-md bg-signal px-4 font-medium text-surface disabled:opacity-50';
+  'motion-lift min-h-11 rounded-md bg-signal px-4 font-medium text-surface disabled:opacity-50';
 
 export default function LoginPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>('phone');
   const [phone, setPhone] = useState('+91');
   const [otp, setOtp] = useState('');
+  const [orgType, setOrgType] = useState<OrgType | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -51,9 +53,38 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, token: otp }),
       });
-      const json = (await res.json()) as ApiErrorResponse;
+      const json = (await res.json()) as { needsOrgSetup?: boolean } & ApiErrorResponse;
       if (!res.ok) {
         setError(json.error?.message ?? 'Verification failed');
+        return;
+      }
+      if (json.needsOrgSetup) {
+        setStep('role');
+        return;
+      }
+      router.push('/');
+      router.refresh();
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function finishSignup() {
+    if (!orgType) {
+      setError('Choose one to continue.');
+      return;
+    }
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth/org', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: orgType }),
+      });
+      const json = (await res.json()) as ApiErrorResponse;
+      if (!res.ok) {
+        setError(json.error?.message ?? 'Could not finish setting up your account');
         return;
       }
       router.push('/');
@@ -66,7 +97,7 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center gap-4 px-4">
       <div className="motion-rise grid w-full max-w-sm gap-3">
-        <h1 className="text-center text-xl font-semibold text-ink">SHOUTOUT</h1>
+        <h1 className="text-center text-xl font-semibold text-ink">ShoutOut</h1>
 
         {step === 'phone' ? (
           <>
@@ -90,7 +121,9 @@ export default function LoginPage() {
               {loading ? 'Sending…' : 'Send code'}
             </button>
           </>
-        ) : (
+        ) : null}
+
+        {step === 'otp' ? (
           <>
             <label htmlFor="otp" className="text-sm text-ink-soft">
               6-digit code sent to {phone}
@@ -121,7 +154,47 @@ export default function LoginPage() {
               Change number
             </button>
           </>
-        )}
+        ) : null}
+
+        {step === 'role' ? (
+          <>
+            <p className="text-center text-sm text-ink-soft">
+              One more thing — which best describes you?
+            </p>
+            <button
+              type="button"
+              onClick={() => setOrgType('self')}
+              className={`motion-lift rounded-lg border p-4 text-left ${
+                orgType === 'self' ? 'border-trust bg-trust/10' : 'border-line'
+              }`}
+            >
+              <p className="font-medium text-ink">Artist or manager</p>
+              <p className="text-sm text-ink-soft">
+                Get booked, find collaborators, manage your roster.
+              </p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setOrgType('organiser')}
+              className={`motion-lift rounded-lg border p-4 text-left ${
+                orgType === 'organiser' ? 'border-trust bg-trust/10' : 'border-line'
+              }`}
+            >
+              <p className="font-medium text-ink">Event organiser</p>
+              <p className="text-sm text-ink-soft">
+                Find artists for your events and close the booking.
+              </p>
+            </button>
+            <button
+              type="button"
+              onClick={finishSignup}
+              disabled={loading || !orgType}
+              className={primaryButtonClass}
+            >
+              {loading ? 'Setting up…' : 'Continue'}
+            </button>
+          </>
+        ) : null}
 
         {error ? (
           <p className="text-sm text-signal" role="alert">
