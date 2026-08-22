@@ -87,14 +87,14 @@ beforeAll(async () => {
     `insert into org_members (org_id, user_id, role) values ($1, $2, 'owner'), ($3, $4, 'owner')`,
     [orgA, userA, orgB, userB],
   );
-  await admin.query(`insert into artists (id, org_id, name) values ($1, $2, 'Artist A')`, [
-    artistA,
-    orgA,
-  ]);
-  await admin.query(`insert into artists (id, org_id, name) values ($1, $2, 'Artist B')`, [
-    artistB,
-    orgB,
-  ]);
+  await admin.query(
+    `insert into artists (id, org_id, stage_name, slug) values ($1, $2, 'Artist A', $3)`,
+    [artistA, orgA, `artist-a-${artistA}`],
+  );
+  await admin.query(
+    `insert into artists (id, org_id, stage_name, slug) values ($1, $2, 'Artist B', $3)`,
+    [artistB, orgB, `artist-b-${artistB}`],
+  );
   await admin.query('COMMIT');
 });
 
@@ -148,12 +148,12 @@ describe('cross-org isolation', () => {
 
   it('org A cannot UPDATE org B artists', async () => {
     const result = await withSession(userA, orgA, (c) =>
-      c.query("update artists set name = 'pwned' where id = $1 returning id", [artistB]),
+      c.query("update artists set stage_name = 'pwned' where id = $1 returning id", [artistB]),
     );
     expect(result.rows).toHaveLength(0);
 
-    const check = await admin.query('select name from artists where id = $1', [artistB]);
-    expect(check.rows[0]?.name).toBe('Artist B');
+    const check = await admin.query('select stage_name from artists where id = $1', [artistB]);
+    expect(check.rows[0]?.stage_name).toBe('Artist B');
   });
 
   it('org A cannot DELETE org B artists', async () => {
@@ -192,7 +192,10 @@ describe('org_id escalation is rejected', () => {
   it('org A cannot INSERT an artist row claiming org_id = org B', async () => {
     await expect(
       withSession(userA, orgA, (c) =>
-        c.query('insert into artists (org_id, name) values ($1, $2)', [orgB, 'Escalation Attempt']),
+        c.query(
+          "insert into artists (org_id, stage_name, slug) values ($1, 'Escalation Attempt', $2)",
+          [orgB, `escalation-${randomUUID()}`],
+        ),
       ),
     ).rejects.toThrow();
   });
@@ -240,6 +243,46 @@ describe('Credits: cross-org isolation on works and contributors', () => {
       expect(result.rows).toHaveLength(0);
     } finally {
       await admin.query('delete from works where id = $1', [workId]);
+    }
+  });
+});
+
+describe('Profiles: cross-org isolation on artist_roles and roster', () => {
+  it('org A cannot SELECT a role declared by an org B artist', async () => {
+    const artistRoleId = randomUUID();
+    await admin.query('BEGIN');
+    await admin.query(
+      `insert into artist_roles (id, artist_id, org_id, role, attributes)
+       values ($1, $2, $3, 'vocalist', '{}'::jsonb)`,
+      [artistRoleId, artistB, orgB],
+    );
+    await admin.query('COMMIT');
+
+    try {
+      const result = await withSession(userA, orgA, (c) =>
+        c.query('select id from artist_roles where id = $1', [artistRoleId]),
+      );
+      expect(result.rows).toHaveLength(0);
+    } finally {
+      await admin.query('delete from artist_roles where id = $1', [artistRoleId]);
+    }
+  });
+
+  it('org A cannot SELECT org B roster / commission data', async () => {
+    await admin.query('BEGIN');
+    await admin.query(
+      `insert into roster (org_id, artist_id, commission_pct) values ($1, $2, 15)`,
+      [orgB, artistB],
+    );
+    await admin.query('COMMIT');
+
+    try {
+      const result = await withSession(userA, orgA, (c) =>
+        c.query('select artist_id from roster where org_id = $1', [orgB]),
+      );
+      expect(result.rows).toHaveLength(0);
+    } finally {
+      await admin.query('delete from roster where org_id = $1 and artist_id = $2', [orgB, artistB]);
     }
   });
 });

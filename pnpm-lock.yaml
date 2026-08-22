@@ -84,12 +84,18 @@ importers:
       '@shoutout/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@shoutout/identity':
+        specifier: workspace:*
+        version: link:../../packages/identity
       '@shoutout/intent':
         specifier: workspace:*
         version: link:../../packages/intent
       '@shoutout/money':
         specifier: workspace:*
         version: link:../../packages/money
+      '@shoutout/profiles':
+        specifier: workspace:*
+        version: link:../../modules/profiles
       '@shoutout/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -133,6 +139,19 @@ importers:
 
   apps/workers: {}
 
+  modules/profiles:
+    dependencies:
+      '@shoutout/identity':
+        specifier: workspace:*
+        version: link:../../packages/identity
+      '@supabase/supabase-js':
+        specifier: ^2.45.0
+        version: 2.112.3
+    devDependencies:
+      typescript:
+        specifier: ^5.6.0
+        version: 5.9.3
+
   packages/db:
     dependencies:
       '@supabase/ssr':
@@ -157,6 +176,16 @@ importers:
       vitest:
         specifier: ^2.1.0
         version: 2.1.9(@types/node@20.19.43)(lightningcss@1.32.0)
+
+  packages/identity:
+    dependencies:
+      zod:
+        specifier: ^3.23.0
+        version: 3.25.76
+    devDependencies:
+      typescript:
+        specifier: ^5.6.0
+        version: 5.9.3
 
   packages/intent:
     dependencies:
