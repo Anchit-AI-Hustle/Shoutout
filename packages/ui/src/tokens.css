@@ -1,18 +1,23 @@
-/* SHOUTOUT design tokens — docs/06-DESIGN-SYSTEM.md. Do not hand-pick colors outside this file. */
+/* SHOUTOUT design tokens — docs/06-DESIGN-SYSTEM.md.
+   Tailwind v4 theme: these become real utility classes (bg-signal, text-ink,
+   text-lg, ...), not Tailwind's defaults. The spacing scale (4·8·12·16·24·
+   32·48·64) isn't redeclared — it's exactly Tailwind's default p-1/2/3/4/6/
+   8/12/16 at the standard 4px base, so use those and nothing else
+   ("nothing off-scale" — avoid p-5, p-7, p-9, p-10, p-11, etc.). */
 
-:root {
-  --ink: #15181b; /* primary text */
-  --ink-soft: #4e5259; /* secondary */
-  --surface: #e2ded3; /* app background */
-  --surface-2: #d5d0c3; /* raised */
-  --line: #b6b0a1;
-  --desk: #1a1e22; /* nav, headers, code */
-  --signal: #c1272d; /* action, alert */
-  --trust: #14456f; /* money, verified */
-  --accent: #e8b33a; /* active state */
-  --ok: #3e6b47;
+@theme {
+  --color-ink: #15181b; /* primary text */
+  --color-ink-soft: #4e5259; /* secondary */
+  --color-surface: #e2ded3; /* app background */
+  --color-surface-2: #d5d0c3; /* raised */
+  --color-line: #b6b0a1;
+  --color-desk: #1a1e22; /* nav, headers, code */
+  --color-signal: #c1272d; /* action, alert */
+  --color-trust: #14456f; /* money, verified */
+  --color-accent: #e8b33a; /* active state */
+  --color-ok: #3e6b47;
 
-  /* type scale: 11 · 12 · 13 · 15 · 17 · 21 · 26 · 34 · 48. body 15. never below 11. */
+  /* type scale: 11 · 12 · 13 · 15 · 17 · 21 · 26 · 34 · 48. body 15 (text-base). */
   --text-2xs: 11px;
   --text-xs: 12px;
   --text-sm: 13px;
@@ -23,13 +28,24 @@
   --text-2xl: 34px;
   --text-3xl: 48px;
 
-  /* spacing: 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64. nothing off-scale. */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --space-7: 48px;
-  --space-8: 64px;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Data faces — tabular numerals for money surfaces (docs/06-DESIGN-SYSTEM.md). */
+  --font-data: ui-monospace, 'SF Mono', 'Roboto Mono', monospace;
+
+  /* Dense tables become stacked cards below 760px — the project's one
+     breakpoint for that rule, not Tailwind's default 768px md:. */
+  --breakpoint-md: 760px;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+  }
 }
