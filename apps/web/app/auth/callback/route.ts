@@ -22,10 +22,26 @@ export async function GET(request: Request) {
   }
 
   const supabase = await getServerSupabaseClient();
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
-  if (error) {
+  if (error || !data?.user) {
     return NextResponse.redirect(`${origin}/login?error=exchange_failed`);
+  }
+
+  // A first-time user (most obviously via Google, where there's no OTP
+  // step to hang this off) has a session but no org yet, and every table
+  // is org-scoped — landing them on "/" would show an account that owns
+  // nothing. Send them to pick a role first; /login reads ?setup=1 and
+  // opens on that step.
+  const { data: membership } = await supabase
+    .from('org_members')
+    .select('org_id')
+    .eq('user_id', data.user.id)
+    .limit(1)
+    .maybeSingle();
+
+  if (!membership) {
+    return NextResponse.redirect(`${origin}/login?setup=1`);
   }
 
   // Relative paths only — an absolute `next` would let a crafted link

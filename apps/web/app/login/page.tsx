@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, type ChangeEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState, type ChangeEvent } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type Step = 'contact' | 'otp' | 'role';
 type OrgType = 'self' | 'organiser';
@@ -23,8 +23,50 @@ const inputClass =
 const primaryButtonClass =
   'motion-lift min-h-11 rounded-md bg-signal px-4 font-medium text-surface disabled:opacity-50';
 
+/** Google's four-colour G. Inline so it survives the CSP and needs no asset. */
+function GoogleMark() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62Z"
+      />
+      <path
+        fill="#34A853"
+        d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M3.97 10.72a5.41 5.41 0 0 1 0-3.44V4.95H.96a9 9 0 0 0 0 8.1l3.01-2.33Z"
+      />
+      <path
+        fill="#EA4335"
+        d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58Z"
+      />
+    </svg>
+  );
+}
+
+const CALLBACK_ERRORS: Record<string, string> = {
+  google_unavailable:
+    'Google sign-in isn’t switched on for this project yet. Use email in the meantime.',
+  exchange_failed: 'That sign-in link didn’t work. Try again.',
+  missing_code: 'That sign-in link was incomplete. Try again.',
+};
+
 export default function LoginPage() {
+  return (
+    // useSearchParams() needs a Suspense boundary or it opts the whole
+    // route out of static rendering at build time.
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<Step>('contact');
   const [channel, setChannel] = useState<Channel>('email');
   const [email, setEmail] = useState('');
@@ -33,6 +75,14 @@ export default function LoginPage() {
   const [orgType, setOrgType] = useState<OrgType | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Google lands back here two ways: ?setup=1 for a brand-new account that
+  // still needs a role, or ?error=… when the provider isn't configured.
+  useEffect(() => {
+    if (searchParams.get('setup') === '1') setStep('role');
+    const code = searchParams.get('error');
+    if (code) setError(CALLBACK_ERRORS[code] ?? 'Sign-in failed. Try again.');
+  }, [searchParams]);
 
   async function requestOtp() {
     setError(null);
@@ -111,6 +161,23 @@ export default function LoginPage() {
 
         {step === 'contact' ? (
           <>
+            {/* A plain link, not fetch() — the server route responds with a
+                redirect to Google, and the browser has to follow it as a
+                navigation for the PKCE cookie to be set on the way out. */}
+            <a
+              href="/api/auth/google"
+              className="motion-lift flex min-h-11 items-center justify-center gap-3 rounded-md border border-line bg-surface px-4 text-sm font-medium text-ink"
+            >
+              <GoogleMark />
+              Continue with Google
+            </a>
+
+            <div className="flex items-center gap-3">
+              <span className="h-px flex-1 bg-line" />
+              <span className="text-xs text-ink-soft">or</span>
+              <span className="h-px flex-1 bg-line" />
+            </div>
+
             <div className="flex rounded-md border border-line p-1">
               {(['email', 'phone'] as const).map((c) => (
                 <button
