@@ -4,7 +4,7 @@ import { useEffect, useState, type ChangeEvent, type CSSProperties } from 'react
 import Link from 'next/link';
 import { ROLE_FAMILIES, type RoleFamily } from '@shoutout/identity';
 import { EqualizerAccent, StatusPill, describeAttributeSchema } from '@shoutout/ui';
-import { SignedOutExplainer } from '@/components/SignedOutExplainer';
+import { SignedOutExplainer, PreviewFrame } from '@/components/SignedOutExplainer';
 
 // Culture surface (docs/13-DESIGN-SYSTEM.md) — staggered rise-in, same
 // pattern as the public /a/[slug] page.
@@ -120,13 +120,56 @@ export default function ProfilePage() {
   if (signedIn === false) {
     return (
       <SignedOutExplainer
+        eyebrow="For artists, producers & everyone in between"
         title="Your profile"
-        description="One account, many roles — vocalist, producer, tour manager, whatever you actually do — each matched independently, not lumped into a single label."
-        points={[
-          'A public artist page other people can find and book you from',
-          'Declare as many roles as apply, each with its own match attributes',
-          'One profile feeds Gigs, Collabs, and Credits — no re-entering yourself',
+        tagline="One account, many roles — each matched independently, not lumped into a single label."
+        highlight="each matched independently"
+        features={[
+          {
+            tone: 'trust',
+            title: 'A public page people can book you from',
+            description:
+              'One link that works in a bio, a WhatsApp forward or an email. Anyone can send you a booking request from it, account or not.',
+          },
+          {
+            tone: 'accent',
+            title: 'As many roles as actually apply',
+            description:
+              'Vocalist, producer, tour manager, session guitarist. Each role carries its own attributes and gets matched on its own merits.',
+          },
+          {
+            tone: 'ok',
+            title: 'Reliability held per role',
+            description:
+              'Being a dependable session player and being a new producer are different facts. Your score is kept per role, not averaged into mush.',
+          },
+          {
+            tone: 'signal',
+            title: 'Fills in the rest of the app',
+            description:
+              'The same profile feeds Gigs, Collabs and Credits. You describe yourself once and never re-enter it.',
+          },
         ]}
+        previewCaption="Your page, once you’re in"
+        preview={
+          <PreviewFrame>
+            <div className="flex items-center justify-between rounded-md border border-line px-3 py-2">
+              <div>
+                <p className="text-sm font-medium text-ink">Your stage name</p>
+                <p className="text-xs text-ink-soft">Mumbai · indie-pop, r&amp;b</p>
+              </div>
+              <StatusPill label="Verified" tone="success" />
+            </div>
+            <div className="flex flex-wrap gap-2 px-1">
+              {['vocalist', 'producer', 'songwriter'].map((role) => (
+                <StatusPill key={role} label={role} tone="active" />
+              ))}
+            </div>
+            <p className="px-1 text-xs text-ink-soft">
+              shoutout.app/a/your-name — the link you put in your bio.
+            </p>
+          </PreviewFrame>
+        }
       />
     );
   }

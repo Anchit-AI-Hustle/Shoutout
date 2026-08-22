@@ -8,6 +8,7 @@ export * from './shortlist';
 export * from './quotes';
 export * from './benchmark';
 export * from './riders';
+export * from './organiser';
 export {
   createHold,
   challengeHold,

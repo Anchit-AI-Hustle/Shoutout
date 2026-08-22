@@ -23,19 +23,22 @@ export function SiteHeader() {
 
   return (
     <header className="border-b border-line bg-surface">
-      <nav className="mx-auto flex max-w-4xl items-center justify-between px-4">
+      <nav className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-4">
         <Link
           href="/"
-          className="inline-flex min-h-11 items-center text-base font-semibold text-ink"
+          className="inline-flex min-h-11 shrink-0 items-center text-base font-semibold text-ink"
         >
           ShoutOut
         </Link>
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3 sm:gap-5">
           <Link href="/gigs" className={linkClass}>
             Gigs
           </Link>
           <Link href="/collabs" className={linkClass}>
             Collabs
+          </Link>
+          <Link href="/artists" className={linkClass}>
+            Find artists
           </Link>
           {signedIn ? (
             <Link

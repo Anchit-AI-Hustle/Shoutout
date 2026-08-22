@@ -3,8 +3,16 @@
 import { useState, type ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
-type Step = 'phone' | 'otp' | 'role';
+type Step = 'contact' | 'otp' | 'role';
 type OrgType = 'self' | 'organiser';
+type Channel = 'email' | 'phone';
+
+// Email is the default channel because it is the only one that can actually
+// deliver today: SMS to Indian numbers is gated behind TRAI's DLT
+// registration, which needs a registered business entity and cannot be
+// worked around in code. Phone stays available and unchanged — it starts
+// delivering the moment the MSG91 hook has credentials. See
+// apps/web/app/api/auth/otp/request/route.ts.
 
 interface ApiErrorResponse {
   error?: { message?: string };
@@ -17,7 +25,9 @@ const primaryButtonClass =
 
 export default function LoginPage() {
   const router = useRouter();
-  const [step, setStep] = useState<Step>('phone');
+  const [step, setStep] = useState<Step>('contact');
+  const [channel, setChannel] = useState<Channel>('email');
+  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('+91');
   const [otp, setOtp] = useState('');
   const [orgType, setOrgType] = useState<OrgType | null>(null);
@@ -31,7 +41,7 @@ export default function LoginPage() {
       const res = await fetch('/api/auth/otp/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify(channel === 'email' ? { email } : { phone }),
       });
       const json = (await res.json()) as ApiErrorResponse;
       if (!res.ok) {
@@ -51,7 +61,7 @@ export default function LoginPage() {
       const res = await fetch('/api/auth/otp/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, token: otp }),
+        body: JSON.stringify(channel === 'email' ? { email, token: otp } : { phone, token: otp }),
       });
       const json = (await res.json()) as { needsOrgSetup?: boolean } & ApiErrorResponse;
       if (!res.ok) {
@@ -99,19 +109,61 @@ export default function LoginPage() {
       <div className="motion-rise grid w-full max-w-sm gap-3">
         <h1 className="text-center text-xl font-semibold text-ink">ShoutOut</h1>
 
-        {step === 'phone' ? (
+        {step === 'contact' ? (
           <>
-            <label htmlFor="phone" className="text-sm text-ink-soft">
-              Phone number
-            </label>
-            <input
-              id="phone"
-              type="tel"
-              value={phone}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
-              className={inputClass}
-              placeholder="+919876543210"
-            />
+            <div className="flex rounded-md border border-line p-1">
+              {(['email', 'phone'] as const).map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => {
+                    setChannel(c);
+                    setError(null);
+                  }}
+                  className={`min-h-11 flex-1 rounded text-sm font-medium ${
+                    channel === c ? 'bg-trust text-surface' : 'text-ink-soft'
+                  }`}
+                >
+                  {c === 'email' ? 'Email' : 'Phone'}
+                </button>
+              ))}
+            </div>
+
+            {channel === 'email' ? (
+              <>
+                <label htmlFor="email" className="text-sm text-ink-soft">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                  className={inputClass}
+                  placeholder="you@example.com"
+                />
+              </>
+            ) : (
+              <>
+                <label htmlFor="phone" className="text-sm text-ink-soft">
+                  Phone number
+                </label>
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
+                  className={inputClass}
+                  placeholder="+919876543210"
+                />
+                <p className="text-xs text-ink-soft">
+                  SMS needs a DLT-registered sender to reach Indian numbers. Use email until
+                  that&apos;s set up.
+                </p>
+              </>
+            )}
+
             <button
               type="button"
               onClick={requestOtp}
@@ -120,13 +172,16 @@ export default function LoginPage() {
             >
               {loading ? 'Sending…' : 'Send code'}
             </button>
+            <p className="text-center text-xs text-ink-soft">
+              No password, ever. Signing up is free.
+            </p>
           </>
         ) : null}
 
         {step === 'otp' ? (
           <>
             <label htmlFor="otp" className="text-sm text-ink-soft">
-              6-digit code sent to {phone}
+              Code sent to {channel === 'email' ? email : phone}
             </label>
             <input
               id="otp"
@@ -148,11 +203,14 @@ export default function LoginPage() {
             </button>
             <button
               type="button"
-              onClick={() => setStep('phone')}
+              onClick={() => setStep('contact')}
               className="min-h-11 rounded-md px-4 font-medium text-ink-soft"
             >
-              Change number
+              {channel === 'email' ? 'Change email' : 'Change number'}
             </button>
+            <p className="text-center text-xs text-ink-soft">
+              Sent a link instead of a code? Clicking it signs you in too.
+            </p>
           </>
         ) : null}
 
