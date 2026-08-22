@@ -15,6 +15,7 @@
     "@shoutout/identity": "workspace:*",
     "@shoutout/profiles": "workspace:*",
     "@shoutout/gigs": "workspace:*",
+    "@shoutout/collabs": "workspace:*",
     "@shoutout/money": "workspace:*",
     "@shoutout/intent": "workspace:*",
     "@supabase/ssr": "^0.5.0",

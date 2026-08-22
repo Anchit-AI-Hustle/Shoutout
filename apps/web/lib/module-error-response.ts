@@ -36,6 +36,7 @@ const STATUS_BY_CODE: Record<string, number> = {
   HOLD_EXPIRED: 409,
   ALREADY_CONFIRMED: 409,
   INSUFFICIENT_INDEX_DATA: 200,
+  RATE_LIMITED: 429,
 };
 
 export function moduleErrorResponse(error: unknown) {

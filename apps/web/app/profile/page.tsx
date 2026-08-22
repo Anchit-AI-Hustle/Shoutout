@@ -120,9 +120,14 @@ export default function ProfilePage() {
         <p className="text-sm text-ink-soft">
           One account, many roles — matching happens per role, not per person.
         </p>
-        <Link href="/gigs" className="mt-2 inline-block text-sm text-trust">
-          Gigs pipeline →
-        </Link>
+        <div className="mt-2 flex gap-4">
+          <Link href="/gigs" className="text-sm text-trust">
+            Gigs pipeline →
+          </Link>
+          <Link href="/collabs" className="text-sm text-trust">
+            Collabs →
+          </Link>
+        </div>
       </div>
 
       <section className="motion-rise flex flex-col gap-3" style={rise(1)}>
