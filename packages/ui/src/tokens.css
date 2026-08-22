@@ -141,3 +141,97 @@
   animation-delay: 270ms;
   background: var(--color-ok);
 }
+
+/* Scroll-triggered version of .motion-rise — toggled by a small
+   IntersectionObserver client component (packages/ui's <Reveal>) adding
+   `.motion-in` once an element enters the viewport, instead of a fixed
+   page-load delay. Same reduced-motion floor: the un-animated resting
+   state is opacity 1 either way. */
+.motion-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.motion-reveal.motion-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .motion-reveal {
+    transition:
+      opacity 620ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--motion-delay, 0) * 90ms);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 3D tilt-on-hover — real CSS 3D transforms (perspective + rotateX/Y), not
+   a WebGL/Three.js dependency: cheap, GPU-accelerated, no bundle cost, no
+   risk to the 4G LCP budget (docs/13-DESIGN-SYSTEM.md's mobile rules).
+   --tilt-x/--tilt-y are set by packages/ui's <TiltCard> from pointer
+   position; this class just defines what to do with them. Inert on touch
+   (no hover) and under reduced-motion.*/
+.motion-tilt {
+  transform: perspective(800px) rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .motion-tilt {
+    transition: transform 120ms ease-out;
+  }
+}
+
+/* Tone-matched glow shadow on hover — pairs with the existing border-t-*
+   tone classes on the homepage's module cards. */
+.motion-glow-signal:hover {
+  box-shadow: 0 16px 32px -16px color-mix(in srgb, var(--color-signal) 55%, transparent);
+}
+.motion-glow-trust:hover {
+  box-shadow: 0 16px 32px -16px color-mix(in srgb, var(--color-trust) 55%, transparent);
+}
+.motion-glow-accent:hover {
+  box-shadow: 0 16px 32px -16px color-mix(in srgb, var(--color-accent) 55%, transparent);
+}
+.motion-glow-ok:hover {
+  box-shadow: 0 16px 32px -16px color-mix(in srgb, var(--color-ok) 55%, transparent);
+}
+
+/* The hero waveform — a wide animated bar strip evoking an audio waveform,
+   not just the small 4-bar EqualizerAccent. Decorative background texture,
+   aria-hidden at the component level. Bar heights vary via nth-child so it
+   doesn't read as a mechanical repeat. */
+.motion-waveform {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 56px;
+}
+.motion-waveform-bar {
+  flex: 1 0 auto;
+  height: 100%;
+  min-width: 3px;
+  max-width: 6px;
+  border-radius: 3px;
+  background: currentColor;
+  opacity: 0.55;
+  transform: scaleY(0.3);
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .motion-waveform-bar {
+    animation: motion-wave-bounce 1400ms ease-in-out infinite;
+  }
+}
+@keyframes motion-wave-bounce {
+  0%,
+  100% {
+    transform: scaleY(0.25);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
