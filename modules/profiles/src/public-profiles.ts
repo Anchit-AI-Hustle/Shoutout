@@ -108,3 +108,36 @@ export function getOrganiserEvents(supabase: SupabaseClient, organiserId: string
     p_organiser_id: organiserId,
   });
 }
+
+export interface Credit {
+  work_title: string;
+  role: string;
+  writer_pct: number | null;
+  master_pct: number | null;
+  published_at: string;
+}
+
+export interface ReliabilityScore {
+  role: string;
+  score: number;
+  completed_n: number;
+  avg_rating: number | null;
+}
+
+/**
+ * Verified credits — only works that are locked with every contributor
+ * signed (migration 024). An unsigned claim never reaches a public page.
+ */
+export function getArtistCredits(supabase: SupabaseClient, artistId: string) {
+  return rpc<Credit>(supabase, 'get_artist_credits_public', { p_artist_id: artistId });
+}
+
+/**
+ * Reliability, held per role. Returns nothing below five completed bookings
+ * for that role — a new artist has no score rather than a bad one.
+ */
+export function getArtistReliability(supabase: SupabaseClient, artistId: string) {
+  return rpc<ReliabilityScore>(supabase, 'get_artist_reliability_public', {
+    p_artist_id: artistId,
+  });
+}

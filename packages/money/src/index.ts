@@ -1,3 +1,6 @@
-// Settlement abstraction. Provider-agnostic. Double-entry ledger. Money is bigint paise, never float.
-// Built in M4 — see docs/08-MONEY.md, docs/09-BUILD-SEQUENCE.md.
-export {};
+// Settlement rail. Provider-agnostic, double-entry, integer paise.
+// CLAUDE.md rules 3 and 6: splits sum to zero (enforced by trigger in
+// migration 023), and SHOUTOUT never holds customer funds.
+export * from './ledger';
+export * from './provider';
+export * from './settlements';
