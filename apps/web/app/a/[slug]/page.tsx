@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import { notFound } from 'next/navigation';
 import { createAnonClient } from '@shoutout/db';
 import { EqualizerAccent, StatusPill } from '@shoutout/ui';
+import { BookArtistForm } from './BookArtistForm';
 
 // Culture surface, public + shareable (docs/13-DESIGN-SYSTEM.md: "present,
 // purposeful" motion) — a staggered rise-in per block, delay driven by
@@ -81,6 +82,8 @@ export default async function ArtistProfilePage({ params }: { params: Promise<{ 
           </ul>
         </div>
       ) : null}
+
+      <BookArtistForm artistId={artist.id} />
     </main>
   );
 }

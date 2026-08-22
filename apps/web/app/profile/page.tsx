@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, type ChangeEvent, type CSSProperties } from 'react';
+import Link from 'next/link';
 import { ROLE_FAMILIES, type RoleFamily } from '@shoutout/identity';
 import { EqualizerAccent, StatusPill, describeAttributeSchema } from '@shoutout/ui';
 
@@ -119,6 +120,9 @@ export default function ProfilePage() {
         <p className="text-sm text-ink-soft">
           One account, many roles — matching happens per role, not per person.
         </p>
+        <Link href="/gigs" className="mt-2 inline-block text-sm text-trust">
+          Gigs pipeline →
+        </Link>
       </div>
 
       <section className="motion-rise flex flex-col gap-3" style={rise(1)}>
