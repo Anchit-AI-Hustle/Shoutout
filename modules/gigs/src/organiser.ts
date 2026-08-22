@@ -24,6 +24,10 @@ export interface ArtistSearchResult {
   genres: string[];
   bio: string | null;
   verified: boolean;
+  /** docs/04-PROFILES.md: fee band is hidden unless the artist opts in. */
+  fee_band_visible: boolean;
+  /** Active roles only. Per-role matching is the point (migration 021). */
+  roles: string[];
 }
 
 export async function searchArtists(

@@ -37,7 +37,15 @@ const MODULES = [
     name: 'Find artists',
     href: '/artists',
     tone: 'signal',
-    description: 'Organising an event? Search by genre or city and send a booking request.',
+    description:
+      'Organising an event? Search by role, genre or city — vocalist, drummer, mix engineer — and send a booking request.',
+  },
+  {
+    name: 'Event organisers',
+    href: '/organisers',
+    tone: 'trust',
+    description:
+      'An artist? See who books in your city, what they run, and who has played for them before.',
   },
   {
     name: 'Profiles',
