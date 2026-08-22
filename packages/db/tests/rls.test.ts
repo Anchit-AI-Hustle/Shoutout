@@ -366,3 +366,154 @@ describe('Gigs: cross-org isolation on briefs and holds', () => {
     }
   });
 });
+
+describe('Collabs: cross-org isolation, the two-sided applications policy, and the authz bug fixed in migration 015', () => {
+  it('org A cannot SELECT a collab_request belonging to org B', async () => {
+    const requestId = randomUUID();
+    await admin.query('BEGIN');
+    await admin.query(
+      `insert into collab_requests (id, org_id, artist_id, kind, title, city)
+       values ($1, $2, $3, 'track', 'Need a vocalist', 'Mumbai')`,
+      [requestId, orgB, artistB],
+    );
+    await admin.query('COMMIT');
+
+    try {
+      const result = await withSession(userA, orgA, (c) =>
+        c.query('select id from collab_requests where id = $1', [requestId]),
+      );
+      expect(result.rows).toHaveLength(0);
+    } finally {
+      await admin.query('delete from collab_requests where id = $1', [requestId]);
+    }
+  });
+
+  it('the poster (org A) CAN see an application submitted by a different org (org B) to its own slot', async () => {
+    const requestId = randomUUID();
+    const slotId = randomUUID();
+    const applicationId = randomUUID();
+    await admin.query('BEGIN');
+    await admin.query(
+      `insert into collab_requests (id, org_id, artist_id, kind, title, city)
+       values ($1, $2, $3, 'track', 'Need a vocalist', 'Mumbai')`,
+      [requestId, orgA, artistA],
+    );
+    await admin.query(
+      `insert into collab_slots (id, request_id, org_id, role, comp_model)
+       values ($1, $2, $3, 'vocalist', 'credit')`,
+      [slotId, requestId, orgA],
+    );
+    // the application row is owned by orgB (the applicant), not orgA
+    await admin.query(
+      `insert into applications (id, org_id, slot_id, artist_id) values ($1, $2, $3, $4)`,
+      [applicationId, orgB, slotId, artistB],
+    );
+    await admin.query('COMMIT');
+
+    try {
+      const result = await withSession(userA, orgA, (c) =>
+        c.query('select id from applications where id = $1', [applicationId]),
+      );
+      expect(result.rows).toHaveLength(1);
+    } finally {
+      await admin.query('delete from applications where id = $1', [applicationId]);
+      await admin.query('delete from collab_slots where id = $1', [slotId]);
+      await admin.query('delete from collab_requests where id = $1', [requestId]);
+    }
+  });
+
+  it('applications_artist_org_guard rejects org A applying with an artist it does not own', async () => {
+    const requestId = randomUUID();
+    const slotId = randomUUID();
+    await admin.query('BEGIN');
+    await admin.query(
+      `insert into collab_requests (id, org_id, artist_id, kind, title, city)
+       values ($1, $2, $3, 'track', 'Need a vocalist', 'Mumbai')`,
+      [requestId, orgB, artistB],
+    );
+    await admin.query(
+      `insert into collab_slots (id, request_id, org_id, role, comp_model)
+       values ($1, $2, $3, 'vocalist', 'credit')`,
+      [slotId, requestId, orgB],
+    );
+    await admin.query('COMMIT');
+
+    try {
+      await expect(
+        withSession(userA, orgA, (c) =>
+          c.query(`insert into applications (org_id, slot_id, artist_id) values ($1, $2, $3)`, [
+            orgA,
+            slotId,
+            artistB, // artistB belongs to orgB, not orgA
+          ]),
+        ),
+      ).rejects.toThrow(/FORBIDDEN/);
+    } finally {
+      await admin.query('delete from collab_slots where id = $1', [slotId]);
+      await admin.query('delete from collab_requests where id = $1', [requestId]);
+    }
+  });
+
+  it('poster_update_application is FORBIDDEN when called by an org that does not own the request', async () => {
+    // Regression test for migration 015: the original `<>` comparison
+    // against current_org_id() evaluated to NULL for an unauthenticated
+    // or wrongly-scoped caller, and `IF NULL` is treated as false — the
+    // FORBIDDEN branch silently never ran. This proves a real, non-owning,
+    // authenticated org is correctly rejected, not just an anon caller.
+    const requestId = randomUUID();
+    const slotId = randomUUID();
+    const applicationId = randomUUID();
+    await admin.query('BEGIN');
+    await admin.query(
+      `insert into collab_requests (id, org_id, artist_id, kind, title, city)
+       values ($1, $2, $3, 'track', 'Need a vocalist', 'Mumbai')`,
+      [requestId, orgB, artistB],
+    );
+    await admin.query(
+      `insert into collab_slots (id, request_id, org_id, role, comp_model)
+       values ($1, $2, $3, 'vocalist', 'credit')`,
+      [slotId, requestId, orgB],
+    );
+    await admin.query(
+      `insert into applications (id, org_id, slot_id, artist_id) values ($1, $2, $3, $4)`,
+      [applicationId, orgB, slotId, artistB],
+    );
+    await admin.query('COMMIT');
+
+    try {
+      // orgA is neither the poster (orgB) nor the applicant (orgB) here —
+      // an unrelated org attempting a poster-only action.
+      await expect(
+        withSession(userA, orgA, (c) =>
+          c.query(`select poster_update_application($1, 'shortlisted', null)`, [applicationId]),
+        ),
+      ).rejects.toThrow(/FORBIDDEN/);
+    } finally {
+      await admin.query('delete from applications where id = $1', [applicationId]);
+      await admin.query('delete from collab_slots where id = $1', [slotId]);
+      await admin.query('delete from collab_requests where id = $1', [requestId]);
+    }
+  });
+
+  it('accept_application cannot be executed by the anon role at all', async () => {
+    // Regression test for the more severe half of the same migration 015
+    // bug: before the fix, EXECUTE on this SECURITY DEFINER function was
+    // implicitly available to PUBLIC (Postgres's default on CREATE
+    // FUNCTION), so an anon caller — no session, no org — could invoke it
+    // and, combined with the NULL-comparison bug, bypass authorisation
+    // entirely. This proves the grant itself is closed, independent of
+    // the in-function check.
+    const client = new Client({ connectionString: DATABASE_URL });
+    await client.connect();
+    try {
+      await client.query('BEGIN');
+      await client.query('SET LOCAL ROLE anon');
+      await expect(client.query('select accept_application($1)', [randomUUID()])).rejects.toThrow(
+        /permission denied/i,
+      );
+      await client.query('ROLLBACK');
+    } finally {
+      await client.end();
+    }
+  });
+});
