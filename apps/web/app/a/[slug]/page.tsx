@@ -5,6 +5,10 @@ import {
   getArtistMedia,
   getArtistAlbums,
   getArtistPerformances,
+  getArtistCredits,
+  getArtistReliability,
+  type Credit,
+  type ReliabilityScore,
   type ArtistMedia,
   type Album,
   type Performance,
@@ -35,6 +39,8 @@ interface ArtistPublic {
   media: ArtistMedia[];
   albums: Album[];
   performances: Performance[];
+  credits: Credit[];
+  reliability: ReliabilityScore[];
 }
 
 async function getArtist(slug: string): Promise<ArtistPublic | null> {
@@ -51,14 +57,16 @@ async function getArtist(slug: string): Promise<ArtistPublic | null> {
   // releases and past gigs (migration 022). Fetched in parallel — they're
   // independent reads and this page is ISR'd, so the cost is paid once per
   // revalidate window, not per visitor.
-  const [roles, media, albums, performances] = await Promise.all([
+  const [roles, media, albums, performances, credits, reliability] = await Promise.all([
     supabase.rpc('get_artist_roles_public', { p_artist_id: artist.id }).then((r) => r.data),
     getArtistMedia(supabase, artist.id).catch(() => []),
     getArtistAlbums(supabase, artist.id).catch(() => []),
     getArtistPerformances(supabase, artist.id).catch(() => []),
+    getArtistCredits(supabase, artist.id).catch(() => []),
+    getArtistReliability(supabase, artist.id).catch(() => []),
   ]);
 
-  return { ...artist, roles: roles ?? [], media, albums, performances };
+  return { ...artist, roles: roles ?? [], media, albums, performances, credits, reliability };
 }
 
 export default async function ArtistProfilePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -194,6 +202,58 @@ export default async function ArtistProfilePage({ params }: { params: Promise<{ 
                   <span className="shrink-0 text-xs text-ink-soft">
                     {p.crowd_size.toLocaleString('en-IN')} crowd
                   </span>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {artist.reliability.length > 0 ? (
+        <section className="motion-rise flex flex-col gap-2" style={rise(3)}>
+          <h2 className="text-lg font-semibold text-ink">Reliability</h2>
+          {/* Held per role, never averaged into one number, and absent
+              entirely below five completed bookings for that role. */}
+          <ul className="flex flex-col gap-2">
+            {artist.reliability.map((r) => (
+              <li
+                key={r.role}
+                className="flex items-center justify-between gap-3 rounded-lg border border-line p-3"
+              >
+                <div>
+                  <p className="font-medium text-ink">{r.role.replace(/_/g, ' ')}</p>
+                  <p className="text-xs text-ink-soft">
+                    {r.completed_n} completed
+                    {r.avg_rating ? ` · ${r.avg_rating}/5 average` : ''}
+                  </p>
+                </div>
+                <span className="text-lg font-semibold tabular-nums text-ok">
+                  {Math.round(r.score)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {artist.credits.length > 0 ? (
+        <section className="motion-rise flex flex-col gap-2" style={rise(8)}>
+          <h2 className="text-lg font-semibold text-ink">Verified credits</h2>
+          <p className="text-xs text-ink-soft">
+            Published only from split sheets that are locked and signed by everyone on them.
+          </p>
+          <ul className="flex flex-col gap-2">
+            {artist.credits.map((c) => (
+              <li
+                key={`${c.work_title}-${c.role}`}
+                className="flex items-center justify-between gap-3 rounded-lg border border-line p-3"
+              >
+                <div>
+                  <p className="font-medium text-ink">{c.work_title}</p>
+                  <p className="text-sm text-ink-soft">{c.role}</p>
+                </div>
+                {c.writer_pct ? (
+                  <span className="text-xs tabular-nums text-ink-soft">{c.writer_pct}% writer</span>
                 ) : null}
               </li>
             ))}

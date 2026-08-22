@@ -8,12 +8,14 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"settlement rail not yet built — see docs/09-BUILD-SEQUENCE.md M4\" && exit 0"
+    "test": "vitest run"
   },
   "dependencies": {
-    "@shoutout/db": "workspace:*"
+    "@shoutout/db": "workspace:*",
+    "@supabase/supabase-js": "^2.45.0"
   },
   "devDependencies": {
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
   }
 }
