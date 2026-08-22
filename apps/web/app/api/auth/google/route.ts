@@ -28,10 +28,33 @@ export async function GET(request: Request) {
   });
 
   if (error || !data?.url) {
-    // The common cause is the Google provider not being enabled in the
-    // Supabase dashboard yet ("Unsupported provider: provider is not
-    // enabled"). Send the user back to /login with something readable
-    // rather than a raw 500.
+    return NextResponse.redirect(`${origin}/login?error=google_unavailable`);
+  }
+
+  // Pre-flight the authorize URL before handing the browser to it.
+  //
+  // signInWithOAuth({ skipBrowserRedirect }) never contacts Supabase — it
+  // builds the URL locally and always returns error: null. So the check
+  // above cannot detect a disabled provider, and the browser was being
+  // sent straight to a raw Supabase error page:
+  //
+  //   {"code":400,"error_code":"validation_failed",
+  //    "msg":"Unsupported provider: provider is not enabled"}
+  //
+  // The 400 is only observable by actually requesting the URL, so do that
+  // here — server-side, without following the redirect — and translate a
+  // failure into something a human can read. On success this costs one
+  // extra request on a route that is hit once per sign-in.
+  let authorizeStatus: number;
+  try {
+    const probe = await fetch(data.url, { redirect: 'manual' });
+    authorizeStatus = probe.status;
+  } catch {
+    return NextResponse.redirect(`${origin}/login?error=google_unavailable`);
+  }
+
+  // A configured provider answers with a redirect to Google (3xx).
+  if (authorizeStatus >= 400) {
     return NextResponse.redirect(`${origin}/login?error=google_unavailable`);
   }
 
