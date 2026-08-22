@@ -9,27 +9,10 @@ interface ApiErrorResponse {
   error?: { message?: string };
 }
 
-const inputStyle: React.CSSProperties = {
-  fontSize: 'var(--text-base)',
-  padding: 'var(--space-3)',
-  borderRadius: 8,
-  border: '1px solid var(--line)',
-  background: 'var(--surface)',
-  color: 'var(--ink)',
-  width: '100%',
-  minHeight: 44,
-};
-
-const buttonStyle: React.CSSProperties = {
-  fontSize: 'var(--text-base)',
-  padding: 'var(--space-3)',
-  borderRadius: 8,
-  border: 'none',
-  background: 'var(--signal)',
-  color: 'var(--surface)',
-  minHeight: 44,
-  cursor: 'pointer',
-};
+const inputClass =
+  'min-h-11 w-full rounded-md border border-line bg-surface px-3 text-base text-ink focus:outline-none focus:ring-2 focus:ring-trust';
+const primaryButtonClass =
+  'min-h-11 rounded-md bg-signal px-4 font-medium text-surface disabled:opacity-50';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -81,23 +64,13 @@ export default function LoginPage() {
   }
 
   return (
-    <main
-      style={{
-        minHeight: '100dvh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 'var(--space-4)',
-        padding: 'var(--space-5)',
-      }}
-    >
-      <div style={{ width: '100%', maxWidth: 360, display: 'grid', gap: 'var(--space-3)' }}>
-        <h1 style={{ fontSize: 'var(--text-xl)', margin: 0, textAlign: 'center' }}>SHOUTOUT</h1>
+    <main className="flex min-h-dvh flex-col items-center justify-center gap-4 px-4">
+      <div className="grid w-full max-w-sm gap-3">
+        <h1 className="text-center text-xl font-semibold text-ink">SHOUTOUT</h1>
 
         {step === 'phone' ? (
           <>
-            <label htmlFor="phone" style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
+            <label htmlFor="phone" className="text-sm text-ink-soft">
               Phone number
             </label>
             <input
@@ -105,16 +78,21 @@ export default function LoginPage() {
               type="tel"
               value={phone}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
-              style={inputStyle}
+              className={inputClass}
               placeholder="+919876543210"
             />
-            <button type="button" onClick={requestOtp} disabled={loading} style={buttonStyle}>
+            <button
+              type="button"
+              onClick={requestOtp}
+              disabled={loading}
+              className={primaryButtonClass}
+            >
               {loading ? 'Sending…' : 'Send code'}
             </button>
           </>
         ) : (
           <>
-            <label htmlFor="otp" style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-soft)' }}>
+            <label htmlFor="otp" className="text-sm text-ink-soft">
               6-digit code sent to {phone}
             </label>
             <input
@@ -124,16 +102,21 @@ export default function LoginPage() {
               maxLength={6}
               value={otp}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setOtp(e.target.value)}
-              style={inputStyle}
+              className={inputClass}
               placeholder="123456"
             />
-            <button type="button" onClick={verifyOtp} disabled={loading} style={buttonStyle}>
+            <button
+              type="button"
+              onClick={verifyOtp}
+              disabled={loading}
+              className={primaryButtonClass}
+            >
               {loading ? 'Verifying…' : 'Verify'}
             </button>
             <button
               type="button"
               onClick={() => setStep('phone')}
-              style={{ ...buttonStyle, background: 'transparent', color: 'var(--ink-soft)' }}
+              className="min-h-11 rounded-md px-4 font-medium text-ink-soft"
             >
               Change number
             </button>
@@ -141,7 +124,7 @@ export default function LoginPage() {
         )}
 
         {error ? (
-          <p style={{ color: 'var(--signal)', fontSize: 'var(--text-sm)' }} role="alert">
+          <p className="text-sm text-signal" role="alert">
             {error}
           </p>
         ) : null}

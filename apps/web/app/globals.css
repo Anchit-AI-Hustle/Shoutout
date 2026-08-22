@@ -1,20 +1,8 @@
+@import 'tailwindcss';
 @import '@shoutout/ui/tokens.css';
-
-* {
-  box-sizing: border-box;
-}
 
 html,
 body {
   margin: 0;
   padding: 0;
-  background: var(--surface);
-  color: var(--ink);
-  font-family:
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    sans-serif;
-  font-size: var(--text-base);
 }
