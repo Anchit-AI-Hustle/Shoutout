@@ -1,0 +1,23 @@
+-- 034 - Fixes from the seven-questions audit.
+--
+-- 1. Verification must mean something.
+--    33 of 45 listed artists carried a Verified badge on seeded placeholder
+--    profiles with stock photos. A badge 73% of a fake roster holds is not a
+--    trust signal, it is decoration, and it teaches a visitor that nothing
+--    on the site can be believed. docs/04-PROFILES.md gates Verified behind
+--    PAN or equivalent, which none of these have.
+--      update artists set verified = false where listed;
+--
+-- 2. "Demo Artist" was a visible profile on the browse page. Removed with
+--    its roles and media.
+--
+-- 3. Collabs and the credits registry were gated to Pro (₹4,999/mo).
+--    Collabs is the second pillar on the homepage and the feature most
+--    likely to seed the network: a producer posting for a vocalist brings
+--    the vocalist. Pricing the seeding mechanism above the people who would
+--    seed it is backwards in a cold start. Both now start at Basic; paid
+--    tiers still differentiate on volume, benchmarks, reliability and
+--    roster tools.
+--      insert into plan_entitlements (tier, entitlement) values
+--        ('basic','collabs'), ('basic','credits_registry'),
+--        ('plus','collabs'),  ('plus','credits_registry');
