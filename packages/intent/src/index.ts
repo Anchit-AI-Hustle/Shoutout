@@ -1,2 +1,6 @@
-// GENERATION_INTENT semantic engine, ported from MusicGenAI — see docs/09-BUILD-SEQUENCE.md M1, M5.
-export {};
+// GENERATION_INTENT / MUSIC_BRIEF — the schema at stage 3 of the Studio
+// pipeline, and the plan text a human approves before anything renders.
+// One schema, four consumers: pipeline, Collabs matching, Gigs matching,
+// catalogue tagging (docs/07-STUDIO.md).
+export * from './brief';
+export * from './plan-text';

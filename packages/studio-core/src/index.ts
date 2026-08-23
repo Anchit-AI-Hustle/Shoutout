@@ -1,2 +1,4 @@
-// Nine-stage generation pipeline, ported from Third Eye — see docs/09-BUILD-SEQUENCE.md M5.
-export {};
+// Studio pipeline support. The nine-stage pipeline itself lives in
+// apps/workers; this package holds the parts the app and the worker must
+// agree on — above all the content address that decides what gets reused.
+export * from './hash';
