@@ -16,6 +16,14 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+/** Pre-render known organisers, matching the artist and event pages. */
+export async function generateStaticParams() {
+  const supabase = anonClient();
+  if (!supabase) return [];
+  const { data } = await supabase.rpc('search_organisers_public', { p_limit: 50 });
+  return ((data ?? []) as { slug: string }[]).map((o) => ({ slug: o.slug }));
+}
+
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const supabase = anonClient();
@@ -46,8 +54,41 @@ export default async function OrganiserPublicPage({ params }: PageProps) {
   const events = await getOrganiserEvents(supabase, organiser.id).catch(() => []);
   const totalAttendance = events.reduce((sum, e) => sum + (e.attendance ?? 0), 0);
 
+  // Organization markup, with the events they've run. Missing here for the
+  // same reason it was missing on the artist page — both predate the pages
+  // where structured data became routine.
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: organiser.display_name,
+    url: `/o/${slug}`,
+    ...(organiser.bio ? { description: organiser.bio } : {}),
+    ...(organiser.logo_url ? { logo: organiser.logo_url } : {}),
+    ...(organiser.founded_year ? { foundingDate: String(organiser.founded_year) } : {}),
+    ...(organiser.home_city
+      ? { address: { '@type': 'PostalAddress', addressLocality: organiser.home_city } }
+      : {}),
+    ...(events.length > 0
+      ? {
+          event: events.map((e) => ({
+            '@type': 'MusicEvent',
+            name: e.title,
+            url: `/e/${e.slug}`,
+            ...(e.held_on ? { startDate: e.held_on } : {}),
+            ...(e.venue || e.city
+              ? { location: { '@type': 'Place', name: e.venue ?? e.city } }
+              : {}),
+          })),
+        }
+      : {}),
+  };
+
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-8 px-4 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="motion-rise flex items-start gap-4">
         {organiser.logo_url ? (
           <img
