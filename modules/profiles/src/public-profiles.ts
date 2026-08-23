@@ -48,6 +48,7 @@ export interface OrganiserProfile {
 }
 
 export interface OrganiserEvent {
+  slug: string;
   title: string;
   venue: string | null;
   city: string | null;
@@ -140,4 +141,55 @@ export function getArtistReliability(supabase: SupabaseClient, artistId: string)
   return rpc<ReliabilityScore>(supabase, 'get_artist_reliability_public', {
     p_artist_id: artistId,
   });
+}
+
+export interface EventDetail {
+  id: string;
+  slug: string;
+  title: string;
+  venue: string | null;
+  city: string | null;
+  held_on: string | null;
+  attendance: number | null;
+  image_url: string | null;
+  headliners: string[];
+  organiser_slug: string;
+  organiser_name: string;
+  organiser_city: string | null;
+  organiser_logo_url: string | null;
+  organiser_verified: boolean;
+}
+
+export interface LineupEntry {
+  headliner: string;
+  /** Null when the name doesn't match a listed profile — shown as plain text. */
+  artist_slug: string | null;
+  artist_id: string | null;
+  image_url: string | null;
+  verified: boolean | null;
+}
+
+export interface RelatedEvent {
+  slug: string;
+  title: string;
+  venue: string | null;
+  city: string | null;
+  held_on: string | null;
+  image_url: string | null;
+}
+
+export async function getEvent(
+  supabase: SupabaseClient,
+  slug: string,
+): Promise<EventDetail | null> {
+  const rows = await rpc<EventDetail>(supabase, 'get_event_public', { p_slug: slug });
+  return rows[0] ?? null;
+}
+
+export function getEventLineup(supabase: SupabaseClient, slug: string) {
+  return rpc<LineupEntry>(supabase, 'get_event_lineup_public', { p_slug: slug });
+}
+
+export function getRelatedEvents(supabase: SupabaseClient, slug: string) {
+  return rpc<RelatedEvent>(supabase, 'get_related_events_public', { p_slug: slug, p_limit: 6 });
 }

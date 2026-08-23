@@ -25,11 +25,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const supabase = createAnonClient(url, key);
 
-  const [{ data: artists }, { data: organisers }, { data: combos }] = await Promise.all([
-    supabase.rpc('search_artists_public', { p_limit: 50 }),
-    supabase.rpc('search_organisers_public', { p_limit: 50 }),
-    supabase.rpc('list_book_combinations'),
-  ]);
+  const [{ data: artists }, { data: organisers }, { data: combos }, { data: events }] =
+    await Promise.all([
+      supabase.rpc('search_artists_public', { p_limit: 50 }),
+      supabase.rpc('search_organisers_public', { p_limit: 50 }),
+      supabase.rpc('list_book_combinations'),
+      supabase.rpc('list_event_slugs'),
+    ]);
 
   const artistRoutes: MetadataRoute.Sitemap = ((artists ?? []) as { slug: string }[]).map((a) => ({
     url: `${SITE}/a/${a.slug}`,
@@ -49,5 +51,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...artistRoutes, ...organiserRoutes, ...bookRoutes];
+  // Event pages carry real content — venue, date, attendance, line-up —
+  // rather than being generated permutations, so they get a priority
+  // between profiles and the /book combinations.
+  const eventRoutes: MetadataRoute.Sitemap = (
+    (events ?? []) as { slug: string; held_on: string | null }[]
+  ).map((e) => ({
+    url: `${SITE}/e/${e.slug}`,
+    changeFrequency: 'monthly',
+    priority: 0.6,
+    ...(e.held_on ? { lastModified: new Date(e.held_on) } : {}),
+  }));
+
+  return [...staticRoutes, ...artistRoutes, ...organiserRoutes, ...eventRoutes, ...bookRoutes];
 }
