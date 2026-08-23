@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ROLE_FAMILIES } from '@shoutout/identity';
 import { StatusPill, EqualizerAccent, Waveform } from '@shoutout/ui';
+import { Paywall } from '@/components/Paywall';
 
 // Roles the spec writes as acronyms (docs/04-PROFILES.md's role table).
 // Naive capitalisation turns these into "Dj", "Md", "Foh engineer".
@@ -71,6 +72,7 @@ export default function ArtistSearchPage() {
   const [results, setResults] = useState<ArtistResult[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  const [canBook, setCanBook] = useState<boolean | null>(null);
   const [bookingArtistId, setBookingArtistId] = useState<string | null>(null);
   const [eventDate, setEventDate] = useState('');
   const [eventType, setEventType] = useState<(typeof eventTypes)[number]>('wedding');
@@ -86,6 +88,16 @@ export default function ArtistSearchPage() {
     fetch('/api/profiles/me')
       .then((r) => setSignedIn(r.status !== 401))
       .catch(() => setSignedIn(false));
+
+    // Entitlement drives whether the booking form renders at all. The
+    // database refuses regardless (migration 030) — this only decides
+    // whether the user is shown a form that would fail.
+    fetch('/api/entitlements')
+      .then((r) => (r.ok ? r.json() : { entitlements: [] }))
+      .then((j: { entitlements: string[] }) =>
+        setCanBook(j.entitlements.includes('send_booking_requests')),
+      )
+      .catch(() => setCanBook(false));
 
     fetch('/api/geo')
       .then((r) => r.json())
@@ -219,6 +231,14 @@ export default function ArtistSearchPage() {
           </p>
         ) : null}
 
+        {signedIn && canBook === false ? (
+          <Paywall
+            title="Booking requests need a plan"
+            description="Browsing artists is free. Sending a booking request — and everything that follows it: quotes, holds, riders, settlement — needs an active plan."
+            requiredTier="basic"
+          />
+        ) : null}
+
         {results === null ? (
           <p className="text-sm text-ink-soft">Loading…</p>
         ) : results.length === 0 ? (
@@ -310,6 +330,10 @@ export default function ArtistSearchPage() {
                 {signedIn === false ? (
                   <Link href="/login" className="text-sm text-trust">
                     Sign in to book →
+                  </Link>
+                ) : canBook === false ? (
+                  <Link href="/pricing" className="text-sm text-trust">
+                    Upgrade to send a booking request →
                   </Link>
                 ) : booked === artist.id ? (
                   <p className="text-sm text-ok">Request sent.</p>
