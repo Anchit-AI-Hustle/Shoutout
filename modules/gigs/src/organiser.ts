@@ -28,6 +28,11 @@ export interface ArtistSearchResult {
   fee_band_visible: boolean;
   /** Active roles only. Per-role matching is the point (migration 021). */
   roles: string[];
+  /** Primary press shot, if the artist has uploaded one. */
+  image_url: string | null;
+  album_count: number;
+  performance_count: number;
+  track_count: number;
 }
 
 export async function searchArtists(
