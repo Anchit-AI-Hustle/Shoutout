@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { createAnonClient } from '@shoutout/db';
 import {
@@ -43,12 +44,16 @@ interface ArtistPublic {
   reliability: ReliabilityScore[];
 }
 
-async function getArtist(slug: string): Promise<ArtistPublic | null> {
+function anonClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!supabaseUrl || !supabaseAnonKey) return null;
+  return createAnonClient(supabaseUrl, supabaseAnonKey);
+}
 
-  const supabase = createAnonClient(supabaseUrl, supabaseAnonKey);
+async function getArtist(slug: string): Promise<ArtistPublic | null> {
+  const supabase = anonClient();
+  if (!supabase) return null;
   const { data: rows } = await supabase.rpc('get_artist_public', { p_slug: slug });
   const artist = rows?.[0];
   if (!artist) return null;
@@ -69,6 +74,63 @@ async function getArtist(slug: string): Promise<ArtistPublic | null> {
   return { ...artist, roles: roles ?? [], media, albums, performances, credits, reliability };
 }
 
+/**
+ * Pre-render the artists we know about.
+ *
+ * docs/04-PROFILES.md calls this page "the SEO engine": a competitor with
+ * 30,000 artists and no SEO strategy has 30,000 wasted pages. Rendering
+ * them on demand only is most of the way to that — the first crawl of a
+ * cold page pays full latency, which is exactly when it matters.
+ */
+export async function generateStaticParams() {
+  const supabase = anonClient();
+  if (!supabase) return [];
+  const { data } = await supabase.rpc('search_artists_public', { p_limit: 50 });
+  return ((data ?? []) as { slug: string }[]).map((a) => ({ slug: a.slug }));
+}
+
+/**
+ * Title, description and share preview.
+ *
+ * This page had none, so every artist's tab read "ShoutOut" and every
+ * shared link previewed as nothing — on the one page whose whole job is to
+ * be found and forwarded.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const artist = await getArtist(slug);
+  if (!artist) return { title: 'Artist · ShoutOut' };
+
+  const roles = artist.roles.map((r) => r.role.replace(/_/g, ' ')).join(', ');
+  const where = artist.home_city ? ` in ${artist.home_city}` : '';
+  const description =
+    artist.bio ??
+    `${artist.stage_name}${where}${roles ? ` — ${roles}` : ''}. Listen, see past gigs, and send a booking request.`;
+
+  const photo = artist.media.find((m) => m.kind === 'image')?.url;
+
+  return {
+    title: `${artist.stage_name} · ShoutOut`,
+    description: description.slice(0, 200),
+    alternates: { canonical: `/a/${slug}` },
+    openGraph: {
+      title: artist.stage_name,
+      description: description.slice(0, 200),
+      type: 'profile',
+      ...(photo ? { images: [{ url: photo }] } : {}),
+    },
+    twitter: {
+      card: photo ? 'summary_large_image' : 'summary',
+      title: artist.stage_name,
+      description: description.slice(0, 200),
+    },
+  };
+}
+
 export default async function ArtistProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const artist = await getArtist(slug);
@@ -77,8 +139,55 @@ export default async function ArtistProfilePage({ params }: { params: Promise<{ 
   const photos = artist.media.filter((m) => m.kind === 'image');
   const tracks = artist.media.filter((m) => m.kind === 'audio');
 
+  // schema.org MusicGroup. docs/04-PROFILES.md specifies MusicGroup +
+  // Person markup on this page and it was never added — so the richest
+  // page in the product was being read by crawlers as undifferentiated
+  // text. Releases map to MusicAlbum and past gigs to MusicEvent, which is
+  // what lets a profile surface as a rich result rather than a blue link.
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'MusicGroup',
+    name: artist.stage_name,
+    url: `/a/${slug}`,
+    ...(artist.bio ? { description: artist.bio } : {}),
+    ...(photos.length > 0 ? { image: photos.map((p) => p.url) } : {}),
+    ...(artist.genres.length > 0 ? { genre: artist.genres } : {}),
+    ...(artist.home_city ? { location: { '@type': 'Place', name: artist.home_city } } : {}),
+    ...(artist.roles.length > 0
+      ? { knowsAbout: artist.roles.map((r) => r.role.replace(/_/g, ' ')) }
+      : {}),
+    ...(artist.albums.length > 0
+      ? {
+          album: artist.albums.map((a) => ({
+            '@type': 'MusicAlbum',
+            name: a.title,
+            ...(a.release_year ? { datePublished: String(a.release_year) } : {}),
+            ...(a.track_count ? { numTracks: a.track_count } : {}),
+            ...(a.label ? { recordLabel: { '@type': 'Organization', name: a.label } } : {}),
+          })),
+        }
+      : {}),
+    ...(artist.performances.length > 0
+      ? {
+          performerIn: artist.performances.map((p) => ({
+            '@type': 'MusicEvent',
+            name: p.event_name,
+            ...(p.performed_on ? { startDate: p.performed_on } : {}),
+            ...(p.venue || p.city
+              ? { location: { '@type': 'Place', name: p.venue ?? p.city } }
+              : {}),
+          })),
+        }
+      : {}),
+  };
+
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-6 px-4 py-12">
+      <script
+        type="application/ld+json"
+        // Built from our own rows; no user-supplied markup reaches it.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="motion-rise" style={rise(0)}>
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-semibold text-ink">{artist.stage_name}</h1>
