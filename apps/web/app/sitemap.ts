@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { createAnonClient } from '@shoutout/db';
+import { bookSlug } from '@/lib/book-slug';
 
 // A programmatic landing page nothing links to is a page nothing finds.
 // This enumerates every public surface — artist profiles, organiser pages,
@@ -43,10 +44,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     (o) => ({ url: `${SITE}/o/${o.slug}`, changeFrequency: 'weekly', priority: 0.6 }),
   );
 
+  // Only cells that cleared the >=3-artist guardrail (migration 033) are
+  // returned, so the sitemap cannot advertise a thin page.
   const bookRoutes: MetadataRoute.Sitemap = (
-    (combos ?? []) as { role: string; city: string }[]
+    (combos ?? []) as { slug_token: string; city: string }[]
   ).map((c) => ({
-    url: `${SITE}/book/${c.role}-in-${c.city.toLowerCase().replace(/\s+/g, '-')}`,
+    url: `${SITE}/book/${bookSlug(c.slug_token, c.city)}`,
     changeFrequency: 'weekly',
     priority: 0.7,
   }));

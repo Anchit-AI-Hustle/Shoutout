@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createAnonClient } from '@shoutout/db';
-import { searchArtists } from '@shoutout/gigs';
+import { searchArtists, type ArtistSearchResult } from '@shoutout/gigs';
 import { StatusPill, Waveform, EqualizerAccent } from '@shoutout/ui';
+import { bookSlug, slugifyToken } from '@/lib/book-slug';
 
 // /book/<role>-in-<city> — the programmatic acquisition surface
 // (docs/10-PROMOTION.md).
@@ -44,9 +45,46 @@ export async function generateStaticParams() {
   const supabase = anon();
   if (!supabase) return [];
   const { data } = await supabase.rpc('list_book_combinations');
-  return ((data ?? []) as { role: string; city: string }[]).map((c) => ({
-    slug: `${c.role}-in-${c.city.toLowerCase().replace(/\s+/g, '-')}`,
+  return ((data ?? []) as { slug_token: string; city: string }[]).map((c) => ({
+    slug: bookSlug(c.slug_token, c.city),
   }));
+}
+
+/**
+ * Resolve the token against the cells that passed the guardrail.
+ *
+ * Roles are checked before genres because the two vocabularies can collide
+ * ("brass" is both). Returning null means the cell is either unknown or too
+ * thin to publish, and the page 404s rather than rendering a stub.
+ */
+async function resolveCell(
+  supabase: NonNullable<ReturnType<typeof anon>>,
+  token: string,
+  city: string,
+): Promise<{ kind: 'role' | 'genre'; count: number; token: string; city: string } | null> {
+  const { data } = await supabase.rpc('list_book_combinations');
+  const rows = (data ?? []) as {
+    kind: 'role' | 'genre';
+    slug_token: string;
+    city: string;
+    artist_count: number;
+  }[];
+  const norm = slugifyToken;
+  const matches = rows.filter((r) => norm(r.slug_token) === token && norm(r.city) === city);
+  const role = matches.find((r) => r.kind === 'role');
+  const chosen = role ?? matches[0];
+  // Return the ORIGINAL token and city, not the slug. Slugification is
+  // lossy ("r&b" -> "r-b", "live_band_member" -> "live-band-member"), so
+  // querying with the slug finds nothing and the page 404s despite being
+  // listed in the sitemap. Ask me how I know.
+  return chosen
+    ? {
+        kind: chosen.kind,
+        count: Number(chosen.artist_count),
+        token: chosen.slug_token,
+        city: chosen.city,
+      }
+    : null;
 }
 
 export async function generateMetadata({
@@ -74,17 +112,43 @@ export default async function BookLandingPage({ params }: { params: Promise<{ sl
   const supabase = anon();
   if (!supabase) notFound();
 
-  const cityQuery = parsed.city.replace(/-/g, ' ');
-  const artists = await searchArtists(supabase, {
-    role: parsed.role,
-    city: cityQuery,
-    limit: 24,
-  }).catch(() => []);
+  // The guardrail decides whether this page may exist at all
+  // (00-PRD.md: never publish a cell with fewer than 3 live artists).
+  const cell = await resolveCell(supabase, parsed.role, parsed.city).catch(() => null);
+  if (!cell) notFound();
 
-  if (artists.length === 0) notFound();
+  // Genre cells use their own RPC; role cells reuse the shared search.
+  // Both return the same shape so the card markup below is unchanged.
+  const artists: ArtistSearchResult[] =
+    cell.kind === 'role'
+      ? await searchArtists(supabase, { role: cell.token, city: cell.city, limit: 24 }).catch(
+          () => [] as ArtistSearchResult[],
+        )
+      : await (async () => {
+          try {
+            const { data } = await supabase.rpc('search_artists_by_genre_city', {
+              p_genre: cell.token,
+              p_city: cell.city,
+              p_limit: 24,
+            });
+            return (data ?? []) as ArtistSearchResult[];
+          } catch {
+            return [] as ArtistSearchResult[];
+          }
+        })();
 
-  const role = titleCase(parsed.role);
-  const city = titleCase(cityQuery);
+  if (artists.length < 3) notFound();
+
+  // Percentile band only, and only at sample_n >= 5 (00-PRD.md 5.1). Absent
+  // is the correct answer below that, not an estimate.
+  const { data: bandRows } = await supabase.rpc('get_book_fee_band', {
+    p_city: cell.city,
+    p_genre: cell.kind === 'genre' ? cell.token : null,
+  });
+  const band = ((bandRows ?? []) as { p25: number; p50: number; p75: number }[])[0] ?? null;
+
+  const role = titleCase(cell.token);
+  const city = titleCase(cell.city);
 
   // schema.org so the page can win a rich result rather than a blue link.
   const jsonLd = {
@@ -123,7 +187,9 @@ export default async function BookLandingPage({ params }: { params: Promise<{ sl
           </span>
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-semibold tracking-tight text-surface md:text-4xl">
-              Book a {role.toLowerCase()} in {city}
+              {cell.kind === 'role'
+                ? `Book a ${role.toLowerCase()} in ${city}`
+                : `Book ${role} artists in ${city}`}
             </h1>
             <EqualizerAccent bars={4} />
           </div>
@@ -135,6 +201,19 @@ export default async function BookLandingPage({ params }: { params: Promise<{ sl
       </section>
 
       <div className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-10">
+        {band ? (
+          <div className="rounded-lg border border-line bg-surface-2 p-4">
+            <p className="text-xs uppercase tracking-wide text-ink-faint">Typical fee</p>
+            <p className="mt-1 text-lg font-semibold tabular-nums text-ink">
+              ₹{Math.round(band.p25 / 100).toLocaleString('en-IN')} to ₹
+              {Math.round(band.p75 / 100).toLocaleString('en-IN')}
+            </p>
+            <p className="mt-1 text-xs text-ink-soft">
+              Middle band from settled bookings. Percentiles only, never individual deals.
+            </p>
+          </div>
+        ) : null}
+
         <ul className="flex flex-col gap-3">
           {artists.map((a) => (
             <li key={a.id} className="motion-lift rounded-lg border border-line p-4">

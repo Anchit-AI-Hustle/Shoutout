@@ -84,7 +84,8 @@ function titleCase(s: string) {
 }
 
 interface Combo {
-  role: string;
+  kind: 'role' | 'genre';
+  slug_token: string;
   city: string;
   artist_count: number;
 }
@@ -117,7 +118,7 @@ async function getProof(): Promise<Proof> {
     })(),
   ]);
 
-  const combos = combosRes.filter((c) => c.role && c.city);
+  const combos = combosRes.filter((c) => c.slug_token && c.city);
   const cities = [...new Set(combos.map((c) => c.city))].slice(0, 8);
   return { artists, combos, cities };
 }
@@ -125,8 +126,14 @@ async function getProof(): Promise<Proof> {
 export default async function HomePage() {
   const { artists, combos, cities } = await getProof();
 
-  // Distinct roles, most supply first — these become the browse chips.
-  const roles = [...new Set(combos.map((c) => c.role))].slice(0, 10);
+  // Only cells that passed the >=3 guardrail (migration 033) reach here, so
+  // a chip never leads to a page with one artist on it.
+  const roles = [
+    ...new Set(combos.filter((c) => c.kind === 'role').map((c) => c.slug_token)),
+  ].slice(0, 10);
+  const genres = [
+    ...new Set(combos.filter((c) => c.kind === 'genre').map((c) => c.slug_token)),
+  ].slice(0, 10);
 
   return (
     <main>
@@ -248,6 +255,24 @@ export default async function HomePage() {
                 </li>
               ))}
             </ul>
+
+            {genres.length > 0 ? (
+              <>
+                <h2 className="mt-10 text-xl font-semibold text-ink">Book by genre</h2>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {genres.map((g) => (
+                    <li key={g}>
+                      <Link
+                        href={`/artists?genre=${encodeURIComponent(g)}`}
+                        className="motion-lift inline-flex min-h-11 items-center rounded-full border border-line bg-surface px-4 text-sm text-ink"
+                      >
+                        {titleCase(g)}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
 
             {cities.length > 0 ? (
               <>

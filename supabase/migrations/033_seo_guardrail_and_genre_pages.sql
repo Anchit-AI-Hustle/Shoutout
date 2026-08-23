@@ -1,0 +1,25 @@
+-- 033 - Enforce the programmatic SEO guardrail, and add genre pages.
+--
+-- 00-PRD.md, Programmatic SEO: "never publish a cell with fewer than 3 live
+-- artists, or a fee band below n=5. A thin page ranks for nothing and
+-- dilutes the whole domain."
+--
+-- list_book_combinations() shipped with `having count(distinct a.id) >= 1`,
+-- publishing single-artist pages. A direct violation of an explicit rule:
+-- at 32 artists it generated 85 pages, nearly all thin, and thin pages do
+-- not merely fail to rank, they drag the domain down with them. Raised to 3,
+-- which cut 85 pages to 8 real ones.
+--
+-- The PRD specifies /book/[genre]-in-[city]; only role x city existed. Both
+-- are real search intents ("a wedding singer in Jaipur" is a role, "a sufi
+-- band in Delhi" is a genre), so both are generated and the route resolves
+-- the token against roles first, then genres.
+--
+-- get_book_fee_band() enforces 00-PRD.md 5.1: "never expose raw rows;
+-- percentile bands only; minimum sample_n 5 so individual deals cannot be
+-- reverse-engineered." Below the threshold it returns nothing, which is the
+-- same discipline rule 8 applies to quotes, enforced here so no caller can
+-- forget it.
+--
+-- Also adds search_artists_by_genre_city() to back the genre pages.
+-- Return type of list_book_combinations changes, so it is dropped first.
