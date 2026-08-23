@@ -166,7 +166,7 @@ export default function ProfilePage() {
               ))}
             </div>
             <p className="px-1 text-xs text-ink-soft">
-              shoutout.app/a/your-name - the link you put in your bio.
+              Your public page: /a/your-name - the link you put in your bio.
             </p>
           </PreviewFrame>
         }
