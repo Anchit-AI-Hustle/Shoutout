@@ -102,35 +102,39 @@ export default async function OrganiserPublicPage({ params }: PageProps) {
             <h2 className="text-lg font-semibold text-ink">Past events</h2>
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {events.map((e) => (
-                <li
-                  key={`${e.title}-${e.held_on}`}
-                  className="motion-lift overflow-hidden rounded-lg border border-line"
-                >
-                  {e.image_url ? (
-                    <img
-                      src={e.image_url}
-                      alt=""
-                      width={800}
-                      height={500}
-                      loading="lazy"
-                      className="h-36 w-full object-cover"
-                    />
-                  ) : null}
-                  <div className="flex flex-col gap-1 p-3">
-                    <p className="font-medium text-ink">{e.title}</p>
-                    <p className="text-sm text-ink-soft">
-                      {[e.venue, e.city].filter(Boolean).join(', ')}
-                      {e.held_on ? ` · ${e.held_on}` : ''}
-                    </p>
-                    {e.attendance ? (
-                      <p className="text-xs text-ink-soft">
-                        {e.attendance.toLocaleString('en-IN')} attended
+                <li key={e.slug}>
+                  <Link
+                    href={`/e/${e.slug}`}
+                    className="motion-lift flex h-full flex-col overflow-hidden rounded-lg border border-line"
+                  >
+                    {e.image_url ? (
+                      <img
+                        src={e.image_url}
+                        alt=""
+                        width={800}
+                        height={500}
+                        loading="lazy"
+                        className="h-36 w-full object-cover"
+                      />
+                    ) : null}
+                    <div className="flex flex-col gap-1 p-3">
+                      <p className="font-medium text-ink">{e.title}</p>
+                      <p className="text-sm text-ink-soft">
+                        {[e.venue, e.city].filter(Boolean).join(', ')}
+                        {e.held_on ? ` · ${e.held_on}` : ''}
                       </p>
-                    ) : null}
-                    {e.headliners.length > 0 ? (
-                      <p className="text-xs text-ink-soft">Headliners: {e.headliners.join(', ')}</p>
-                    ) : null}
-                  </div>
+                      {e.attendance ? (
+                        <p className="text-xs text-ink-soft">
+                          {e.attendance.toLocaleString('en-IN')} attended
+                        </p>
+                      ) : null}
+                      {e.headliners.length > 0 ? (
+                        <p className="text-xs text-ink-soft">
+                          Headliners: {e.headliners.join(', ')}
+                        </p>
+                      ) : null}
+                    </div>
+                  </Link>
                 </li>
               ))}
             </ul>

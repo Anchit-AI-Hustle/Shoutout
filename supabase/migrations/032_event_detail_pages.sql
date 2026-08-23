@@ -1,0 +1,24 @@
+-- 032 — A page per event.
+--
+-- Events existed only as cards inside an organiser's profile: nothing to
+-- link to, nothing to index, and no surface connecting an artist to the
+-- events they played. That last one matters most — an event page is the
+-- natural join between the two sides of the marketplace, and unlike the
+-- /book combinations it carries real content (venue, date, attendance,
+-- line-up) rather than being a generated permutation.
+--
+-- Slugs rather than UUIDs, because a URL is read by people and by search
+-- engines. Uniqueness is global, since the URL space is. The backfill runs
+-- before the NOT NULL and the unique index so existing rows survive, and a
+-- follow-up collapses "…-2024-2024" where a title already ended in its year.
+--
+-- get_event_lineup_public() resolves headliner names to listed profiles as
+-- a best-effort LEFT JOIN. Name matching is imperfect, so an unmatched
+-- headliner renders as plain text — the page never invents a profile link
+-- it cannot stand behind.
+--
+-- get_organiser_events_public() was dropped and recreated to return slug,
+-- since the organiser page now links each card through.
+--
+-- Functions: get_event_public, get_event_lineup_public,
+-- get_related_events_public, list_event_slugs.
