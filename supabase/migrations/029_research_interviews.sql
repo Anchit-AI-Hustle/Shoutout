@@ -1,0 +1,16 @@
+-- 029 — Customer discovery as a tracked object, not a memory.
+--
+-- Validation is the lowest score in the review and the only one that cannot
+-- be closed by writing code. What code *can* do is stop the evidence from
+-- evaporating: interviews recorded against pre-registered hypotheses, so
+-- twenty conversations produce a scoreboard rather than twenty vague
+-- impressions and a feeling of encouragement.
+--
+-- The eight hypotheses are seeded rather than free-text on purpose.
+-- Pre-registered claims can be falsified; notes cannot.
+--
+-- research_scoreboard() refuses to call a hypothesis either way below five
+-- responses — the same rule the price index and reliability scores use,
+-- applied to the founder's own beliefs. Full DDL in the applied migration:
+-- research_hypotheses (seeded H1..H8), research_interviews,
+-- research_responses, and research_scoreboard().
