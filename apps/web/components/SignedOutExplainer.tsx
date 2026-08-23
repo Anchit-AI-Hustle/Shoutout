@@ -122,7 +122,7 @@ export function SignedOutExplainer({
             </Link>
           </div>
           <p className="text-xs text-surface/50">
-            Free to sign up. A code to your email or phone — no password to forget.
+            Free to browse and free to join — a code to your email, no password to forget.
           </p>
         </div>
       </section>
@@ -165,7 +165,7 @@ export function SignedOutExplainer({
           <h2 className="text-xl font-semibold text-ink">Ready when you are</h2>
           <p className="max-w-md text-sm text-ink-soft">
             Get a code, pick whether you&apos;re an artist or an organiser, and you&apos;re in.
-            Everything on this page is free to use.
+            Browsing is free; listing yourself or booking an artist needs a plan from ₹499/mo.
           </p>
           <Link
             href="/login"

@@ -125,7 +125,6 @@ export default async function HomePage() {
 
   // Distinct roles, most supply first — these become the browse chips.
   const roles = [...new Set(combos.map((c) => c.role))].slice(0, 10);
-  const artistCount = new Set(artists.map((a) => a.id)).size;
 
   return (
     <main>
@@ -138,13 +137,13 @@ export default async function HomePage() {
             For artists, managers &amp; event organisers
           </span>
           <h1 className="text-3xl font-semibold tracking-tight text-surface md:text-5xl">
-            Get paid for the gig <span className="text-accent">you already played</span>
+            Get booked. <span className="text-accent">Get paid on time.</span>
           </h1>
           <EqualizerAccent />
           <p className="max-w-xl text-lg text-surface/70">
-            Booking, contracts and settlement for India&apos;s independent music industry. Every
-            rupee accounted for before a payment can close — enforced by the database, not by
-            whoever answers the phone.
+            Booking, riders and settlement for India&apos;s independent music industry. Every rupee
+            accounted for before a payment can close — enforced by the database, not by whoever
+            answers the phone.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
@@ -157,10 +156,16 @@ export default async function HomePage() {
               href="/login"
               className="motion-lift min-h-11 rounded-md border border-surface/25 px-6 py-3 text-sm font-medium text-surface"
             >
-              List yourself — free
+              List yourself
             </Link>
           </div>
-          <p className="text-xs text-surface/50">No password. Free to join. Nothing to install.</p>
+          {/* Says precisely what is free. Migration 030 gates listing and
+              booking, so "free" without qualification is now untrue — and a
+              price the visitor discovers only after signing up is the kind
+              of thing that loses the account permanently. */}
+          <p className="text-xs text-surface/50">
+            Free to browse and free to join. Listing or booking needs a plan from ₹499/mo.
+          </p>
         </div>
       </section>
 
@@ -168,11 +173,19 @@ export default async function HomePage() {
       {artists.length > 0 ? (
         <section className="mx-auto max-w-5xl px-4 py-14">
           <div className="mb-5 flex items-baseline justify-between gap-3">
-            <h2 className="text-xl font-semibold text-ink">Artists on ShoutOut</h2>
+            {/* Named honestly: every profile here is currently sample data
+                seeded to exercise the schema. Calling them "Artists on
+                ShoutOut" implies a roster that has signed up, which is a
+                claim the product cannot yet back. */}
+            <h2 className="text-xl font-semibold text-ink">Sample profiles</h2>
             <Link href="/artists" className="text-sm text-trust">
               Browse all →
             </Link>
           </div>
+          <p className="mb-4 -mt-3 text-sm text-ink-soft">
+            Example profiles showing what a listing looks like. Real artists replace these as they
+            join.
+          </p>
           <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {artists.map((a, i) => (
               <Reveal key={a.id} delay={i}>
@@ -293,9 +306,7 @@ export default async function HomePage() {
 
       <section className="bg-desk">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-4 py-16 text-center">
-          <h2 className="text-2xl font-semibold text-surface">
-            {artistCount > 0 ? `Join the artists already listed` : 'Put your name on the list'}
-          </h2>
+          <h2 className="text-2xl font-semibold text-surface">Put your name on the list</h2>
           <p className="max-w-md text-sm text-surface/70">
             A profile takes five minutes: your roles, your releases, the gigs you&apos;ve played.
             Organisers find you from it.
