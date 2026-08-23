@@ -211,7 +211,7 @@ export default function BriefWorkspacePage({ params }: { params: Promise<{ id: s
         {indexResult ? (
           'code' in indexResult ? (
             <p className="text-sm text-ink-soft">
-              Not enough settled deals yet for this exact combination — price it manually.
+              Not enough settled deals yet for this exact combination - price it manually.
             </p>
           ) : (
             <p className="text-sm text-ink">

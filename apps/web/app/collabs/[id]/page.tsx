@@ -216,7 +216,7 @@ export default function CollabDetailPage({ params }: { params: Promise<{ id: str
                   >
                     <div>
                       <p className="text-sm text-ink">
-                        {a.artist_id.slice(0, 8)}… — score {a.score.toFixed(2)}
+                        {a.artist_id.slice(0, 8)}… - score {a.score.toFixed(2)}
                       </p>
                       {a.pitch ? <p className="text-xs text-ink-soft">{a.pitch}</p> : null}
                       <StatusPill label={a.status} tone="neutral" />

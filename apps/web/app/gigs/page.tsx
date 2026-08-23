@@ -58,14 +58,14 @@ export default async function GigsPipelinePage() {
       <SignedOutExplainer
         eyebrow="For artists, managers & agencies"
         title="Gigs"
-        tagline="One screen that answers who's booked, who owes you money, and who to call next."
-        highlight="who owes you money"
+        tagline="One screen that answers who's booked, who's confirmed, and who to call next."
+        highlight="who's confirmed"
         features={[
           {
             tone: 'signal',
             title: 'Every enquiry in one pipeline',
             description:
-              'Briefs come in from WhatsApp, your public page, or typed in by hand — and land in the same list, not five different chats.',
+              'Briefs come in from WhatsApp, your public page, or typed in by hand - and land in the same list, not five different chats.',
           },
           {
             tone: 'accent',
@@ -77,7 +77,7 @@ export default async function GigsPipelinePage() {
             tone: 'trust',
             title: 'A holds calendar that can’t double-book',
             description:
-              'One date, one confirmed booking, across your whole roster — enforced by the database, not by whoever answers first.',
+              'One date, one confirmed booking, across your whole roster - enforced by the database, not by whoever answers first.',
           },
           {
             tone: 'ok',

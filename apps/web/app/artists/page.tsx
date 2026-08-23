@@ -172,8 +172,8 @@ export default function ArtistSearchPage() {
             <EqualizerAccent bars={4} />
           </div>
           <p className="max-w-xl text-lg text-surface/70">
-            Search by <span className="text-accent">role</span>, genre or city — a vocalist, a mix
-            engineer, a tabla player — then book them without chasing a phone number.
+            Search by <span className="text-accent">role</span>, genre or city - a vocalist, a mix
+            engineer, a tabla player - then book them without chasing a phone number.
           </p>
         </div>
       </section>
@@ -181,7 +181,7 @@ export default function ArtistSearchPage() {
       <div className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-10">
         <div className="motion-rise flex flex-wrap gap-2">
           {/* Role is the primary filter, not an afterthought:
-              docs/04-PROFILES.md — "Matching happens per role, never per
+              docs/04-PROFILES.md - "Matching happens per role, never per
               person." Grouped by the same families the spec defines,
               read straight from packages/identity so the vocabulary has
               exactly one source. */}
@@ -234,7 +234,7 @@ export default function ArtistSearchPage() {
         {signedIn && canBook === false ? (
           <Paywall
             title="Booking requests need a plan"
-            description="Browsing artists is free. Sending a booking request — and everything that follows it: quotes, holds, riders, settlement — needs an active plan."
+            description="Browsing artists is free. Sending a booking request - and everything that follows it: quotes, holds, riders, settlement - needs an active plan."
             requiredTier="basic"
           />
         ) : null}
@@ -279,7 +279,7 @@ export default function ArtistSearchPage() {
                       </Link>
                       {artist.verified ? <StatusPill label="Verified" tone="success" /> : null}
                     </div>
-                    {/* What they've actually got behind them — the reason to
+                    {/* What they've actually got behind them - the reason to
                         click through rather than scroll past. */}
                     <p className="text-xs text-ink-soft">
                       {[
@@ -321,7 +321,7 @@ export default function ArtistSearchPage() {
                 ) : null}
 
                 {/* Fee band is opt-in (docs/04-PROFILES.md: "Fee band shown
-                    only if the artist opts in — forcing it costs supply").
+                    only if the artist opts in - forcing it costs supply").
                     Say which it is rather than showing nothing. */}
                 <p className="text-xs text-ink-soft">
                   {artist.fee_band_visible ? 'Fee band shown on their profile' : 'Fee on request'}

@@ -170,7 +170,7 @@ function LoginForm() {
 
         {step === 'contact' ? (
           <>
-            {/* A plain link, not fetch() — the server route responds with a
+            {/* A plain link, not fetch() - the server route responds with a
                 redirect to Google, and the browser has to follow it as a
                 navigation for the PKCE cookie to be set on the way out.
                 Rendered only when Google is actually configured; a button
@@ -299,7 +299,7 @@ function LoginForm() {
         {step === 'role' ? (
           <>
             <p className="text-center text-sm text-ink-soft">
-              One more thing — which best describes you?
+              One more thing - which best describes you?
             </p>
             <button
               type="button"

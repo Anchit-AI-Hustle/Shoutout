@@ -177,7 +177,7 @@ export default async function BookLandingPage({ params }: { params: Promise<{ sl
         <div className="rounded-lg border border-line bg-surface-2 p-6 text-center">
           <h2 className="text-lg font-semibold text-ink">Looking for something else in {city}?</h2>
           <p className="mt-1 text-sm text-ink-soft">
-            Search every role — vocalists, producers, session players, DJs.
+            Search every role - vocalists, producers, session players, DJs.
           </p>
           <Link
             href={`/artists?city=${encodeURIComponent(city)}`}

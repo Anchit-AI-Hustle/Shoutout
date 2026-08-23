@@ -137,7 +137,7 @@ export async function POST(request: Request) {
       status: 'sent',
       due_on: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
       sent_at: new Date().toISOString(),
-      notes: `ShoutOut ${plan.name} — ${parsed.data.billingPeriod}`,
+      notes: `ShoutOut ${plan.name} - ${parsed.data.billingPeriod}`,
     })
     .select('id, invoice_number, public_token, total_paise')
     .single();

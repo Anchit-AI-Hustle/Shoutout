@@ -48,7 +48,7 @@ export default function ProfilePage() {
       return;
     }
     setSignedIn(true);
-    if (res.status === 404) return; // no profile yet — that's fine
+    if (res.status === 404) return; // no profile yet - that's fine
     const json = (await res.json()) as Profile & ApiErrorResponse;
     if (res.ok) {
       setProfile(json);
@@ -122,7 +122,7 @@ export default function ProfilePage() {
       <SignedOutExplainer
         eyebrow="For artists, producers & everyone in between"
         title="Your profile"
-        tagline="One account, many roles — each matched independently, not lumped into a single label."
+        tagline="One account, many roles - each matched independently, not lumped into a single label."
         highlight="each matched independently"
         features={[
           {
@@ -166,7 +166,7 @@ export default function ProfilePage() {
               ))}
             </div>
             <p className="px-1 text-xs text-ink-soft">
-              shoutout.app/a/your-name — the link you put in your bio.
+              shoutout.app/a/your-name - the link you put in your bio.
             </p>
           </PreviewFrame>
         }
@@ -182,7 +182,7 @@ export default function ProfilePage() {
           <EqualizerAccent bars={3} />
         </div>
         <p className="text-sm text-ink-soft">
-          One account, many roles — matching happens per role, not per person.
+          One account, many roles - matching happens per role, not per person.
         </p>
         <div className="mt-2 flex gap-4">
           <Link href="/gigs" className="text-sm text-trust">

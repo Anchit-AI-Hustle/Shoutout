@@ -52,7 +52,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
       const res = await fetch(`/api/works/${id}/lock`, { method: 'POST' });
       const json = (await res.json()) as ApiErrorResponse;
       if (!res.ok) {
-        setError(json.error?.message ?? 'Could not lock — check totals and signatures');
+        setError(json.error?.message ?? 'Could not lock - check totals and signatures');
         return;
       }
       await load();
@@ -111,7 +111,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
               </p>
               {work.status === 'draft' && !c.signed_at ? (
                 <p className="mt-1 break-all text-xs text-ink-soft">
-                  Signing link (share manually — WhatsApp dispatch isn&apos;t wired up yet):{' '}
+                  Signing link (share manually - WhatsApp dispatch isn&apos;t wired up yet):{' '}
                   {typeof window !== 'undefined' ? window.location.origin : ''}/w/{work.id}
                   ?contributorId=
                   {c.id}&token={c.signature_ref}
@@ -137,7 +137,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
         </button>
       ) : (
         <p className="text-sm text-ok">
-          Locked {work.locked_at ? new Date(work.locked_at).toLocaleString() : ''} — this split
+          Locked {work.locked_at ? new Date(work.locked_at).toLocaleString() : ''} - this split
           sheet is now immutable.
         </p>
       )}

@@ -99,7 +99,7 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
         </div>
         {!locked ? (
           <p className="mt-2 text-sm text-ink-soft">
-            Full-quality files stay locked until every split is signed — watermarked previews only
+            Full-quality files stay locked until every split is signed - watermarked previews only
             until then (watermarking itself isn&apos;t wired up yet; what IS enforced is that the
             file key below stays hidden until the split sheet locks).
           </p>
@@ -115,7 +115,7 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
             {room.versions.map((v) => (
               <li key={v.id} className="rounded-lg border border-line p-3">
                 <p className="text-sm text-ink">
-                  v{v.version} — {locked ? v.file_key : 'locked until split sheet signs'}
+                  v{v.version} - {locked ? v.file_key : 'locked until split sheet signs'}
                 </p>
                 {v.note ? <p className="text-xs text-ink-soft">{v.note}</p> : null}
               </li>
@@ -126,7 +126,7 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
         <div className="flex flex-col gap-2 rounded-lg border border-line p-4">
           <input
             className="min-h-11 rounded-md border border-line bg-surface px-3 text-base text-ink"
-            placeholder="File key (from a manual upload — no signed-upload pipeline yet)"
+            placeholder="File key (from a manual upload - no signed-upload pipeline yet)"
             value={fileKey}
             onChange={(e) => setFileKey(e.target.value)}
           />

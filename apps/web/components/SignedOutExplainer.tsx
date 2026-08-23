@@ -122,7 +122,7 @@ export function SignedOutExplainer({
             </Link>
           </div>
           <p className="text-xs text-surface/50">
-            Free to browse and free to join — a code to your email, no password to forget.
+            Free to browse and free to join - a code to your email, no password to forget.
           </p>
         </div>
       </section>

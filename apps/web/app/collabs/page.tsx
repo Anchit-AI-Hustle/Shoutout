@@ -46,7 +46,7 @@ export default async function CollabsFeedPage() {
       <SignedOutExplainer
         eyebrow="For anyone making music with anyone else"
         title="Collabs"
-        tagline="Find people to make music with — no gig, no date, no budget required."
+        tagline="Find people to make music with - no gig, no date, no budget required."
         highlight="no gig, no date, no budget required"
         features={[
           {
@@ -59,7 +59,7 @@ export default async function CollabsFeedPage() {
             tone: 'trust',
             title: 'Ranked by fit, not by who refreshed first',
             description:
-              'Applications are scored on genre, role, city and how reliably you’ve delivered before — the same engine that ranks gig matches.',
+              'Applications are scored on genre, role, city and how reliably you’ve delivered before - the same engine that ranks gig matches.',
           },
           {
             tone: 'ok',
@@ -127,7 +127,7 @@ export default async function CollabsFeedPage() {
       {requests.length === 0 ? (
         <div className="motion-rise rounded-lg border border-line p-6 text-center" style={rise(2)}>
           <p className="text-base text-ink">No open requests yet.</p>
-          <p className="mt-1 text-sm text-ink-soft">Be the first — post what you need.</p>
+          <p className="mt-1 text-sm text-ink-soft">Be the first - post what you need.</p>
         </div>
       ) : (
         <ul className="motion-rise flex flex-col gap-3" style={rise(2)}>

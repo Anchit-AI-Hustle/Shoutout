@@ -120,7 +120,7 @@ export default function PricingPage() {
           <div className="mt-2 flex rounded-md border border-surface/25 p-1">
             {[
               [false, 'Monthly'],
-              [true, 'Annual — 2 months free'],
+              [true, 'Annual - 2 months free'],
             ].map(([v, label]) => (
               <button
                 key={String(v)}
@@ -149,7 +149,7 @@ export default function PricingPage() {
             </p>
             {current.status === 'pending' ? (
               <p className="mt-1 text-sm text-ink-soft">
-                Your invoice is raised — the plan activates once it&apos;s paid.
+                Your invoice is raised - the plan activates once it&apos;s paid.
               </p>
             ) : null}
           </div>
@@ -237,7 +237,7 @@ export default function PricingPage() {
 
         <p className="text-xs text-ink-soft">
           Prices exclude 18% GST, added on the invoice. Payment is by bank transfer against an
-          invoice while card checkout is being set up — your plan activates as soon as it clears.
+          invoice while card checkout is being set up - your plan activates as soon as it clears.
         </p>
       </div>
     </main>

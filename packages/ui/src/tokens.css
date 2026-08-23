@@ -1,9 +1,9 @@
 /* SHOUTOUT design tokens — docs/06-DESIGN-SYSTEM.md.
    Tailwind v4 theme: these become real utility classes (bg-signal, text-ink,
    text-lg, ...), not Tailwind's defaults. The spacing scale (4·8·12·16·24·
-   32·48·64) isn't redeclared — it's exactly Tailwind's default p-1/2/3/4/6/
+   32·48·64) isn't redeclared - it's exactly Tailwind's default p-1/2/3/4/6/
    8/12/16 at the standard 4px base, so use those and nothing else
-   ("nothing off-scale" — avoid p-5, p-7, p-9, p-10, p-11, etc.). */
+   ("nothing off-scale" - avoid p-5, p-7, p-9, p-10, p-11, etc.). */
 
 @theme {
   --color-ink: #15181b; /* primary text */
@@ -53,13 +53,13 @@
 /* Motion — docs/13-DESIGN-SYSTEM.md: "Present, purposeful" on culture
    surfaces (Profiles, Gigs, Collabs, Stage), "Minimal" on money surfaces
    (Payments, Credits). These are opt-in utility classes, not a global
-   animate-everything default — money-surface pages simply don't reach for
+   animate-everything default - money-surface pages simply don't reach for
    them, which is what keeps the two registers looking distinct.
 
    Everything below is gated on prefers-reduced-motion: no-preference
    (accessibility floor, docs/13-DESIGN-SYSTEM.md). A reduced-motion client
    gets the same final layout with zero animation, never a stuck
-   invisible/offset element — .motion-rise's non-media-query opacity: 1
+   invisible/offset element - .motion-rise's non-media-query opacity: 1
    is the fallback resting state. */
 
 .motion-rise {
@@ -111,7 +111,7 @@
 
 /* The "music vibe" accent — small animated equalizer bars, for culture
    surfaces only (docs/13-DESIGN-SYSTEM.md's "warm, confident" register).
-   Decorative — always paired with aria-hidden in the component. */
+   Decorative - always paired with aria-hidden in the component. */
 .motion-eq {
   display: inline-flex;
   align-items: flex-end;
