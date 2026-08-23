@@ -75,9 +75,18 @@ function LoginForm() {
   const [orgType, setOrgType] = useState<OrgType | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  // Null while unknown, so the button never flashes in and out.
+  const [googleAvailable, setGoogleAvailable] = useState<boolean | null>(null);
 
   // Google lands back here two ways: ?setup=1 for a brand-new account that
   // still needs a role, or ?error=… when the provider isn't configured.
+  useEffect(() => {
+    fetch('/api/auth/providers')
+      .then((r) => r.json())
+      .then((j: { google: boolean }) => setGoogleAvailable(j.google))
+      .catch(() => setGoogleAvailable(false));
+  }, []);
+
   useEffect(() => {
     if (searchParams.get('setup') === '1') setStep('role');
     const code = searchParams.get('error');
@@ -163,20 +172,26 @@ function LoginForm() {
           <>
             {/* A plain link, not fetch() — the server route responds with a
                 redirect to Google, and the browser has to follow it as a
-                navigation for the PKCE cookie to be set on the way out. */}
-            <a
-              href="/api/auth/google"
-              className="motion-lift flex min-h-11 items-center justify-center gap-3 rounded-md border border-line bg-surface px-4 text-sm font-medium text-ink"
-            >
-              <GoogleMark />
-              Continue with Google
-            </a>
+                navigation for the PKCE cookie to be set on the way out.
+                Rendered only when Google is actually configured; a button
+                that always errors is worse than no button. */}
+            {googleAvailable ? (
+              <>
+                <a
+                  href="/api/auth/google"
+                  className="motion-lift flex min-h-11 items-center justify-center gap-3 rounded-md border border-line bg-surface px-4 text-sm font-medium text-ink"
+                >
+                  <GoogleMark />
+                  Continue with Google
+                </a>
 
-            <div className="flex items-center gap-3">
-              <span className="h-px flex-1 bg-line" />
-              <span className="text-xs text-ink-soft">or</span>
-              <span className="h-px flex-1 bg-line" />
-            </div>
+                <div className="flex items-center gap-3">
+                  <span className="h-px flex-1 bg-line" />
+                  <span className="text-xs text-ink-soft">or</span>
+                  <span className="h-px flex-1 bg-line" />
+                </div>
+              </>
+            ) : null}
 
             <div className="flex rounded-md border border-line p-1">
               {(['email', 'phone'] as const).map((c) => (
