@@ -81,7 +81,7 @@ export default function OrganisersPage() {
             <EqualizerAccent bars={4} />
           </div>
           <p className="max-w-xl text-lg text-surface/70">
-            See <span className="text-accent">who actually books</span> in your city — what they
+            See <span className="text-accent">who actually books</span> in your city - what they
             run, how big it gets, and who they&apos;ve had on before.
           </p>
         </div>

@@ -109,7 +109,7 @@ export async function generateMetadata({
   const where = artist.home_city ? ` in ${artist.home_city}` : '';
   const description =
     artist.bio ??
-    `${artist.stage_name}${where}${roles ? ` — ${roles}` : ''}. Listen, see past gigs, and send a booking request.`;
+    `${artist.stage_name}${where}${roles ? ` - ${roles}` : ''}. Listen, see past gigs, and send a booking request.`;
 
   const photo = artist.media.find((m) => m.kind === 'image')?.url;
 

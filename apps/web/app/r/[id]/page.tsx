@@ -83,22 +83,22 @@ export default function PublicRiderPage({ params }: { params: Promise<{ id: stri
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-6 px-4 py-12">
       <div>
-        <h1 className="text-xl font-semibold text-ink">Rider — {rider.event_date}</h1>
+        <h1 className="text-xl font-semibold text-ink">Rider - {rider.event_date}</h1>
         <p className="text-sm text-ink-soft">Please confirm what&apos;s below is agreed.</p>
       </div>
 
       <div className="flex flex-col gap-3">
         <div>
           <p className="text-sm text-ink-soft">Backline</p>
-          <p className="text-base text-ink">{rider.backline?.text || '—'}</p>
+          <p className="text-base text-ink">{rider.backline?.text || '-'}</p>
         </div>
         <div>
           <p className="text-sm text-ink-soft">Travel</p>
-          <p className="text-base text-ink">{rider.travel?.text || '—'}</p>
+          <p className="text-base text-ink">{rider.travel?.text || '-'}</p>
         </div>
         <div>
           <p className="text-sm text-ink-soft">Hospitality</p>
-          <p className="text-base text-ink">{rider.hospitality?.text || '—'}</p>
+          <p className="text-base text-ink">{rider.hospitality?.text || '-'}</p>
         </div>
       </div>
 

@@ -63,7 +63,7 @@ export default async function OrganiserRequestsPage() {
             tone: 'trust',
             title: 'One calendar for the whole line-up',
             description:
-              'Every confirmed act across every date, together — not one artist’s availability at a time.',
+              'Every confirmed act across every date, together - not one artist’s availability at a time.',
           },
           {
             tone: 'ok',

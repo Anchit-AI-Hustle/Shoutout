@@ -3,20 +3,22 @@ import { createAnonClient } from '@shoutout/db';
 import { searchArtists, type ArtistSearchResult } from '@shoutout/gigs';
 import { EqualizerAccent, Reveal, TiltCard, Waveform, StatusPill } from '@shoutout/ui';
 
-// The homepage, rebuilt around what the product can actually prove.
+// The homepage.
 //
-// The previous version was six abstract module cards and a headline about
-// running "the music business part on one account" — true, but it showed
-// nothing, named nobody, and led with an abstraction. Meanwhile the
-// published evidence on this market is overwhelmingly about one thing:
-// artists not getting paid. 1,800 unpaid in Karnataka against a 15-day
-// rule; a DJ who had to shame a venue on Facebook to collect. That is the
-// headline, not "one account".
+// Positioning, corrected: this product is about *booking, connecting and
+// finding collaborators* — not settlements. An earlier pass led with
+// payment, reasoning from published evidence that unpaid artists are the
+// loudest pain in the market. That evidence is real but it described a
+// different product. Settlement is plumbing that makes a booking finish
+// cleanly; it is not the reason anyone opens the site.
 //
-// So this page now (a) leads with payment, (b) shows real artists from the
-// database rather than describing them, and (c) exposes browse-by-role and
-// browse-by-city, which double as internal links into the /book landing
-// pages that carry the SEO strategy.
+// What people come for: an organiser needs an act for a date, an artist
+// wants to be found, a producer needs a vocalist. All three are discovery
+// and connection problems. The page leads with those.
+//
+// It also (a) shows real profiles rather than describing them, and (b)
+// exposes browse-by-role and browse-by-city, which double as the internal
+// link graph into the /book landing pages carrying the SEO strategy.
 //
 // ISR: live data, rendered once an hour, so the proof stays current without
 // costing a query per visitor.
@@ -27,25 +29,25 @@ const MODULES = [
     name: 'Gigs',
     href: '/gigs',
     tone: 'signal',
-    description: 'Enquiry to payment in one pipeline. Holds that cannot double-book.',
+    description: 'Every enquiry in one pipeline, from first message to a confirmed date.',
   },
   {
     name: 'Collabs',
     href: '/collabs',
     tone: 'accent',
-    description: 'Up to six slots, each on its own terms. Split sheets draft themselves.',
+    description: 'Need a vocalist, a drummer, a mix engineer? Post the slots and get matched.',
   },
   {
     name: 'Credits',
     href: '/works/new',
     tone: 'ok',
-    description: 'Signed before files move. A verified record of who made what.',
+    description: 'A verified record of who made what, signed by everyone on it.',
   },
   {
     name: 'Profiles',
     href: '/profile',
     tone: 'trust',
-    description: 'One account, many roles — matched independently, scored per role.',
+    description: 'One account, many roles - matched independently, scored per role.',
   },
 ] as const;
 
@@ -68,12 +70,12 @@ const STEPS = [
     'Search by role, genre or city. Every profile shows releases, past gigs and who they played for.',
   ],
   [
-    'Agree it in writing',
-    'Send a request, get a quote, hold the date. Riders confirmed and timestamped by both sides.',
+    'Reach them directly',
+    'Send a request without hunting for a phone number or going through three intermediaries.',
   ],
   [
-    'Get paid',
-    'Every rupee accounted for before a settlement can close. The database refuses an unbalanced one.',
+    'Agree the details',
+    'Quote, hold the date, confirm the rider - timestamped by both sides so nothing is disputed later.',
   ],
 ] as const;
 
@@ -137,13 +139,13 @@ export default async function HomePage() {
             For artists, managers &amp; event organisers
           </span>
           <h1 className="text-3xl font-semibold tracking-tight text-surface md:text-5xl">
-            Get booked. <span className="text-accent">Get paid on time.</span>
+            Find who you need. <span className="text-accent">Book them properly.</span>
           </h1>
           <EqualizerAccent />
           <p className="max-w-xl text-lg text-surface/70">
-            Booking, riders and settlement for India&apos;s independent music industry. Every rupee
-            accounted for before a payment can close — enforced by the database, not by whoever
-            answers the phone.
+            Search by role, genre or city: a vocalist in Mumbai, a tabla player in Chennai, a mix
+            engineer anywhere. Book acts for your event, or find people to make music with. Built
+            for India&apos;s independent music industry.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
@@ -160,7 +162,7 @@ export default async function HomePage() {
             </Link>
           </div>
           {/* Says precisely what is free. Migration 030 gates listing and
-              booking, so "free" without qualification is now untrue — and a
+              booking, so "free" without qualification is now untrue - and a
               price the visitor discovers only after signing up is the kind
               of thing that loses the account permanently. */}
           <p className="text-xs text-surface/50">
@@ -232,7 +234,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-5xl px-4 py-14">
             <h2 className="text-xl font-semibold text-ink">Book by role</h2>
             <p className="mt-1 text-sm text-ink-soft">
-              Matching happens per role — a vocalist and a mix engineer are different searches.
+              Matching happens per role - a vocalist and a mix engineer are different searches.
             </p>
             <ul className="mt-4 flex flex-wrap gap-2">
               {roles.map((r) => (

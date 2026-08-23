@@ -55,7 +55,7 @@ export default function NewCollabPage() {
   async function submit() {
     setError(null);
     if (!artistId) {
-      setError('Save your profile first — a request needs a poster artist.');
+      setError('Save your profile first - a request needs a poster artist.');
       return;
     }
     setSubmitting(true);

@@ -34,7 +34,7 @@ export default function RiderPage({ params }: { params: Promise<{ id: string }> 
 
   async function load() {
     const res = await fetch(`/api/gigs/${id}/rider`);
-    if (res.status === 404) return; // no rider saved yet — blank form is correct
+    if (res.status === 404) return; // no rider saved yet - blank form is correct
     const json = await res.json();
     if (res.ok) {
       setRider(json);
@@ -93,7 +93,7 @@ export default function RiderPage({ params }: { params: Promise<{ id: string }> 
       <div>
         <h1 className="text-xl font-semibold text-ink">Rider</h1>
         <p className="text-sm text-ink-soft">
-          Backline, travel, hospitality — both sides tick off.
+          Backline, travel, hospitality - both sides tick off.
         </p>
       </div>
 
@@ -162,7 +162,7 @@ export default function RiderPage({ params }: { params: Promise<{ id: string }> 
           </div>
           {shareUrl ? (
             <p className="break-all text-xs text-ink-soft">
-              Share with the organiser (manually — WhatsApp dispatch isn&apos;t wired up yet):{' '}
+              Share with the organiser (manually - WhatsApp dispatch isn&apos;t wired up yet):{' '}
               {shareUrl}
             </p>
           ) : null}
