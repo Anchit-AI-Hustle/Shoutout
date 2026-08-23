@@ -23,14 +23,17 @@ export function SiteHeader() {
 
   return (
     <header className="border-b border-line bg-surface">
-      <nav className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-4">
+      {/* Wraps rather than overflowing: five items plus the logo exceed
+          375px, and CLAUDE.md rule 10 forbids horizontal scroll. A second
+          row on small screens keeps every link reachable at 44px. */}
+      <nav className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-4 px-4">
         <Link
           href="/"
           className="inline-flex min-h-11 shrink-0 items-center text-base font-semibold text-ink"
         >
           ShoutOut
         </Link>
-        <div className="flex items-center gap-3 sm:gap-5">
+        <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-5">
           <Link href="/gigs" className={linkClass}>
             Gigs
           </Link>
