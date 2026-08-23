@@ -46,6 +46,9 @@ export function SiteHeader() {
           <Link href="/organisers" className={linkClass}>
             Organisers
           </Link>
+          <Link href="/pricing" className={linkClass}>
+            Pricing
+          </Link>
           {signedIn ? (
             <Link
               href="/profile"

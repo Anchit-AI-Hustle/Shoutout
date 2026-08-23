@@ -1,0 +1,34 @@
+-- 030 — Tiered subscriptions with real enforcement.
+--
+-- Supersedes the earlier "label as Pro but leave it free" arrangement. The
+-- two core actions now require a paid plan: listing yourself as an artist,
+-- and searching/booking artists as an organiser.
+--
+-- What stays free is deliberate, not generosity: public artist and organiser
+-- pages, and the /book landing pages. Those are the SEO engine
+-- (docs/04-PROFILES.md) and gating them would wall off the only distribution
+-- channel the product has. You can always *see* the market; you pay to *act*
+-- in it.
+--
+-- Entitlements are keyed strings rather than booleans per tier, so adding a
+-- capability is a row, not a migration and a deploy — the same
+-- configuration-over-branching rule CLAUDE.md applies to Shout types.
+--
+-- Enforcement lives in the database for the same reason the settlement
+-- balance does: a check that lives in one of forty-five route files is a
+-- check that will eventually be forgotten in the forty-sixth.
+--
+-- Tables: plans (basic/plus/pro/max, seeded), plan_entitlements,
+-- subscriptions (one per org, so an upgrade mutates rather than stacks).
+-- Functions: has_entitlement(), my_entitlements(),
+-- booking_requests_this_month().
+-- Gates: create_authenticated_brief_for_artist() requires
+-- 'send_booking_requests' and respects the monthly cap;
+-- artists.listed is guarded by assert_can_list_artist().
+--
+-- Ordering note: the `listed` backfill must run BEFORE the trigger is
+-- created. Creating it first makes the backfill trip the very gate it is
+-- meant to exempt — which is exactly what happened on the first attempt.
+--
+-- 'past_due' deliberately does not grant access: a lapsed card should stop
+-- entitlement, and enqueue_invoice_reminders() chases it separately.
