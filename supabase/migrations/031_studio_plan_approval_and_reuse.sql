@@ -1,0 +1,41 @@
+-- 031 — Studio: approve the plan before render, revise one unit not all.
+--
+-- Two patterns, borrowed from Flick (github.com/Creatorberry/flick), which
+-- surfaces a compact scene plan for approval and then revises only the
+-- scene you name. Flick documents the workflow but not the mechanism for
+-- keeping untouched units identical, so that part is designed here.
+--
+-- 1. APPROVE BEFORE RENDER. docs/07-STUDIO.md's stage 3 is the MUSIC_BRIEF,
+--    "the seam" where intent becomes a render. Generation is the expensive
+--    irreversible step, so the brief is surfaced as readable text
+--    (packages/intent renderPlanText) and nothing renders until a human
+--    says yes. Enforced by trigger: a section cannot enter 'rendering'
+--    while its plan is unapproved. A check in the worker is a check the
+--    worker can skip.
+--
+-- 2. REVISE ONE UNIT. Every section is content-addressed on
+--    (spec, seed, pipeline_version, model_version). Regenerating the chorus
+--    changes only the chorus's hash; every other section keeps its hash and
+--    therefore its existing artifact. "Byte-identical" is literal — it is
+--    the same stored object, not a re-run that happens to match.
+--
+--    set_section_hash() also short-circuits: if an UPDATE produces an
+--    unchanged hash it returns OLD untouched, so a no-op write cannot
+--    reset rendered state.
+--
+--    generation_artifacts is keyed by content hash alone, so reuse works
+--    across revisions *and* across plans — revert a change and the original
+--    audio comes straight back from cache.
+--
+-- Album mode falls out of the same structure: plan holds tracks, track
+-- holds sections, so "approve the tracklist, regenerate track 4" is the
+-- same mechanism one level up. Verified: regenerating track 4 of a 4-track
+-- album dirties 2 sections on track 4 and leaves the other 6 untouched.
+--
+-- compute_section_hash() is mirrored in packages/studio-core with a test
+-- pinning it to the value this function produces. If those ever diverge,
+-- the client predicts a cache hit the database will not honour.
+--
+-- Tables: generation_plans, generation_tracks, generation_sections,
+-- generation_artifacts. Functions: compute_section_hash,
+-- approve_generation_plan, plan_render_manifest, record_section_artifact.
