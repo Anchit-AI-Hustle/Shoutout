@@ -167,6 +167,10 @@ export default function PricingPage() {
           </div>
         ) : null}
 
+        <p className="text-sm text-ink-soft">
+          Logging gigs you already have, drafting a profile and browsing are free forever. A plan is
+          for being found by people you do not know yet, and for booking others.
+        </p>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {plans.map((p) => {
             const isCurrent = current?.tier === p.tier;

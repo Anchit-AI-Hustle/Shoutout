@@ -88,6 +88,10 @@ export default function OrganisersPage() {
       </section>
 
       <div className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-10">
+        <p className="-mb-2 text-sm text-ink-soft">
+          Who books in your city, what they run, and how big it gets. Use it to decide who is worth
+          replying to.
+        </p>
         <div className="motion-rise flex flex-wrap gap-2">
           <select
             aria-label="Event type"

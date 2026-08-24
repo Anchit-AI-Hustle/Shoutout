@@ -1,0 +1,35 @@
+-- 035 - Log a gig you got somewhere else.
+--
+-- The strategic problem this solves. Every moat in this product needs data
+-- that only exists after liquidity: the credits graph needs signed works,
+-- reliability needs five completed bookings per role, the benchmark index
+-- needs settled bookings. All three are empty and stay empty until the
+-- marketplace works, which they were supposed to help cause.
+--
+-- Meanwhile a lone artist gets nothing on day one. Madverse pays them
+-- royalties, Hoopr pays them licensing income, and ShoutOut asks Rs499 to
+-- stand in an empty room.
+--
+-- So: accept the gigs that already happen on WhatsApp. The artist logs the
+-- booking they just agreed, the organiser confirms it on a link, and both
+-- sides get a timestamped record - precisely the thing the published
+-- evidence says is missing (1,800 unpaid artists in Karnataka against a
+-- 15-day rule; an Rs80,000 booking with an Rs10,000 advance and no written
+-- terms).
+--
+-- Every logged gig also manufactures the data the moats need. This is the
+-- opposite of disintermediation: rather than trying to stop deals leaking
+-- to WhatsApp, it invites the WhatsApp deal in.
+--
+-- Deliberately NOT gated by has_entitlement. It is the day-one value that
+-- earns the right to charge later, and gating it would recreate the exact
+-- problem it fixes.
+--
+-- A synthetic confirmed hold is created because bookings.hold_id is NOT
+-- NULL and the no-double-confirm index keys off holds. Useful side effect:
+-- a logged WhatsApp gig now also protects that date inside the platform.
+--
+-- Functions: log_external_gig (authenticated, own artists only),
+-- get_gig_confirmation_public and confirm_gig_public (anonymous by token,
+-- because requiring the organiser to sign up is how a record never gets
+-- made). Confirmation is idempotent: a second tap is success, not an error.

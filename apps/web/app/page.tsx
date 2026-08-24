@@ -162,10 +162,10 @@ export default async function HomePage() {
               Find an artist
             </Link>
             <Link
-              href="/login"
+              href="/gigs/log"
               className="motion-lift min-h-11 rounded-md border border-surface/25 px-6 py-3 text-sm font-medium text-surface"
             >
-              List yourself
+              Already got a gig? Log it free
             </Link>
           </div>
           {/* Says precisely what is free. Migration 030 gates listing and
@@ -173,7 +173,8 @@ export default async function HomePage() {
               price the visitor discovers only after signing up is the kind
               of thing that loses the account permanently. */}
           <p className="text-xs text-surface/50">
-            Free to browse and free to join. Listing or booking needs a plan from ₹499/mo.
+            Logging your own gigs is free forever. A plan is only for being found by people you do
+            not know yet.
           </p>
         </div>
       </section>
