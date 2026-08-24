@@ -1,0 +1,20 @@
+-- 036 - Claiming, and the graph the claim reveals.
+--
+-- preview_claim_public() is anon-callable on purpose: requiring an account
+-- to see what you have been credited for would kill the loop at step one.
+--
+-- claim_profile() moves the artist row into the claimer's org. This is the
+-- one place a row legitimately changes tenant, and it is safe because an
+-- unclaimed profile has no owner to harm - it was minted by a third party
+-- naming a person, and that person is now asserting the name is theirs. The
+-- UPDATE is guarded on claim_state = 'unclaimed', so a stale invite can
+-- never move a profile that has since been claimed or was always owned.
+-- Contributor, media and role rows follow the profile, or RLS would hide
+-- the credit from the person who just claimed it.
+--
+-- get_artist_collaborators_public() is the asset. Nothing else in this
+-- market can answer "who has this drummer worked with", because nobody else
+-- stores the people - only the recordings.
+--
+-- Functions: preview_claim_public, claim_profile,
+-- get_artist_collaborators_public, get_work_credits_public.

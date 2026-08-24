@@ -1,0 +1,31 @@
+-- 035 - The credit tag, and the profile it creates.
+--
+-- The strategic bet, stated plainly: booking is what ShoutOut lets you do,
+-- but the credit graph is why anyone shows up.
+--
+-- Booking needs both sides present before it is worth anything, which is
+-- exactly what a cold marketplace cannot offer. A credit is worth having
+-- the moment one person enters it. That is the only kind of value
+-- deliverable at zero liquidity.
+--
+-- It is also the one thing the adjacent players cannot copy. Madverse and
+-- Hoopr model tracks and rights: they know a recording exists and who owns
+-- it. Neither has any concept of who was in the room. 200,000 artists on
+-- Madverse and not one row saying who played tabla.
+--
+-- The loop:
+--   1. I credit you on my work. You are not a user.
+--   2. A claimable profile is minted for you, and you are notified.
+--   3. You claim it. You now have a public page with a verified credit.
+--   4. You credit five people on your own work.
+--
+-- credits.artist_id was already nullable, so the data model permitted this
+-- from the start. Nothing acted on it.
+--
+-- One deliberate restraint: an unclaimed profile is NOT listed. It does not
+-- appear in search or on /book pages until its owner claims it and chooses
+-- to list. Publishing a page about someone who never opted in is precisely
+-- what this product exists to stop doing to session musicians.
+--
+-- Tables: credit_invites. Columns: artists.claim_state, artists.claimed_at.
+-- Functions: generate_claim_slug, credit_person.
