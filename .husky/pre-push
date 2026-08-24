@@ -1,0 +1,51 @@
+#!/bin/sh
+# Run what CI runs, before the push rather than after it.
+#
+# Two reasons this exists. GitHub Actions has been failing on every run
+# since a billing lapse - the job dies in about two seconds, before any
+# step executes - so for a stretch nothing was validated on the platform at
+# all and "gates pass" meant "gates passed on my machine". And even with CI
+# healthy, finding a lint error after the push is a wasted round trip.
+#
+# Mirrors .github/workflows/ci.yml in order. Two deliberate differences:
+#
+#   test:rls is skipped. It needs SUPABASE_DB_URL, a direct Postgres
+#   connection string that belongs in CI secrets and should not sit on a
+#   developer machine. CI still runs it, and it still fails closed there.
+#
+#   build runs with the local .env.local temporarily moved aside, because
+#   CI has no Supabase env vars and a build that only succeeds with them is
+#   a build that breaks CI.
+#
+# Skip in an emergency with: git push --no-verify
+
+set -e
+
+echo "pre-push: running the CI sequence"
+
+pnpm install --frozen-lockfile --prefer-offline >/dev/null
+echo "  ok  install (frozen lockfile)"
+
+pnpm lint >/dev/null && echo "  ok  lint"
+pnpm typecheck >/dev/null && echo "  ok  typecheck"
+pnpm test >/dev/null && echo "  ok  test"
+pnpm test:boundaries >/dev/null && echo "  ok  test:boundaries"
+pnpm test:money >/dev/null && echo "  ok  test:money"
+echo "  --  test:rls skipped locally (needs SUPABASE_DB_URL; CI runs it)"
+
+# Build the way CI does: without Supabase credentials.
+ENVFILE="apps/web/.env.local"
+RESTORE=0
+if [ -f "$ENVFILE" ]; then mv "$ENVFILE" "$ENVFILE.prepush"; RESTORE=1; fi
+restore() { [ "$RESTORE" = "1" ] && [ -f "$ENVFILE.prepush" ] && mv "$ENVFILE.prepush" "$ENVFILE"; }
+# Restore on any exit path, including a failed build or an interrupt.
+trap restore EXIT INT TERM
+
+if pnpm build >/dev/null 2>&1; then
+  echo "  ok  build (no env vars, as CI)"
+else
+  echo "  FAIL build - this would break CI. Run: pnpm build" >&2
+  exit 1
+fi
+
+echo "pre-push: all green"
