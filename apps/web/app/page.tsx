@@ -24,30 +24,64 @@ import { EqualizerAccent, Reveal, TiltCard, Waveform, StatusPill } from '@shouto
 // costing a query per visitor.
 export const revalidate = 3600;
 
+// The full surface, so nothing shipped is invisible. Grouped rather than
+// listed flat, because eleven equal cards reads as a feature dump.
 const MODULES = [
+  {
+    name: 'Profiles',
+    href: '/artists',
+    tone: 'trust',
+    description:
+      'One account, many roles. Releases, past gigs, crowd sizes and a public page that search engines can find.',
+  },
   {
     name: 'Gigs',
     href: '/gigs',
     tone: 'signal',
-    description: 'Every enquiry in one pipeline, from first message to a confirmed date.',
+    description:
+      'Enquiry to confirmed date in one pipeline, with quotes, date holds and riders signed by both sides.',
+  },
+  {
+    name: 'Log a gig you already have',
+    href: '/gigs/log',
+    tone: 'signal',
+    description:
+      'Free, forever. Put a booking you made on WhatsApp in writing and start a track record from day one.',
   },
   {
     name: 'Collabs',
     href: '/collabs',
     tone: 'accent',
-    description: 'Need a vocalist, a drummer, a mix engineer? Post the slots and get matched.',
+    description:
+      'Post up to six slots on separate terms. A vocalist for a share, an engineer for a fee, matched per role.',
   },
   {
     name: 'Credits',
     href: '/works/new',
     tone: 'ok',
-    description: 'A verified record of who made what, signed by everyone on it.',
+    description:
+      'Split sheets signed before any file moves, and a permanent public record of who made what.',
   },
   {
-    name: 'Profiles',
-    href: '/profile',
+    name: 'Organisers',
+    href: '/organisers',
     tone: 'trust',
-    description: 'One account, many roles - matched independently, scored per role.',
+    description:
+      'See who books in your city, what they run, how big it gets and who has played for them before.',
+  },
+  {
+    name: 'Calendars',
+    href: '/gigs/calendar',
+    tone: 'accent',
+    description:
+      'A roster calendar for managers and a line-up calendar for organisers. One date cannot be confirmed twice.',
+  },
+  {
+    name: 'Plans',
+    href: '/pricing',
+    tone: 'ok',
+    description:
+      'Browsing and logging your own gigs stay free. A plan is for being found by people you do not know yet.',
   },
 ] as const;
 
@@ -57,12 +91,129 @@ const TONE_BORDER: Record<(typeof MODULES)[number]['tone'], string> = {
   trust: 'border-t-trust',
   ok: 'border-t-ok',
 };
+const TONE_BORDER_L: Record<'signal' | 'accent' | 'trust', string> = {
+  signal: 'border-l-signal',
+  accent: 'border-l-accent',
+  trust: 'border-l-trust',
+};
+const TONE_TEXT: Record<'signal' | 'accent' | 'trust', string> = {
+  signal: 'text-signal',
+  accent: 'text-accent',
+  trust: 'text-trust',
+};
+
 const TONE_GLOW: Record<(typeof MODULES)[number]['tone'], string> = {
   signal: 'motion-glow-signal',
   accent: 'motion-glow-accent',
   trust: 'motion-glow-trust',
   ok: 'motion-glow-ok',
 };
+
+// Why anyone needs this. Concrete and grounded, because an abstract
+// "we make booking easier" is what every marketplace says and none of them
+// is memorable. Each line is a thing that is actually true of the market
+// today, drawn from the published evidence rather than invented.
+const PROBLEM = [
+  [
+    'It runs on WhatsApp chains',
+    'Finding a tabla player in Chennai means asking three people who know someone. Even booking agencies call the current system unreliable and opaque.',
+  ],
+  [
+    'Nothing is written down',
+    'The fee, the date, the sound requirements, who pays for travel. All of it lives in a chat thread, so the disagreement happens after the gig.',
+  ],
+  [
+    'The people who played are not named',
+    'Session musicians on some of the biggest records in the country have no public record that they were there at all.',
+  ],
+] as const;
+
+// What you can do here, by who you are. Three audiences, all shown at once
+// rather than behind tabs: a visitor should never have to guess which of
+// these they are before the page will tell them anything.
+const AUDIENCES = [
+  {
+    who: 'If you make music',
+    sub: 'Vocalists, players, producers, engineers, DJs',
+    tone: 'signal' as const,
+    can: [
+      [
+        'Be found for what you actually do',
+        'One account, every role you play. A mix engineer and a vocalist are different searches, scored separately.',
+      ],
+      [
+        'Log gigs you already have, free',
+        'Bookings made on WhatsApp get recorded here, confirmed in writing, and become your track record.',
+      ],
+      [
+        'Get credited on the work',
+        'Split sheets signed by everyone before any file moves. Your name on the record, permanently.',
+      ],
+      [
+        'Find people to make the next one with',
+        'Post what you need, a vocalist or a drummer, and get matched per role.',
+      ],
+      [
+        'Show the proof',
+        'A public page with your releases, your past gigs, the crowds, and who you played for.',
+      ],
+    ],
+  },
+  {
+    who: 'If you represent artists',
+    sub: 'Managers, agencies, labels',
+    tone: 'accent' as const,
+    can: [
+      [
+        'Every enquiry in one pipeline',
+        'From first message to a confirmed date, instead of five parallel chat threads.',
+      ],
+      [
+        'A calendar that cannot double-book',
+        'One date, one confirmed booking, across the whole roster. Enforced by the database, not by whoever answers first.',
+      ],
+      [
+        'Quote without guessing',
+        'What comparable acts were actually paid for the same city, date and crowd size.',
+      ],
+      [
+        'Riders both sides signed',
+        'Sound, stay, travel and payment terms, timestamped by organiser and artist.',
+      ],
+      [
+        'Reliability held per role',
+        'Because a dependable session player and an unproven producer can be the same person.',
+      ],
+    ],
+  },
+  {
+    who: 'If you book artists',
+    sub: 'Organisers, venues, promoters, wedding and corporate planners',
+    tone: 'trust' as const,
+    can: [
+      [
+        'Search by role, genre or city',
+        'A tabla player in Chennai. A mix engineer anywhere. A wedding singer in Jaipur.',
+      ],
+      [
+        'Judge before you commit',
+        'Past gigs, crowd sizes, releases and who they have played for, on every profile.',
+      ],
+      [
+        'Send a request without a phone number',
+        'Straight from their page. No intermediary, no three phone calls.',
+      ],
+      [
+        'Track every request in one list',
+        'Sent, quoted, held, confirmed. Stop reconstructing where a conversation stands.',
+      ],
+      [
+        'One calendar for the whole line-up',
+        'Every confirmed act across every date, not one artist at a time.',
+      ],
+    ],
+  },
+] as const;
 
 const STEPS = [
   [
@@ -179,6 +330,69 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Why this needs to exist at all. The page previously jumped from a
+          headline straight to a list of features, which assumes the visitor
+          already agrees there is a problem. Most do not. */}
+      <section className="border-b border-line bg-surface-2">
+        <div className="mx-auto max-w-4xl px-4 py-14">
+          <h2 className="text-xl font-semibold text-ink">
+            Booking music in India is still done the hard way
+          </h2>
+          <ul className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-3">
+            {PROBLEM.map(([title, body], i) => (
+              <Reveal key={title} delay={i}>
+                <li className="flex flex-col gap-2 border-t-2 border-signal pt-4">
+                  <h3 className="font-semibold text-ink">{title}</h3>
+                  <p className="text-sm text-ink-soft">{body}</p>
+                </li>
+              </Reveal>
+            ))}
+          </ul>
+          <p className="mt-8 max-w-2xl text-base text-ink">
+            ShoutOut makes the market searchable and the deal recorded. You get found for the
+            specific thing you do, and what you agreed exists somewhere other than a chat thread.
+          </p>
+        </div>
+      </section>
+
+      {/* What you can do, by who you are. All three shown at once: a visitor
+          should not have to guess which persona they are before the page
+          will tell them anything useful. */}
+      <section className="mx-auto max-w-5xl px-4 py-16">
+        <h2 className="text-xl font-semibold text-ink">What you can do here</h2>
+        <p className="mt-1 max-w-2xl text-sm text-ink-soft">
+          Three sides of the same market. Find yours.
+        </p>
+
+        <div className="mt-8 flex flex-col gap-6">
+          {AUDIENCES.map((a, i) => (
+            <Reveal key={a.who} delay={i}>
+              <div
+                className={`rounded-lg border border-line border-l-4 bg-surface p-6 ${TONE_BORDER_L[a.tone]}`}
+              >
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <h3 className="text-lg font-semibold text-ink">{a.who}</h3>
+                  <p className="text-sm text-ink-soft">{a.sub}</p>
+                </div>
+                <ul className="mt-5 grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
+                  {a.can.map(([title, body]) => (
+                    <li key={title} className="flex gap-2.5">
+                      <span aria-hidden="true" className={`pt-0.5 ${TONE_TEXT[a.tone]}`}>
+                        &#10003;
+                      </span>
+                      <div>
+                        <p className="text-sm font-medium text-ink">{title}</p>
+                        <p className="text-sm text-ink-soft">{body}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
       {/* Proof before pitch: real people, not descriptions of people. */}
       {artists.length > 0 ? (
         <section className="mx-auto max-w-5xl px-4 py-14">
@@ -198,8 +412,13 @@ export default async function HomePage() {
           </p>
           <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {artists.map((a, i) => (
-              <Reveal key={a.id} delay={i}>
-                <TiltCard maxTiltDeg={6}>
+              // min-w-0 on the grid item: a grid child defaults to
+              // min-width:auto, so it cannot shrink below its content. The
+              // square press shot inside was forcing each cell wider than
+              // half the viewport, pushing the whole document to 448px on a
+              // 375px screen and breaking CLAUDE.md rule 10.
+              <Reveal key={a.id} delay={i} className="min-w-0">
+                <TiltCard maxTiltDeg={6} className="w-full">
                   <Link
                     href={`/a/${a.slug}`}
                     className="motion-lift flex h-full flex-col overflow-hidden rounded-lg border border-line bg-surface"
@@ -314,7 +533,7 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto max-w-4xl px-4 pb-16">
-        <h2 className="mb-5 text-xl font-semibold text-ink">Everything else it does</h2>
+        <h2 className="mb-5 text-xl font-semibold text-ink">Everything it does</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {MODULES.map((m, i) => (
             <Reveal key={m.name} delay={i}>
