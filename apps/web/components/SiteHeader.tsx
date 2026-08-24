@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { AccountMenu } from './AccountMenu';
 
 // Site-wide nav. A client component deliberately — it fetches its own
 // signed-in state in the browser (GET /api/profiles/me, 401 vs not) so the
@@ -50,12 +51,7 @@ export function SiteHeader() {
             Pricing
           </Link>
           {signedIn ? (
-            <Link
-              href="/profile"
-              className="inline-flex min-h-11 items-center text-sm font-medium text-trust"
-            >
-              Profile
-            </Link>
+            <AccountMenu />
           ) : (
             <Link
               href="/login"
