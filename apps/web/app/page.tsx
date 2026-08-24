@@ -91,15 +91,18 @@ const TONE_BORDER: Record<(typeof MODULES)[number]['tone'], string> = {
   trust: 'border-t-trust',
   ok: 'border-t-ok',
 };
-const TONE_BORDER_L: Record<'signal' | 'accent' | 'trust', string> = {
-  signal: 'border-l-signal',
-  accent: 'border-l-accent',
-  trust: 'border-l-trust',
+// Colour now means "which of the three problems", not "which audience" -
+// so a problem, its fix, and every capability derived from it are the same
+// colour wherever they appear on the page.
+const TONE_DOT: Record<'signal' | 'accent' | 'trust', string> = {
+  signal: 'bg-signal',
+  accent: 'bg-accent',
+  trust: 'bg-trust',
 };
-const TONE_TEXT: Record<'signal' | 'accent' | 'trust', string> = {
-  signal: 'text-signal',
-  accent: 'text-accent',
-  trust: 'text-trust',
+const TONE_BORDER_T: Record<'signal' | 'accent' | 'trust', string> = {
+  signal: 'border-t-signal',
+  accent: 'border-t-accent',
+  trust: 'border-t-trust',
 };
 
 const TONE_GLOW: Record<(typeof MODULES)[number]['tone'], string> = {
@@ -109,108 +112,168 @@ const TONE_GLOW: Record<(typeof MODULES)[number]['tone'], string> = {
   ok: 'motion-glow-ok',
 };
 
-// Why anyone needs this. Concrete and grounded, because an abstract
-// "we make booking easier" is what every marketplace says and none of them
-// is memorable. Each line is a thing that is actually true of the market
-// today, drawn from the published evidence rather than invented.
-const PROBLEM = [
-  [
-    'It runs on WhatsApp chains',
-    'Finding a tabla player in Chennai means asking three people who know someone. Even booking agencies call the current system unreliable and opaque.',
-  ],
-  [
-    'Nothing is written down',
-    'The fee, the date, the sound requirements, who pays for travel. All of it lives in a chat thread, so the disagreement happens after the gig.',
-  ],
-  [
-    'The people who played are not named',
-    'Session musicians on some of the biggest records in the country have no public record that they were there at all.',
-  ],
+// Why anyone needs this, and what each problem turns into.
+//
+// The page's whole job is to make one chain visible: here is what is broken,
+// here is the fix, here is what that fix looks like for you specifically.
+// Previously the problem section and the audience section were two unrelated
+// lists sitting next to each other - a visitor read three complaints, then
+// read fifteen features, and had to do the joining themselves. Most will not.
+//
+// So the three problems are now the spine. Each carries a tag, each names the
+// fix it turns into, and every single capability further down the page is
+// stamped with the tag of the problem it solves. There are exactly three
+// answers in this product; the rest is those three answers in different
+// shapes.
+//
+// The tag is a word, not just a colour: #e8b33a on the light surface is far
+// below a readable contrast ratio at 11px, so the colour is a dot that
+// reinforces and the word is what actually carries the mapping.
+const PROBLEMS = [
+  {
+    id: 'find',
+    tag: 'Findable',
+    tone: 'signal',
+    title: 'It runs on WhatsApp chains',
+    body: 'Finding a tabla player in Chennai means asking three people who know someone. Even booking agencies call the current system unreliable and opaque.',
+    answer:
+      'So the market becomes searchable. Every role, genre and city, and a public page for every person in it.',
+  },
+  {
+    id: 'record',
+    tag: 'In writing',
+    tone: 'accent',
+    title: 'Nothing is written down',
+    body: 'The fee, the date, the sound requirements, who pays for travel. All of it lives in a chat thread, so the disagreement happens after the gig.',
+    answer:
+      'So every deal is recorded. Quote, date hold and rider, timestamped by both sides before anyone travels.',
+  },
+  {
+    id: 'credit',
+    tag: 'Credited',
+    tone: 'trust',
+    title: 'The people who played are not named',
+    body: 'Session musicians on some of the biggest records in the country have no public record that they were there at all.',
+    answer:
+      'So credits are permanent and public. Everyone who was in the room is named on the work, and can prove it.',
+  },
 ] as const;
+
+type ProblemId = (typeof PROBLEMS)[number]['id'];
+
+const PROBLEM_BY_ID: Record<ProblemId, (typeof PROBLEMS)[number]> = {
+  find: PROBLEMS[0],
+  record: PROBLEMS[1],
+  credit: PROBLEMS[2],
+};
 
 // What you can do here, by who you are. Three audiences, all shown at once
 // rather than behind tabs: a visitor should never have to guess which of
 // these they are before the page will tell them anything.
+//
+// Every entry carries `fix`, which is not decoration. It is the assertion
+// that this capability exists because of one of the three problems above,
+// and each audience block ends up showing all three tags - which is the
+// point. The same three fixes, read three different ways.
+//
+// Ordered by fix within each block so the tags cluster as you scan.
 const AUDIENCES = [
   {
     who: 'If you make music',
     sub: 'Vocalists, players, producers, engineers, DJs',
-    tone: 'signal' as const,
     can: [
-      [
-        'Be found for what you actually do',
-        'One account, every role you play. A mix engineer and a vocalist are different searches, scored separately.',
-      ],
-      [
-        'Log gigs you already have, free',
-        'Bookings made on WhatsApp get recorded here, confirmed in writing, and become your track record.',
-      ],
-      [
-        'Get credited on the work',
-        'Split sheets signed by everyone before any file moves. Your name on the record, permanently.',
-      ],
-      [
-        'Find people to make the next one with',
-        'Post what you need, a vocalist or a drummer, and get matched per role.',
-      ],
-      [
-        'Show the proof',
-        'A public page with your releases, your past gigs, the crowds, and who you played for.',
-      ],
+      {
+        fix: 'find' as ProblemId,
+        title: 'Be found for what you actually do',
+        body: 'One account, every role you play. A mix engineer and a vocalist are different searches, scored separately.',
+      },
+      {
+        fix: 'find' as ProblemId,
+        title: 'Find people to make the next one with',
+        body: 'Post what you need, a vocalist or a drummer, and get matched per role.',
+      },
+      {
+        fix: 'record' as ProblemId,
+        title: 'Log gigs you already have, free',
+        body: 'Bookings made on WhatsApp get recorded here, confirmed in writing, and become your track record.',
+      },
+      {
+        fix: 'credit' as ProblemId,
+        title: 'Get credited on the work',
+        body: 'Split sheets signed by everyone before any file moves. Your name on the record, permanently.',
+      },
+      {
+        fix: 'credit' as ProblemId,
+        title: 'Show the proof',
+        body: 'A public page with your releases, your past gigs, the crowds, and who you played for.',
+      },
     ],
   },
   {
     who: 'If you represent artists',
     sub: 'Managers, agencies, labels',
-    tone: 'accent' as const,
     can: [
-      [
-        'Every enquiry in one pipeline',
-        'From first message to a confirmed date, instead of five parallel chat threads.',
-      ],
-      [
-        'A calendar that cannot double-book',
-        'One date, one confirmed booking, across the whole roster. Enforced by the database, not by whoever answers first.',
-      ],
-      [
-        'Quote without guessing',
-        'What comparable acts were actually paid for the same city, date and crowd size.',
-      ],
-      [
-        'Riders both sides signed',
-        'Sound, stay, travel and payment terms, timestamped by organiser and artist.',
-      ],
-      [
-        'Reliability held per role',
-        'Because a dependable session player and an unproven producer can be the same person.',
-      ],
+      {
+        fix: 'find' as ProblemId,
+        title: 'Your whole roster, findable',
+        body: 'Each artist gets a public page, and requests from it land in your pipeline instead of on their personal phone.',
+      },
+      {
+        fix: 'record' as ProblemId,
+        title: 'Every enquiry in one pipeline',
+        body: 'From first message to a confirmed date, instead of five parallel chat threads.',
+      },
+      {
+        fix: 'record' as ProblemId,
+        title: 'A calendar that cannot double-book',
+        body: 'One date, one confirmed booking, across the whole roster. Enforced by the database, not by whoever answers first.',
+      },
+      {
+        fix: 'record' as ProblemId,
+        title: 'Riders both sides signed',
+        body: 'Sound, stay, travel and payment terms, timestamped by organiser and artist.',
+      },
+      {
+        fix: 'credit' as ProblemId,
+        title: 'Quote without guessing',
+        body: 'What comparable acts were actually paid for the same city, date and crowd size, because those gigs are on record.',
+      },
+      {
+        fix: 'credit' as ProblemId,
+        title: 'Reliability held per role',
+        body: 'Because a dependable session player and an unproven producer can be the same person.',
+      },
     ],
   },
   {
     who: 'If you book artists',
     sub: 'Organisers, venues, promoters, wedding and corporate planners',
-    tone: 'trust' as const,
     can: [
-      [
-        'Search by role, genre or city',
-        'A tabla player in Chennai. A mix engineer anywhere. A wedding singer in Jaipur.',
-      ],
-      [
-        'Judge before you commit',
-        'Past gigs, crowd sizes, releases and who they have played for, on every profile.',
-      ],
-      [
-        'Send a request without a phone number',
-        'Straight from their page. No intermediary, no three phone calls.',
-      ],
-      [
-        'Track every request in one list',
-        'Sent, quoted, held, confirmed. Stop reconstructing where a conversation stands.',
-      ],
-      [
-        'One calendar for the whole line-up',
-        'Every confirmed act across every date, not one artist at a time.',
-      ],
+      {
+        fix: 'find' as ProblemId,
+        title: 'Search by role, genre or city',
+        body: 'A tabla player in Chennai. A mix engineer anywhere. A wedding singer in Jaipur.',
+      },
+      {
+        fix: 'find' as ProblemId,
+        title: 'Send a request without a phone number',
+        body: 'Straight from their page. No intermediary, no three phone calls.',
+      },
+      {
+        fix: 'record' as ProblemId,
+        title: 'Track every request in one list',
+        body: 'Sent, quoted, held, confirmed. Stop reconstructing where a conversation stands.',
+      },
+      {
+        fix: 'record' as ProblemId,
+        title: 'One calendar for the whole line-up',
+        body: 'Every confirmed act across every date, not one artist at a time.',
+      },
+      {
+        fix: 'credit' as ProblemId,
+        title: 'Judge before you commit',
+        body: 'Past gigs, crowd sizes, releases and who they have played for, on every profile.',
+      },
     ],
   },
 ] as const;
@@ -229,6 +292,19 @@ const STEPS = [
     'Quote, hold the date, confirm the rider - timestamped by both sides so nothing is disputed later.',
   ],
 ] as const;
+
+// The crosswalk itself. The same chip renders on a problem card and on
+// every capability derived from that problem, so the connection is a thing
+// you can see rather than a thing you have to infer.
+function FixTag({ id }: { id: ProblemId }) {
+  const problem = PROBLEM_BY_ID[id];
+  return (
+    <span className="mr-2 inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line px-2 py-0.5 align-[0.1em] text-[11px] font-medium text-ink-soft">
+      <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${TONE_DOT[problem.tone]}`} />
+      {problem.tag}
+    </span>
+  );
+}
 
 function titleCase(s: string) {
   return s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
@@ -330,60 +406,75 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Why this needs to exist at all. The page previously jumped from a
-          headline straight to a list of features, which assumes the visitor
-          already agrees there is a problem. Most do not. */}
+      {/* Why this needs to exist at all, and what each problem becomes.
+          The page previously jumped from a headline straight to a list of
+          features, which assumes the visitor already agrees there is a
+          problem. Most do not. Each card now names the problem and the fix
+          it turns into, and the tag on it reappears on every capability
+          below that exists because of it. */}
       <section className="border-b border-line bg-surface-2">
-        <div className="mx-auto max-w-4xl px-4 py-14">
+        <div className="mx-auto max-w-5xl px-4 py-14">
           <h2 className="text-xl font-semibold text-ink">
             Booking music in India is still done the hard way
           </h2>
+          <p className="mt-2 max-w-2xl text-sm text-ink-soft">
+            Three things are broken. Everything ShoutOut does is a fix for one of them.
+          </p>
           <ul className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-3">
-            {PROBLEM.map(([title, body], i) => (
-              <Reveal key={title} delay={i}>
-                <li className="flex flex-col gap-2 border-t-2 border-signal pt-4">
-                  <h3 className="font-semibold text-ink">{title}</h3>
-                  <p className="text-sm text-ink-soft">{body}</p>
+            {PROBLEMS.map((problem, i) => (
+              <Reveal key={problem.id} delay={i} className="min-w-0">
+                <li
+                  className={`flex h-full flex-col gap-2 border-t-2 pt-4 ${TONE_BORDER_T[problem.tone]}`}
+                >
+                  <h3 className="font-semibold text-ink">{problem.title}</h3>
+                  <p className="text-sm text-ink-soft">{problem.body}</p>
+                  {/* mt-auto so the fix pins to the bottom of the card: the
+                      three problem bodies are different lengths, and the
+                      answers only read as a matched set when they line up. */}
+                  <div className="mt-auto flex flex-col items-start gap-2 border-t border-line pt-3">
+                    <FixTag id={problem.id} />
+                    <p className="text-sm text-ink">{problem.answer}</p>
+                  </div>
                 </li>
               </Reveal>
             ))}
           </ul>
-          <p className="mt-8 max-w-2xl text-base text-ink">
-            ShoutOut makes the market searchable and the deal recorded. You get found for the
-            specific thing you do, and what you agreed exists somewhere other than a chat thread.
-          </p>
         </div>
       </section>
 
-      {/* What you can do, by who you are. All three shown at once: a visitor
-          should not have to guess which persona they are before the page
-          will tell them anything useful. */}
+      {/* The same three fixes, read three different ways. All three
+          audiences shown at once: a visitor should not have to guess which
+          persona they are before the page will tell them anything useful.
+          Every line is tagged with the problem it came from, so nothing
+          here is a feature that arrived from nowhere. */}
       <section className="mx-auto max-w-5xl px-4 py-16">
-        <h2 className="text-xl font-semibold text-ink">What you can do here</h2>
+        <h2 className="text-xl font-semibold text-ink">What that looks like for you</h2>
         <p className="mt-1 max-w-2xl text-sm text-ink-soft">
-          Three sides of the same market. Find yours.
+          Same three fixes, three sides of the same market. The tag on each line tells you which
+          problem it came from.
         </p>
 
         <div className="mt-8 flex flex-col gap-6">
           {AUDIENCES.map((a, i) => (
-            <Reveal key={a.who} delay={i}>
-              <div
-                className={`rounded-lg border border-line border-l-4 bg-surface p-6 ${TONE_BORDER_L[a.tone]}`}
-              >
+            <Reveal key={a.who} delay={i} className="min-w-0">
+              <div className="rounded-lg border border-line bg-surface p-6">
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <h3 className="text-lg font-semibold text-ink">{a.who}</h3>
                   <p className="text-sm text-ink-soft">{a.sub}</p>
                 </div>
-                <ul className="mt-5 grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-                  {a.can.map(([title, body]) => (
-                    <li key={title} className="flex gap-2.5">
-                      <span aria-hidden="true" className={`pt-0.5 ${TONE_TEXT[a.tone]}`}>
-                        &#10003;
-                      </span>
-                      <div>
-                        <p className="text-sm font-medium text-ink">{title}</p>
-                        <p className="text-sm text-ink-soft">{body}</p>
-                      </div>
+                <ul className="mt-5 grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
+                  {a.can.map((item) => (
+                    // The tag sits inline at the head of the title rather than
+                    // on a row of its own: a short title then keeps the tag on
+                    // the same line, and a long one wraps under it, so every
+                    // item starts at the same place instead of alternating
+                    // between one-line and two-line headers.
+                    <li key={item.title} className="min-w-0">
+                      <p className="text-sm font-medium text-ink">
+                        <FixTag id={item.fix} />
+                        {item.title}
+                      </p>
+                      <p className="mt-1 text-sm text-ink-soft">{item.body}</p>
                     </li>
                   ))}
                 </ul>
