@@ -124,11 +124,17 @@ export default async function GigsPipelinePage() {
           <EqualizerAccent bars={3} />
         </div>
         <p className="text-sm text-ink-soft">
-          Who&apos;s booked, who owes money, who to call next.
+          Every booking in one place, so you never reconstruct a deal from a chat thread.
         </p>
       </div>
 
       <div className="motion-rise flex gap-3" style={rise(1)}>
+        <Link
+          href="/gigs/log"
+          className="motion-lift rounded-md bg-signal px-4 py-2 text-sm font-medium text-surface"
+        >
+          Log a gig you already have
+        </Link>
         <Link
           href="/gigs/calendar"
           className="motion-lift rounded-md border border-line px-4 py-2 text-sm text-ink-soft"
@@ -141,9 +147,15 @@ export default async function GigsPipelinePage() {
         <div className="motion-rise rounded-lg border border-line p-6 text-center" style={rise(2)}>
           <p className="text-base text-ink">Nothing in the pipeline yet.</p>
           <p className="mt-1 text-sm text-ink-soft">
-            Briefs land here from an artist&apos;s public page, or you can log one by hand once
-            that&apos;s wired into this view.
+            Got a gig on WhatsApp already? Log it here and get it confirmed in writing. It is free,
+            it holds the date, and it starts your track record.
           </p>
+          <Link
+            href="/gigs/log"
+            className="motion-lift mt-4 inline-flex min-h-11 items-center rounded-md bg-signal px-6 text-sm font-medium text-surface"
+          >
+            Log a gig
+          </Link>
         </div>
       ) : (
         <ul className="motion-rise flex flex-col gap-3" style={rise(2)}>
