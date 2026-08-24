@@ -19,6 +19,13 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Re-runnable by hand. Every run since 2026-08-23 has died in ~3s with
+  # "The job was not started because recent account payments have failed or
+  # your spending limit needs to be increased" - an account-level block, so
+  # no runner is ever allocated and zero steps execute. Once billing is
+  # cleared, this trigger re-runs the pipeline from the Actions tab without
+  # needing an empty commit to generate a push event.
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
