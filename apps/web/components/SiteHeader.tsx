@@ -50,7 +50,20 @@ export function SiteHeader() {
           <Link href="/pricing" className={linkClass}>
             Pricing
           </Link>
-          {signedIn ? (
+          {/* Three states, not two. `signedIn` is null until the fetch
+              resolves, and the old code treated null as signed-out - so every
+              signed-in user was shown a "Sign in" button on every page load,
+              which then swapped to their account menu. Telling someone who is
+              logged in that they are logged out, on every navigation, reads as
+              a session that keeps dropping.
+
+              While unknown, render a placeholder of the same height so the
+              nav does not shift when the answer arrives (the swap was also a
+              layout-shift source, and the row wraps on small screens where a
+              reflow is most visible). */}
+          {signedIn === null ? (
+            <span aria-hidden="true" className="inline-flex min-h-11 w-20 items-center" />
+          ) : signedIn ? (
             <AccountMenu />
           ) : (
             <Link
