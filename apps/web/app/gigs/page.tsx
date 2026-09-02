@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { listBriefs } from '@shoutout/gigs';
@@ -20,6 +21,12 @@ function rise(step: number): CSSProperties {
 // so the uncaught throw crashed the whole build. Confirmed by reproducing
 // locally with .env.local removed. This page also cannot be static anyway
 // — it reads the caller's session on every request.
+export const metadata: Metadata = {
+  title: 'Gigs',
+  description:
+    'Every booking in one pipeline - enquiry, quote, date hold, confirmed rider - so a deal never has to be reconstructed from a chat thread.',
+};
+
 export const dynamic = 'force-dynamic';
 
 // The Manager OS pipeline board (docs/05-GIGS.md: "Pipeline board: enquiry

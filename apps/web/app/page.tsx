@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { createAnonClient } from '@shoutout/db';
 import { searchArtists, type ArtistSearchResult } from '@shoutout/gigs';
@@ -22,6 +23,17 @@ import { EqualizerAccent, Reveal, TiltCard, Waveform, StatusPill } from '@shouto
 //
 // ISR: live data, rendered once an hour, so the proof stays current without
 // costing a query per visitor.
+export const metadata: Metadata = {
+  // The homepage is the one page whose title should not carry the "| ShoutOut"
+  // suffix the layout template adds, so it sets an absolute title.
+  title: {
+    absolute: 'ShoutOut - book musicians and find collaborators in India',
+  },
+  description:
+    'Find who you need and book them properly. Search by role, genre or city, book acts for your event, or find people to make music with.',
+  alternates: { canonical: '/' },
+};
+
 export const revalidate = 3600;
 
 // The full surface, so nothing shipped is invisible. Grouped rather than
