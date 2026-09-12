@@ -1,159 +1,153 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import Link from 'next/link';
+import { createAnonClient } from '@shoutout/db';
+import { searchArtists, type ArtistSearchResult } from '@shoutout/gigs';
 import { ROLE_FAMILIES } from '@shoutout/identity';
-import { StatusPill, EqualizerAccent, Waveform } from '@shoutout/ui';
+import { EqualizerAccent, StatusPill, Waveform } from '@shoutout/ui';
 import { Paywall } from '@/components/Paywall';
+import { getServerSupabaseClient } from '@/lib/supabase-server';
+import { resolveGeo } from '@/lib/geo';
+import { roleLabel, roleNounPlural } from '@/lib/role-label';
+import { BookArtist } from './BookArtist';
 
-// Roles the spec writes as acronyms (docs/04-PROFILES.md's role table).
-// Naive capitalisation turns these into "Dj", "Md", "Foh engineer".
-const ACRONYMS: Record<string, string> = {
-  dj: 'DJ',
-  md: 'MD',
-  dop: 'DOP',
-  vfx: 'VFX',
-  foh: 'FOH',
-};
+// Find artists - the organiser's discovery surface, and the page the whole
+// acquisition model rests on.
+//
+// It used to be a Client Component that fetched everything in useEffect. That
+// meant the server sent a shell and the words "Loading...", and nothing else.
+// Verified against production: the rendered HTML of /artists contained zero
+// artist links and zero artist names. Every crawler, and every visitor on a
+// slow connection, got an empty page - on the one route that is supposed to
+// bring in organic traffic. Three separate costs:
+//
+//   1. Nothing to index. Google cannot rank a spinner, so the page that is
+//      meant to capture "book a tabla player in Chennai" ranked for nothing.
+//   2. LCP measured from the fetch waterfall, not the response - three
+//      round trips (session, entitlements, geo) before the first result,
+//      against CLAUDE.md rule 10's 2.5s-on-4G budget.
+//   3. The wrong call-to-action rendered until the session fetch resolved.
+//
+// Now: the server resolves geo from the edge headers, reads the session and
+// entitlements it already has a client for, queries, and returns finished
+// HTML. The filter form is a plain GET form, so filtering works with
+// JavaScript disabled and every filtered view is a real, shareable,
+// indexable URL. Only the booking form stays client-side, because it posts.
+export const dynamic = 'force-dynamic';
 
-/** 'backing_vocalist' -> 'Backing vocalist'. The vocabulary is stored snake_case. */
-function roleLabel(role: string): string {
-  const words = role.split('_').map((w, i) => {
-    const acronym = ACRONYMS[w];
-    if (acronym) return acronym;
-    return i === 0 ? w.charAt(0).toUpperCase() + w.slice(1) : w;
-  });
-  return words.join(' ');
+interface SearchParams {
+  role?: string;
+  genre?: string;
+  city?: string;
+  /** Set by the filter form, so a deliberately cleared city is not re-guessed. */
+  q?: string;
 }
 
-// Find artists for your event (the organiser's discovery surface —
-// docs/05-GIGS.md never specified how an organiser finds someone without
-// already knowing their public page, so this is new). Browsing is public
-// (GET /api/artists, no session required) — booking needs an account, same
-// "understand it before you sign in, act after" pattern as the rest of
-// this pass. Signed-in visitors book via POST /api/gigs/book-as-org
-// (identity resolved from their session); signed-out visitors are pointed
-// at sign-in rather than silently falling back to the anonymous flow —
-// the whole point of this page is the organiser dashboard experience.
-
-interface ArtistResult {
-  id: string;
-  stage_name: string;
-  slug: string;
-  home_city: string | null;
-  genres: string[];
-  bio: string | null;
-  verified: boolean;
-  fee_band_visible: boolean;
-  roles: string[];
-  image_url: string | null;
-  album_count: number;
-  performance_count: number;
-  track_count: number;
+/**
+ * The filters actually in effect. A submitted form always carries `q`, which
+ * is how "the visitor cleared the city" is told apart from "the visitor has
+ * not searched yet" - only the second should fall back to their location.
+ */
+function effectiveFilters(params: SearchParams, geoCity: string | null) {
+  const submitted = params.q !== undefined;
+  return {
+    role: params.role?.trim() || '',
+    genre: params.genre?.trim() || '',
+    city: submitted ? (params.city?.trim() ?? '') : params.city?.trim() || geoCity || '',
+    usedGeoDefault: !submitted && !params.city && Boolean(geoCity),
+  };
 }
 
-const eventTypes = [
-  'wedding',
-  'corporate',
-  'festival',
-  'club',
-  'college',
-  'private',
-  'government',
-  'temple',
-  'other',
-] as const;
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const role = params.role?.trim();
+  const city = params.city?.trim();
+  const genre = params.genre?.trim();
 
-export default function ArtistSearchPage() {
-  const [genre, setGenre] = useState('');
-  const [city, setCity] = useState('');
-  const [role, setRole] = useState('');
-  const [detectedCity, setDetectedCity] = useState<string | null>(null);
-  const [results, setResults] = useState<ArtistResult[] | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [signedIn, setSignedIn] = useState<boolean | null>(null);
-  const [canBook, setCanBook] = useState<boolean | null>(null);
-  const [bookingArtistId, setBookingArtistId] = useState<string | null>(null);
-  const [eventDate, setEventDate] = useState('');
-  const [eventType, setEventType] = useState<(typeof eventTypes)[number]>('wedding');
-  const [notes, setNotes] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [booked, setBooked] = useState<string | null>(null);
+  // A filtered view is a different page with a different intent, and saying
+  // so is most of the value of making this route server-rendered at all.
+  const subject = role ? roleNounPlural(role) : genre ? `${genre} artists` : 'Artists';
+  const place = city ? ` in ${city}` : ' in India';
 
-  // Default the region to wherever the visitor actually is. Vercel's edge
-  // headers give a city; locally (and outside the cities we cover) it comes
-  // back null and we show everyone rather than guessing wrong. The field
-  // stays editable either way — detection is a default, never a lock.
-  useEffect(() => {
-    fetch('/api/profiles/me')
-      .then((r) => setSignedIn(r.status !== 401))
-      .catch(() => setSignedIn(false));
+  return {
+    title: `${subject}${place} to book`,
+    description: `Find and book ${subject.toLowerCase()}${place}. See past gigs, crowd sizes and releases before you send a request.`,
+    // Every filtered permutation canonicalises to the unfiltered page. The
+    // combinations are near-duplicates of each other, and the pages built to
+    // rank for "tabla player in chennai" are the /book/[slug] landing pages
+    // with their >=3-artist guardrail (migration 033). Letting an unbounded
+    // query-string space compete with those would split the signal and index
+    // a lot of one-result pages. The filtered view stays fully useful to a
+    // human with the link - it just is not the one in the index.
+    alternates: { canonical: '/artists' },
+  };
+}
 
-    // Entitlement drives whether the booking form renders at all. The
-    // database refuses regardless (migration 030) — this only decides
-    // whether the user is shown a form that would fail.
-    fetch('/api/entitlements')
-      .then((r) => (r.ok ? r.json() : { entitlements: [] }))
-      .then((j: { entitlements: string[] }) =>
-        setCanBook(j.entitlements.includes('send_booking_requests')),
-      )
-      .catch(() => setCanBook(false));
+async function findArtists(filters: {
+  role: string;
+  genre: string;
+  city: string;
+}): Promise<{ results: ArtistSearchResult[]; failed: boolean }> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  // CI builds without credentials. Degrade to an empty page rather than
+  // failing the build, same as the homepage does.
+  if (!url || !key) return { results: [], failed: false };
 
-    fetch('/api/geo')
-      .then((r) => r.json())
-      .then((geo: { city: string | null }) => {
-        if (geo.city) {
-          setCity(geo.city);
-          setDetectedCity(geo.city);
-          void search({ city: geo.city });
-        } else {
-          void search({});
-        }
-      })
-      .catch(() => void search({}));
-  }, []);
-
-  async function search(override: { city?: string } = {}) {
-    setLoading(true);
-    try {
-      const effectiveCity = override.city ?? city;
-      const params = new URLSearchParams();
-      if (genre) params.set('genre', genre);
-      if (effectiveCity) params.set('city', effectiveCity);
-      if (role) params.set('role', role);
-      const res = await fetch(`/api/artists?${params.toString()}`);
-      const json = await res.json();
-      if (res.ok) setResults(json.data ?? []);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function submitBooking(artistId: string) {
-    setError(null);
-    if (!city) {
-      setError('City is required.');
-      return;
-    }
-    const res = await fetch('/api/gigs/book-as-org', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        artistId,
-        eventDate: eventDate || undefined,
-        city,
-        eventType,
-        notes: notes || undefined,
-      }),
+  try {
+    const supabase = createAnonClient(url, key);
+    const results = await searchArtists(supabase, {
+      role: filters.role || undefined,
+      genre: filters.genre || undefined,
+      city: filters.city || undefined,
+      limit: 24,
     });
-    const json = await res.json();
-    if (!res.ok) {
-      setError(json.error?.message ?? 'Could not send this request');
-      return;
-    }
-    setBooked(artistId);
-    setBookingArtistId(null);
+    return { results, failed: false };
+  } catch {
+    // Distinguished from "no matches" on purpose: an outage and an empty
+    // result set need completely different copy, and telling someone there
+    // are no tabla players in Chennai when the database is down is a lie
+    // that costs a visit.
+    return { results: [], failed: true };
   }
+}
+
+/** Session and entitlement, read server-side so the card renders the right CTA first time. */
+async function readViewer(): Promise<{ signedIn: boolean; canBook: boolean }> {
+  try {
+    const supabase = await getServerSupabaseClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { signedIn: false, canBook: false };
+
+    const { data } = await supabase.rpc('my_entitlements');
+    const rows = (data ?? []) as { entitlement: string }[];
+    return {
+      signedIn: true,
+      canBook: rows.some((r) => r.entitlement === 'send_booking_requests'),
+    };
+  } catch {
+    return { signedIn: false, canBook: false };
+  }
+}
+
+const fieldClass = 'min-h-11 rounded-md border border-line bg-surface px-3 text-base text-ink';
+
+export default async function ArtistSearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await searchParams;
+  const geo = resolveGeo(await headers());
+  const filters = effectiveFilters(params, geo.city);
+
+  const [{ results, failed }, viewer] = await Promise.all([findArtists(filters), readViewer()]);
 
   return (
     <main>
@@ -163,7 +157,7 @@ export default function ArtistSearchPage() {
         </div>
         <div className="motion-rise relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-4 px-4 py-14 text-center">
           <span className="rounded-full bg-surface/10 px-3 py-1 text-xs font-medium text-accent">
-            For event organisers & venues
+            For event organisers &amp; venues
           </span>
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-semibold tracking-tight text-surface md:text-4xl">
@@ -179,18 +173,16 @@ export default function ArtistSearchPage() {
       </section>
 
       <div className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-10">
-        <div className="motion-rise flex flex-wrap gap-2">
+        {/* A plain GET form. No JavaScript required to filter, every result
+            set has its own URL, and the browser restores the controls from
+            the query string on back-navigation for free. */}
+        <form method="GET" action="/artists" className="motion-rise flex flex-wrap gap-2">
+          <input type="hidden" name="q" value="1" />
           {/* Role is the primary filter, not an afterthought:
               docs/04-PROFILES.md - "Matching happens per role, never per
-              person." Grouped by the same families the spec defines,
-              read straight from packages/identity so the vocabulary has
-              exactly one source. */}
-          <select
-            aria-label="Role"
-            className="min-h-11 rounded-md border border-line bg-surface px-3 text-base text-ink"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-          >
+              person." Grouped by the families packages/identity defines, so
+              the vocabulary has exactly one source. */}
+          <select name="role" aria-label="Role" defaultValue={filters.role} className={fieldClass}>
             <option value="">Any role</option>
             {Object.entries(ROLE_FAMILIES).map(([family, def]) => (
               <optgroup key={family} label={def.label}>
@@ -203,35 +195,35 @@ export default function ArtistSearchPage() {
             ))}
           </select>
           <input
-            className="min-h-11 rounded-md border border-line bg-surface px-3 text-base text-ink"
+            name="genre"
+            aria-label="Genre"
             placeholder="Genre"
-            value={genre}
-            onChange={(e) => setGenre(e.target.value)}
+            defaultValue={filters.genre}
+            className={fieldClass}
           />
           <input
-            className="min-h-11 rounded-md border border-line bg-surface px-3 text-base text-ink"
+            name="city"
+            aria-label="City"
             placeholder="City"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
+            defaultValue={filters.city}
+            className={fieldClass}
           />
           <button
-            type="button"
-            onClick={() => void search()}
-            disabled={loading}
-            className="motion-lift min-h-11 rounded-md bg-signal px-4 text-sm font-medium text-surface disabled:opacity-50"
+            type="submit"
+            className="motion-lift min-h-11 rounded-md bg-signal px-4 text-sm font-medium text-surface"
           >
-            {loading ? 'Searching…' : 'Search'}
+            Search
           </button>
-        </div>
+        </form>
 
-        {detectedCity ? (
+        {filters.usedGeoDefault ? (
           <p className="-mt-3 text-xs text-ink-soft">
-            Showing artists near <span className="font-medium text-ink">{detectedCity}</span>, based
-            on where you&apos;re browsing from. Clear the city field to search everywhere.
+            Showing artists near <span className="font-medium text-ink">{filters.city}</span>, based
+            on where you are browsing from. Clear the city field to search everywhere.
           </p>
         ) : null}
 
-        {signedIn && canBook === false ? (
+        {viewer.signedIn && !viewer.canBook ? (
           <Paywall
             title="Booking requests need a plan"
             description="Browsing artists is free. Sending a booking request - and everything that follows it: quotes, holds, riders, settlement - needs an active plan."
@@ -239,10 +231,24 @@ export default function ArtistSearchPage() {
           />
         ) : null}
 
-        {results === null ? (
-          <p className="text-sm text-ink-soft">Loading…</p>
+        {failed ? (
+          <div className="rounded-lg border border-signal/40 bg-signal/5 p-5">
+            <p className="font-medium text-ink">Artist search is temporarily unavailable</p>
+            <p className="mt-1 text-sm text-ink-soft">
+              This is on our side, not yours, and it is not a sign that nobody matches. Try again in
+              a moment.
+            </p>
+          </div>
         ) : results.length === 0 ? (
-          <p className="text-sm text-ink-soft">No artists match yet.</p>
+          <div className="rounded-lg border border-line p-5">
+            <p className="font-medium text-ink">No artists match that search yet.</p>
+            <p className="mt-1 text-sm text-ink-soft">
+              Try a wider search - drop the city, or pick a broader role.
+            </p>
+            <Link href="/artists" className="mt-3 inline-block text-sm text-trust">
+              Clear all filters →
+            </Link>
+          </div>
         ) : (
           <ul className="flex flex-col gap-3">
             {results.map((artist) => (
@@ -258,7 +264,7 @@ export default function ArtistSearchPage() {
                   {artist.image_url ? (
                     <img
                       src={artist.image_url}
-                      alt=""
+                      alt={`${artist.stage_name}, press photo`}
                       width={64}
                       height={64}
                       loading="lazy"
@@ -279,7 +285,7 @@ export default function ArtistSearchPage() {
                       </Link>
                       {artist.verified ? <StatusPill label="Verified" tone="success" /> : null}
                     </div>
-                    {/* What they've actually got behind them - the reason to
+                    {/* What they have actually got behind them - the reason to
                         click through rather than scroll past. */}
                     <p className="text-xs text-ink-soft">
                       {[
@@ -302,13 +308,16 @@ export default function ArtistSearchPage() {
                 </p>
 
                 {/* The roles this person is actually bookable for. Without
-                    these the card can't answer "can they do the job", which
+                    these the card cannot answer "can they do the job", which
                     is the only question an organiser is asking. */}
                 {artist.roles.length > 0 ? (
                   <ul className="flex flex-wrap gap-1.5">
                     {artist.roles.map((r) => (
                       <li key={r}>
-                        <StatusPill label={roleLabel(r)} tone={r === role ? 'active' : 'neutral'} />
+                        <StatusPill
+                          label={roleLabel(r)}
+                          tone={r === filters.role ? 'active' : 'neutral'}
+                        />
                       </li>
                     ))}
                   </ul>
@@ -327,72 +336,16 @@ export default function ArtistSearchPage() {
                   {artist.fee_band_visible ? 'Fee band shown on their profile' : 'Fee on request'}
                 </p>
 
-                {signedIn === false ? (
-                  <Link href="/login" className="text-sm text-trust">
-                    Sign in to book →
-                  </Link>
-                ) : canBook === false ? (
-                  <Link href="/pricing" className="text-sm text-trust">
-                    Upgrade to send a booking request →
-                  </Link>
-                ) : booked === artist.id ? (
-                  <p className="text-sm text-ok">Request sent.</p>
-                ) : bookingArtistId === artist.id ? (
-                  <div className="flex flex-col gap-2 rounded-md border border-line p-3">
-                    <div className="grid grid-cols-2 gap-2">
-                      <input
-                        type="date"
-                        className="min-h-11 rounded-md border border-line bg-surface px-3 text-base text-ink"
-                        value={eventDate}
-                        onChange={(e) => setEventDate(e.target.value)}
-                      />
-                      <select
-                        className="min-h-11 rounded-md border border-line bg-surface px-3 text-base text-ink"
-                        value={eventType}
-                        onChange={(e) =>
-                          setEventType(e.target.value as (typeof eventTypes)[number])
-                        }
-                      >
-                        {eventTypes.map((t) => (
-                          <option key={t} value={t}>
-                            {t}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <textarea
-                      className="min-h-11 rounded-md border border-line bg-surface px-3 text-base text-ink"
-                      placeholder="Notes (optional)"
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => submitBooking(artist.id)}
-                      className="motion-lift min-h-11 self-start rounded-md bg-signal px-4 text-sm font-medium text-surface"
-                    >
-                      Send request
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setBookingArtistId(artist.id)}
-                    className="motion-lift min-h-11 self-start rounded-md border border-line px-4 text-sm text-ink-soft"
-                  >
-                    Book
-                  </button>
-                )}
+                <BookArtist
+                  artistId={artist.id}
+                  defaultCity={filters.city}
+                  signedIn={viewer.signedIn}
+                  canBook={viewer.canBook}
+                />
               </li>
             ))}
           </ul>
         )}
-
-        {error ? (
-          <p className="text-sm text-signal" role="alert">
-            {error}
-          </p>
-        ) : null}
       </div>
     </main>
   );
